@@ -1,60 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>{% block title %}CodeVerse{% endblock %}</title>
 
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     body {
-      background: linear-gradient(120deg, #d4fc79, #96e6a1);
-      min-height: 100vh;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    .problem-card {
-      background-color: #ffffffdd;
-      border-radius: 1rem;
-      padding: 1.4rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .problem-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    .gradient-btn {
-      background: linear-gradient(45deg, #ff6ec4, #7873f5);
-      color: #fff;
-      border: none;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-    }
-    .gradient-btn:hover {
-      transform: scale(1.05);
-    }
-
-    .wave-divider {
-      overflow: hidden;
-      line-height: 0;
-      margin-bottom: -1px;
-    }
-    .wave-divider svg {
-      height: 60px;
-      width: 100%;
-      display: block;
-    }
+        background: #0a1f44; /* rich, deep blue */
+        color: #cbe7ff; /* soft light-blue text */
+        font-family: 'Inter', sans-serif;
+      }
+      
+      .navbar-custom h3, .navbar-custom a {
+        transition: color .2s;
+      }
+      .navbar-custom h3:hover,
+      .navbar-custom a:hover {
+        color: #4da6ff;
+      }
+      
+      
+      .problem-card {
+        background: rgba(11, 34, 69, 0.9);
+        border-radius: 1rem;
+        padding: 1.6rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 16px rgba(0, 64, 128, 0.7);
+        transition: transform .2s, box-shadow .2s;
+      }
+      .problem-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0, 96, 192, 0.9);
+      }
+      
+      .problem-card-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #b3e0ff;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        margin-bottom: .5rem;
+      }
+      
+      .problem-card-meta {
+        font-size: .9rem;
+        color: #89b9f0;
+        margin-bottom: 1rem;
+      }
+      
+      .difficulty-badge {
+        font-size: .8rem;
+        padding: .35em .65em;
+        border-radius: .8rem;
+      }
+      .badge-easy {
+        background-color: #4da6ff;
+        color: #fff;
+      }
+      .badge-medium {
+        background-color: #1a75ff;
+        color: #fff;
+      }
+      .badge-hard {
+        background-color: #004ecc;
+        color: #fff;
+      }
+      
+      a.btn-solve {
+        background: #1a75ff;
+        border: none;
+        color: #fff;
+        font-size: .9rem;
+        font-weight: 500;
+        padding: .35em .75em;
+        border-radius: .5rem;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+        transition: background .2s, transform .2s;
+      }
+      a.btn-solve:hover {
+        background: #4da6ff;
+        transform: translateY(-2px);
+      }
+      /* Remove default focus outline and shadow for links and buttons */
+      a:focus, a:active,
+      button:focus, button:active {
+        outline: none !important;
+        box-shadow: none !important; /* removes Bootstrap's default focus ring */ :contentReference[oaicite:2]{index=2}
+      }
+      
+      /* Optional: Add a subtle custom focus effect when using keyboard navigation */
+      a:focus-visible, button:focus-visible {
+        outline: 2px solid #4da6ff;
+        outline-offset: 2px;
+      }
+            
   </style>
 </head>
 <body class="container py-4">
 
-  <!-- ↑ Navbar from problems.html will appear here via block content -->
-
+  <!-- 🔹 Navbar -->
+  <nav class="navbar-custom d-flex justify-content-between align-items-center">
+    <h3 class="mb-0 fw-bold">⚡ CodeVerse</h3>
+    <div>
+      {% if user.is_authenticated %}
+        <span class="me-2">👋 Hello, {{ user.full_name }}!</span>
+        <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger">Logout</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary me-2">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-sm btn-outline-success">Register</a>
+      {% endif %}
+    </div>
+  </nav>
 
   {% block content %}{% endblock %}
+
 </body>
 </html>

@@ -3,39 +3,29 @@
 {% block title %}Problems – CodeVerse{% endblock %}
 
 {% block content %}
-<div class="mt-4 mb-3 text-end">
-  {% if user.is_authenticated %}
-    <span class="me-3 fs-5">👋 Hello, {{ user.full_name|default:user.username }}!</span>
-    <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>
-  {% else %}
-    <a class="btn btn-outline-primary me-2" href="{% url 'login' %}">Login</a>
-    <a class="btn btn-outline-success" href="{% url 'register' %}">Register</a>
-  {% endif %}
-</div>
 
 <h2 class="mb-4">🧠 All Problems</h2>
 
 {% for p in problems %}
-  <div class="problem-card">
-    <div class="row">
-      <div class="col-md-8">
-        <a href="{% url 'problem_detail' code=p.code %}" class="h5 text-decoration-none text-dark">
-          {{ p.name }}
-        </a>
-        <p class="text-muted mb-1"><code>{{ p.code }}</code></p>
-      </div>
-      <div class="col-md-4 text-end">
-        <span class="badge 
-          {% if p.difficulty == 'E' %} bg-success 
-          {% elif p.difficulty == 'M' %} bg-warning text-dark 
-          {% else %} bg-danger 
-          {% endif %}">
-          {{ p.get_difficulty_display }}
-        </span>
-      </div>
-    </div>
+<div class="problem-card">
+  <div class="problem-card-title">💠 {{ p.name }}</div>
+  <div class="problem-card-meta">Code: <code style="background:#0c295a;padding:2px 4px;border-radius:4px;">{{ p.code }}</code></div>
+  <div class="d-flex justify-content-between align-items-center">
+    <span class="difficulty-badge
+      {% if p.difficulty == "E" %} badge-easy
+      {% elif p.difficulty == "M" %} badge-medium
+      {% else %} badge-hard
+      {% endif %}">
+      {{ p.get_difficulty_display }}
+    </span>
+    <a href="{% url 'problem_detail' code=p.code %}" class="btn-solve">
+      Solve →
+    </a>
   </div>
+</div>
 {% empty %}
-  <p>No problems yet! 🧩</p>
+<p>No problems yet—start coding! 💻</p>
 {% endfor %}
+
+
 {% endblock %}
