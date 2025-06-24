@@ -1,34 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>{{ problem.name }}</title>
-</head>
-<body>
-  <h1>{{ problem.name }}</h1>
-  <p><strong>Difficulty:</strong> {{ problem.get_difficulty_display }}</p>
-  <p>{{ problem.statement }}</p>
+{% extends 'base.html' %}
+{% block title %}{{ problem.name }} – CodeVerse{% endblock %}
 
-  <hr>
-  <h2>Submit Your Code</h2>
+{% block content %}
+<div class="mt-5">  {# Push content down from navbar #}
 
-  <form method="post">
-    {% csrf_token %}
-    <label for="language">Language:</label>
-    <select name="language" id="language" required>
-      <option value="python">Python</option>
-      <option value="cpp">C++</option>
-    </select>
-    <br><br>
+  <!-- 🔹 Problem Description Card -->
+  <div class="problem-card mb-4">
+    <div class="problem-card-title">🧠 {{ problem.name }}</div>
+    <div class="problem-card-meta mb-2">
+      Code: <code class="problem-code">{{ problem.code }}</code> |
+      Difficulty:
+      <span class="badge 
+        {% if problem.difficulty == 'E' %}badge-easy
+        {% elif problem.difficulty == 'M' %}badge-medium
+        {% else %}badge-hard
+        {% endif %}">
+        {{ problem.get_difficulty_display }}
+      </span>
+    </div>
 
-    <label for="code">Code:</label><br>
-    <textarea name="code" id="code" rows="10" cols="80" required></textarea>
-    <br><br>
+    <h5 class="mb-2">📝 Problem Statement</h5>
+    <p style="white-space: pre-wrap;">{{ problem.statement }}</p>
+  </div>
 
-    <button type="submit">Submit Code</button>
-  </form>
+  <!-- 🔸 Code Submission Card -->
+  <div class="problem-card">
+    <div class="problem-card-title">🚀 Submit Your Code</div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="language" class="form-label">Language:</label>
+        <select name="language" id="language" class="form-select w-auto d-inline-block ms-2" required>
+          <option value="python">Python</option>
+          <option value="cpp">C++</option>
+        </select>
+      </div>
 
-  {% if verdict %}
-    <p><strong>Verdict:</strong> {{ verdict }}</p>
-  {% endif %}
-</body>
-</html>
+      <div class="mb-3">
+        <label for="code" class="form-label">Code:</label>
+        <textarea name="code" id="code" class="code-editor" rows="12" placeholder="Write your awesome code here…" required>{{ code|default:"" }}</textarea>
+      </div>
+
+      <button type="submit" class="btn-solve">Submit Code</button>
+    </form>
+
+    {% if verdict %}
+      <div class="mt-3">
+        <strong>🧾 Verdict:</strong> {{ verdict }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

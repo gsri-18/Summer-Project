@@ -1,13 +1,25 @@
+{% extends 'base.html' %}
 {% load crispy_forms_tags %}
-<!DOCTYPE html>
-<html>
-<head><title>Login</title></head>
-<body>
-    <h2>Welcome Back!</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit">Login</button>
+
+{% block title %}Login - CodeVerse{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 85vh;">
+  <div class="auth-card">
+    <h2 class="auth-heading">🚀 Login to CodeVerse</h2>
+    
+    <form method="POST" novalidate>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <div class="d-grid mt-3">
+        <button type="submit" class="btn">Login</button>
+      </div>
     </form>
-</body>
-</html>
+
+    <hr class="my-4" style="border-color: rgba(255,255,255,0.15);">
+    <p class="text-center mb-0">New here? 
+      <a href="{% url 'register' %}" style="color:#4da6ff;">Create an account</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
