@@ -1,0 +1,17 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Ignore your venv
+codeverse-env/
+
+# Ignore system files
+.DS_Store
+
+# Ignore IDE stuff
+.vscode/
+.idea/
+
+# Ignore environment and secret settings
+.env

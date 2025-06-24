@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Problems</title></head>
+<body>
+  <h1>All Problems</h1>
+  <ul>
+    {% for p in problems %}
+      <li>
+        <a href="{% url 'problem_detail' code=p.code %}">{{ p.name }}</a> - {{ p.get_difficulty_display }}
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
