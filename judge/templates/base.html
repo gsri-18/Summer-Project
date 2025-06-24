@@ -10,185 +10,203 @@
 
   <style>
     body {
-        background: #0a1f44; /* deep blue */
-        color: #cbe7ff;
-        font-family: 'Inter', sans-serif;
-      }
-      
-      .navbar-custom h3, .navbar-custom a {
-        transition: color .2s;
-      }
-      .navbar-custom h3:hover,
-      .navbar-custom a:hover {
-        color: #4da6ff;
-      }
-      
-      .problem-card {
-        background: rgba(11, 34, 69, 0.9);
-        border-radius: 1rem;
-        padding: 1.6rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 4px 16px rgba(0, 64, 128, 0.7);
-        transition: transform .2s, box-shadow .2s;
-      }
-      .problem-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 24px rgba(0, 96, 192, 0.9);
-      }
-      
-      .problem-card-title {
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: #b3e0ff;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-        margin-bottom: .5rem;
-      }
-      
-      .problem-card-meta {
-        font-size: .9rem;
-        color: #89b9f0;
-        margin-bottom: 1rem;
-      }
-      
-      .difficulty-badge {
-        font-size: .8rem;
-        padding: .35em .65em;
-        border-radius: .8rem;
-      }
-      .badge-easy    { background-color: #4da6ff; color: #fff; }
-      .badge-medium  { background-color: #1a75ff; color: #fff; }
-      .badge-hard    { background-color: #004ecc; color: #fff; }
-      
-      a.btn-solve {
-        background: #1a75ff;
+      background: #0a1f44;
+      color: #cbe7ff;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .navbar-custom h3, .navbar-custom a {
+      transition: color .2s;
+    }
+    .navbar-custom h3:hover,
+    .navbar-custom a:hover {
+      color: #4da6ff;
+    }
+
+    /* 🔷 Updated problem card */
+    .problem-card {
+      background: linear-gradient(135deg, #0a1f44, #30cfcf22);
+      border: 1px solid #30cfcf55;
+      border-radius: 1rem;
+      padding: 1.6rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 24px rgba(48, 207, 207, 0.25);
+      transition: transform .2s, box-shadow .2s;
+      backdrop-filter: blur(6px);
+      color: #cbe7ff;
+    }
+
+    .problem-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(48, 207, 207, 0.4);
+    }
+
+    .problem-card-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #b3e0ff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      margin-bottom: .5rem;
+    }
+
+    .problem-card-meta {
+      font-size: .9rem;
+      color: #89b9f0;
+      margin-bottom: 1rem;
+    }
+
+    .difficulty-badge {
+      font-size: .8rem;
+      padding: .35em .65em;
+      border-radius: .8rem;
+    }
+
+    .badge-easy    { background-color: #4da6ff; color: #fff; }
+    .badge-medium  { background-color: #1a75ff; color: #fff; }
+    .badge-hard    { background-color: #004ecc; color: #fff; }
+
+    .btn-solve {
+        background: linear-gradient(135deg, #1a75ff, #30cfcf);
         border: none;
         color: #fff;
-        font-size: .9rem;
-        font-weight: 500;
-        padding: .35em .75em;
-        border-radius: .5rem;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.4);
-        transition: background .2s, transform .2s;
-      }
-      a.btn-solve:hover {
-        background: #4da6ff;
-        transform: translateY(-2px);
-      }
-      
-      a:focus, a:active,
-      button:focus, button:active {
-        outline: none !important;
-        box-shadow: none !important;
-      }
-      
-      a:focus-visible, button:focus-visible {
-        outline: 2px solid #4da6ff;
-        outline-offset: 2px;
-      }
-      
-      /* Fix for invisible help text on password forms and form hints/errors */
-      .helptext,
-      .errorlist,
-      .errorlist li,
-      .form-text,
-      .text-muted {
-        color: #aad4ff !important; /* light bluish text */
-        font-size: 0.9rem;
-      }
-      
-      /* Inputs and selects styling */
-      input, select, textarea {
-        background-color: #14203C !important;
-        border: 1px solid #1a75ff !important;
-        color: #cbe7ff !important;
-        border-radius: 0.5rem !important;
-      }
-      
-      input:focus, select:focus, textarea:focus {
-        border-color: #4da6ff !important;
-        box-shadow: 0 0 8px #4da6ff88 !important;
-      }
-      
-      label {
-        color: #b3e0ff !important;
-      }
-      
-      /* Editor container and code editor */
-      .editor-container {
-        display: flex;
-        flex-direction: column; /* or row if you want side-by-side layout */
-        gap: 1.5rem;
-        margin-top: 2.5rem;
-      }
-      .code-editor {
-        width: 100% !important;
-        min-width: 100% !important; /* force it to stretch */
-        max-width: 100%;
-      }
-      
-      /* Auth card styling (used on login/register pages) */
-      .auth-card {
-        background: linear-gradient(135deg, rgba(14, 36, 71, 0.95), rgba(9, 26, 55, 0.95));
-        border: 1px solid rgba(77, 166, 255, 0.2);
-        border-radius: 1rem;
-        box-shadow: 0 8px 24px rgba(0, 96, 192, 0.15);
-        color: #cbe7ff;
-        padding: 2rem;
-        width: 100%;
-        max-width: 420px;
-        backdrop-filter: blur(6px);
-        margin: auto;
-      }
-      
-      .auth-heading {
-        font-weight: 700;
-        font-size: 1.5rem;
-        text-align: center;
-        background: linear-gradient(45deg, #4da6ff, #cbe7ff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 1.5rem;
-      }
-      
-      .auth-card .btn {
-        background: #1a75ff;
-        color: #fff;
+        font-size: 1rem;
         font-weight: 600;
-        transition: background 0.2s ease;
-        border-radius: 0.5rem;
-      }
-      .auth-card .btn:hover {
-        background: #4da6ff;
-      }
-      
-      .auth-card .form-label {
-        color: #b3e0ff;
-        font-weight: 500;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.6rem;
+        box-shadow: 0 4px 12px rgba(48, 207, 207, 0.4);
+        transition: all 0.25s ease-in-out;
+        letter-spacing: 0.5px;
       }
       
-      .auth-card .helptext,
-      .auth-card .text-muted,
-      .auth-card .errorlist li {
-        color: #aad4ff !important;
-        font-size: 0.9rem;
+      .btn-solve:hover {
+        background: linear-gradient(135deg, #30cfcf, #4da6ff);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 18px rgba(48, 207, 207, 0.6);
       }
       
-      .auth-card input,
-      .auth-card select,
-      .auth-card textarea {
-        background-color: #14203C !important;
-        border: 1px solid #1a75ff !important;
-        color: #cbe7ff !important;
-        border-radius: 0.5rem !important;
-      }
-      
-      .auth-card input:focus,
-      .auth-card select:focus,
-      .auth-card textarea:focus {
-        border-color: #4da6ff !important;
-        box-shadow: 0 0 8px #4da6ff88 !important;
-      }
-      
+
+    a:focus, a:active,
+    button:focus, button:active {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid #4da6ff;
+      outline-offset: 2px;
+    }
+
+    .helptext,
+    .errorlist,
+    .errorlist li,
+    .form-text,
+    .text-muted {
+      color: #aad4ff !important;
+      font-size: 0.9rem;
+    }
+
+    input, select, textarea {
+      background-color: #14203C !important;
+      border: 1px solid #1a75ff !important;
+      color: #cbe7ff !important;
+      border-radius: 0.5rem !important;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #4da6ff !important;
+      box-shadow: 0 0 8px #4da6ff88 !important;
+    }
+
+    label {
+      color: #b3e0ff !important;
+    }
+
+    .editor-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    /* 🔷 Updated code editor */
+    .code-editor {
+      background: linear-gradient(135deg, #0a1f44, #30cfcf22);
+      border: 1px solid #30cfcf55;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      color: #cbe7ff;
+      box-shadow: 0 8px 24px rgba(48, 207, 207, 0.2);
+      backdrop-filter: blur(6px);
+      width: 100% !important;
+      min-width: 100% !important;
+      max-width: 100%;
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Auth card */
+    .auth-card {
+      background: linear-gradient(135deg, #0a1f44, #30cfcf22);
+      border: 1px solid #30cfcf55;
+      border-radius: 1rem;
+      box-shadow: 0 8px 24px rgba(48, 207, 207, 0.25);
+      color: #cbe7ff;
+      padding: 2rem;
+      width: 100%;
+      max-width: 420px;
+      backdrop-filter: blur(8px);
+      margin: auto;
+    }
+
+    .auth-heading {
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-align: center;
+      background: linear-gradient(45deg, #4da6ff, #cbe7ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-card .btn {
+      background: #1a75ff;
+      color: #fff;
+      font-weight: 600;
+      transition: background 0.2s ease;
+      border-radius: 0.5rem;
+    }
+
+    .auth-card .btn:hover {
+      background: #4da6ff;
+    }
+
+    .auth-card .form-label {
+      color: #b3e0ff;
+      font-weight: 500;
+    }
+
+    .auth-card .helptext,
+    .auth-card .text-muted,
+    .auth-card .errorlist li {
+      color: #aad4ff !important;
+      font-size: 0.9rem;
+    }
+
+    .auth-card input,
+    .auth-card select,
+    .auth-card textarea {
+      background-color: #14203C !important;
+      border: 1px solid #1a75ff !important;
+      color: #cbe7ff !important;
+      border-radius: 0.5rem !important;
+    }
+
+    .auth-card input:focus,
+    .auth-card select:focus,
+    .auth-card textarea:focus {
+      border-color: #4da6ff !important;
+      box-shadow: 0 0 8px #4da6ff88 !important;
+    }
+
   </style>
 </head>
 <body class="container py-4">
