@@ -136,3 +136,8 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
+LOGIN_REDIRECT_URL = '/problems/'
+LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = '/login/'
+
+

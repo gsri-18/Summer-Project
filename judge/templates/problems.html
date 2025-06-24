@@ -1,7 +1,20 @@
 <!DOCTYPE html>
 <html>
-<head><title>Problems</title></head>
+<head>
+  <title>Problems</title>
+</head>
 <body>
+
+  <!-- 🔹 Navbar -->
+  <div style="margin-bottom: 20px;">
+    {% if user.is_authenticated %}
+      <p>Hello, {{ user.full_name|default:user.username }}! | <a href="{% url 'logout' %}">Logout</a></p>
+    {% else %}
+      <a href="{% url 'login' %}">Login</a> | <a href="{% url 'register' %}">Register</a>
+    {% endif %}
+  </div>
+
+  <!-- 🔸 Problem List -->
   <h1>All Problems</h1>
   <ul>
     {% for p in problems %}
@@ -10,5 +23,6 @@
       </li>
     {% endfor %}
   </ul>
+
 </body>
 </html>
