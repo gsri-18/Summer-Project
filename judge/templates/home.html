@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Welcome to CodeVerse{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+  <h1 class="auth-heading">👋 Welcome to CodeVerse</h1>
+  <p class="lead">Start solving problems and testing your skills!</p>
+  <a href="{% url 'problem_list' %}" class="btn btn-primary mt-3">🚀 Go to Problems</a>
+</div>
+{% endblock %}

@@ -31,7 +31,7 @@ It includes sandboxed execution, custom problems, admin control, and an intuitiv
 | `main`                       | Core backend + frontend structure — fully working problem submission and admin panel                                 |
 | `monaco-integration-started` | Adds Monaco Editor (VS Code–like editor) for rich coding experience — auto-indent, IntelliSense (WIP), syntax colors |
 
-🔄 **You are currently on: `monaco-integration-started`**  
+🔄 **You are currently on: `main`**  
 💡 Use `git checkout monaco-integration-started` to explore the editor enhancements.
 
 ---

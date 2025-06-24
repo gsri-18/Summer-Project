@@ -56,4 +56,4 @@ def register_view(request):
 
 
 def home_view(request):
-    return HttpResponse("<h1>Welcome to CodeVerse!</h1><p><a href='/register/'>Register</a> | <a href='/admin/'>Admin</a> | <a href='/problems/'>Problems</a></p>")
+    return render(request, 'home.html')
