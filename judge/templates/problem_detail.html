@@ -39,7 +39,11 @@
 
       <div class="mb-3">
         <label for="code" class="form-label">Code:</label>
-        <textarea name="code" id="code" class="code-editor" rows="12" placeholder="Write your awesome code here…" required>{{ code|default:"" }}</textarea>
+        <!-- 🔸 Monaco Editor container -->
+        <div id="editor" style="height: 400px; width: 100%; border: 1px solid #1a75ff; border-radius: 0.5rem;"></div>
+
+        <!-- 🔸 Hidden input to hold submitted code -->
+        <textarea name="code" id="hidden-code" style="display:none;">{{ code|default:"" }}</textarea>
       </div>
 
       <button type="submit" class="btn-solve">Submit Code</button>
