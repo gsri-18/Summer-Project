@@ -2,59 +2,177 @@
 {% block title %}{{ problem.name }} – CodeVerse{% endblock %}
 
 {% block content %}
-<div class="mt-5">  {# Push content down from navbar #}
+<style>
+  .split-container {
+    display: flex;
+    height: calc(100vh - 100px);
+    overflow: hidden;
+  }
 
-  <!-- 🔹 Problem Description Card -->
-  <div class="problem-card mb-4">
-    <div class="problem-card-title">🧠 {{ problem.name }}</div>
-    <div class="problem-card-meta mb-2">
-      Code: <code class="problem-code">{{ problem.code }}</code> |
-      Difficulty:
-      <span class="badge 
-        {% if problem.difficulty == 'E' %}badge-easy
-        {% elif problem.difficulty == 'M' %}badge-medium
-        {% else %}badge-hard
-        {% endif %}">
-        {{ problem.get_difficulty_display }}
-      </span>
+  .left-pane {
+    width: 40%;
+    min-width: 300px;
+    max-width: 70%;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .right-pane {
+    flex-grow: 1;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .resizer {
+    width: 5px;
+    cursor: ew-resize;
+    background-color: #ccc;
+    transition: background-color 0.2s;
+  }
+
+  .resizer:hover {
+    background-color: #888;
+  }
+
+  #editor {
+    height: 300px;
+    border: 1px solid #007bff;
+    border-radius: 0.5rem;
+  }
+</style>
+
+<div class="split-container">
+  <!-- 🔹 Problem Description -->
+  <div class="left-pane">
+    <div class="problem-card">
+      <div class="problem-card-title">🧠 {{ problem.name }}</div>
+      <div class="problem-card-meta mb-2">
+        Code: <code class="problem-code">{{ problem.code }}</code> |
+        Difficulty:
+        <span class="badge 
+          {% if problem.difficulty == 'E' %}badge-easy
+          {% elif problem.difficulty == 'M' %}badge-medium
+          {% else %}badge-hard
+          {% endif %}">
+          {{ problem.get_difficulty_display }}
+        </span>
+      </div>
+      <h5 class="mb-2">📝 Problem Statement</h5>
+      <p style="white-space: pre-wrap;">{{ problem.statement }}</p>
     </div>
-
-    <h5 class="mb-2">📝 Problem Statement</h5>
-    <p style="white-space: pre-wrap;">{{ problem.statement }}</p>
   </div>
 
-  <!-- 🔸 Code Submission Card -->
-  <div class="problem-card">
-    <div class="problem-card-title">🚀 Submit Your Code</div>
-    <form id="submission-form" method="post">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label for="language" class="form-label">Language:</label>
-        <select name="language" id="language" class="form-select w-auto d-inline-block ms-2" required>
-          <option value="java">Java</option>
-          <option value="python">Python</option>
-          <option value="cpp">C++</option>
-          <option value="c">C</option>
-        </select>
-      </div>
+  <!-- 🔁 Drag Handle -->
+  <div class="resizer" id="resizer"></div>
 
-      <div class="mb-3">
-        <label for="code" class="form-label">Code:</label>
-        <!-- 🔸 Monaco Editor container -->
-        <div id="editor" style="height: 400px; width: 100%; border: 1px solid #1a75ff; border-radius: 0.5rem;"></div>
+  <!-- 🔸 Code Workspace -->
+  <div class="right-pane">
+    <div class="problem-card">
+      <div class="problem-card-title">🚀 Code Workspace</div>
+      <form id="submission-form" method="post">
+        {% csrf_token %}
 
-        <!-- 🔸 Hidden input to hold submitted code -->
-        <textarea name="code" id="hidden-code" style="display:none;">{{ code|default:"" }}</textarea>
-      </div>
+        <div class="mb-2">
+          <label for="language">Language:</label>
+          <select name="language" id="language" class="form-select w-auto d-inline-block ms-2" required>
+            <option value="java">Java</option>
+            <option value="python">Python</option>
+            <option value="cpp">C++</option>
+            <option value="c">C</option>
+          </select>
+        </div>
 
-      <button type="submit" class="btn-solve">Submit Code</button>
-    </form>
+        <div class="mb-3">
+          <label for="code">Your Code:</label>
+          <div id="editor"></div>
+          <textarea name="code" id="hidden-code" style="display: none;"></textarea>
+        </div>
 
-    {% if verdict %}
-      <div class="mt-3">
-        <strong>🧾 Verdict:</strong> {{ verdict }}
-      </div>
-    {% endif %}
+        <div class="mb-2">
+          <label for="custom-input">📥 Custom Input:</label>
+          <textarea id="custom-input" class="form-control" rows="3" placeholder="Enter custom input..."></textarea>
+        </div>
+
+        <div class="mb-2">
+          <label for="custom-output">📤 Output:</label>
+          <textarea id="custom-output" class="form-control" rows="4" readonly></textarea>
+        </div>
+
+        <div class="d-flex gap-3">
+          <button type="button" class="btn btn-outline-primary" id="run-button">▶️ Run Code</button>
+          <button type="submit" class="btn btn-success">✅ Submit Code</button>
+        </div>
+      </form>
+
+      {% if verdict %}
+        <div class="mt-3 alert alert-info">
+          <strong>🧾 Verdict:</strong> {{ verdict }}
+        </div>
+      {% endif %}
+    </div>
   </div>
 </div>
+
+<script>
+  // 💡 Make the vertical divider draggable
+  const resizer = document.getElementById('resizer');
+  const leftPane = resizer.previousElementSibling;
+  const rightPane = resizer.nextElementSibling;
+
+  let isResizing = false;
+
+  resizer.addEventListener('mousedown', function (e) {
+    isResizing = true;
+    document.body.style.cursor = 'ew-resize';
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    if (!isResizing) return;
+
+    const containerOffsetLeft = leftPane.parentNode.offsetLeft;
+    const newLeftWidth = e.clientX - containerOffsetLeft;
+
+    if (newLeftWidth < 250 || newLeftWidth > window.innerWidth * 0.7) return;
+
+    leftPane.style.width = `${newLeftWidth}px`;
+  });
+
+  document.addEventListener('mouseup', function () {
+    isResizing = false;
+    document.body.style.cursor = 'default';
+  });
+</script>
+
+<script>
+  document.getElementById('run-button').addEventListener('click', function() {
+      const code = editor.getValue();  // assuming Monaco
+      const language = document.getElementById('language').value;
+      const customInput = document.getElementById('custom-input').value;
+  
+      const formData = new FormData();
+      formData.append('code', code);
+      formData.append('language', language);
+      formData.append('custom_input', customInput);
+  
+      fetch('/run-code/', {
+          method: 'POST',
+          headers: {
+              'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+          const output = data.output || data.details || data.error;
+          document.getElementById('custom-output').value = output;
+      })
+      .catch(err => {
+          document.getElementById('custom-output').value = '⚠️ Error occurred: ' + err;
+      });
+  });
+  </script>
+  
+
+
+
 {% endblock %}

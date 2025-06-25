@@ -246,5 +246,128 @@ def submission_detail(request, id):
         'submission': submission,
     })
 
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+@csrf_exempt
+@login_required
+def run_code_view(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST allowed'}, status=405)
+
+    code = request.POST.get('code', '')
+    language = request.POST.get('language', '').lower()
+    custom_input = request.POST.get('custom_input', '')
+
+    uid = str(uuid.uuid4())[:8]
+    base_path = os.path.join(settings.BASE_DIR, 'submission_files')
+
+    ext_map = {
+        'python': '.py',
+        'c': '.c',
+        'cpp': '.cpp',
+        'java': '.java',
+    }
+
+    if language not in ext_map:
+        return JsonResponse({'error': 'Unsupported language'}, status=400)
+
+    filename = 'Main.java' if language == 'java' else f"code_{uid}{ext_map[language]}"
+    code_path = os.path.join(base_path, filename)
+    input_path = os.path.join(base_path, f"input_{uid}.txt")
+    output_path = os.path.join(base_path, f"output_{uid}.txt")
+
+    with open(code_path, 'w') as f:
+        f.write(code)
+
+    with open(input_path, 'w') as f:
+        f.write(custom_input)
+
+    try:
+        # Compile
+        if language in ['c', 'cpp']:
+            exe_path = os.path.join(base_path, f'a_{uid}.out')
+            compile_cmd = ['gcc', code_path, '-o', exe_path] if language == 'c' else ['g++', code_path, '-o', exe_path]
+            compile_result = subprocess.run(compile_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            if compile_result.returncode != 0:
+                return JsonResponse({'error': 'Compilation Error', 'details': compile_result.stderr.decode()})
+
+        elif language == 'java':
+            compile_cmd = ['javac', '-d', base_path, code_path]
+            compile_result = subprocess.run(compile_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            if compile_result.returncode != 0:
+                return JsonResponse({'error': 'Compilation Error', 'details': compile_result.stderr.decode()})
+
+        elif language == 'python':
+            try:
+                compile(code, filename, 'exec')  # Syntax check
+            except SyntaxError as e:
+                return JsonResponse({'error': 'Compilation Error', 'details': str(e)})
+
+        # Run
+        with open(input_path, 'r') as infile, open(output_path, 'w') as outfile:
+            if language == 'python':
+                run_cmd = ['python3', code_path]
+                run_dir = None
+            elif language in ['c', 'cpp']:
+                run_cmd = [exe_path]
+                run_dir = None
+            elif language == 'java':
+                run_cmd = ['java', '-Xmx128m', '-cp', base_path, 'Main']
+                run_dir = base_path
+
+            run_cmd_str = (
+                " ".join(run_cmd)
+                if language == 'java'
+                else f'ulimit -v 131072; {" ".join(run_cmd)}'
+            )
+
+            run_result = subprocess.run(
+                run_cmd_str,
+                stdin=infile,
+                stdout=outfile,
+                stderr=subprocess.PIPE,
+                timeout=1,
+                cwd=run_dir,
+                shell=True
+            )
+
+        # Read output
+        with open(output_path, 'r') as f:
+            output = f.read().strip()
+
+        return_code = run_result.returncode
+        stderr = run_result.stderr.decode().strip()
+
+        if return_code != 0:
+            return JsonResponse({'error': 'Runtime Error', 'details': stderr})
+
+        return JsonResponse({'output': output})
+
+    except subprocess.TimeoutExpired:
+        return JsonResponse({'error': 'Time Limit Exceeded'})
+    
+
+    finally:
+        #  Cleanup files
+        for path in [code_path, input_path, output_path]:
+            if os.path.exists(path):
+                os.remove(path)
+
+        # Remove compiled files
+        if language in ['c', 'cpp'] and 'exe_path' in locals() and os.path.exists(exe_path):
+            os.remove(exe_path)
+
+        if language == 'java':
+            class_file = os.path.join(base_path, 'Main.class')
+            if os.path.exists(class_file):
+                os.remove(class_file)
+
+
+
     
 
