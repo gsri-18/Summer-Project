@@ -23,15 +23,22 @@
     overflow-y: auto;
   }
 
+  /* 🔹 Sleek Blue Vertical Separator */
   .resizer {
-    width: 5px;
+    width: 6px;
     cursor: ew-resize;
-    background-color: #ccc;
-    transition: background-color 0.2s;
+    background-color: #1a2b4c;
+    background-image: radial-gradient(circle, #4da6ff 1.2px, transparent 1.2px);
+    background-size: 4px 8px;
+    background-repeat: repeat-y;
+    border-left: 1px solid #4da6ff33;
+    border-right: 1px solid #4da6ff33;
+    transition: background-color 0.2s, transform 0.2s ease;
   }
 
   .resizer:hover {
-    background-color: #888;
+    background-color: #263b6e;
+    transform: scaleX(1.05);
   }
 
   #editor {
@@ -39,7 +46,48 @@
     border: 1px solid #007bff;
     border-radius: 0.5rem;
   }
+
+  /* 🔸 Right Pane Scrollbar (Code Workspace) - consistent dark theme */
+  .right-pane::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .right-pane::-webkit-scrollbar-track {
+    background: #0e1a33;
+  }
+
+  .right-pane::-webkit-scrollbar-thumb {
+    background-color: #4da6ff;
+    border-radius: 4px;
+  }
+
+  .right-pane::-webkit-scrollbar-thumb:hover {
+    background-color: #80cfff;
+  }
+
+  /* Optional: Match left-pane too */
+  .left-pane::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .left-pane::-webkit-scrollbar-thumb {
+    background-color: #4da6ff;
+    border-radius: 4px;
+  }
+
+  #custom-input {
+    background-color: #ffffff; /* white background for clarity */
+    color: #000000; /* black text */
+  }
+  
+  #custom-input::placeholder {
+    color: #666666; /* darker grey placeholder for visibility */
+    opacity: 1; /* ensure placeholder is fully visible */
+  }
+  
+
 </style>
+
 
 <div class="split-container">
   <!-- 🔹 Problem Description -->
