@@ -1,90 +1,138 @@
-# 🚀 CodeVerse - Online Judge Platform
+
+# ⚡️ CodeVerse – Online Judge Platform
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue.svg)
 ![Django](https://img.shields.io/badge/Django-5.2-green.svg)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
-![Status](https://img.shields.io/badge/Status-In_Progress-yellow)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)
+![Status](https://img.shields.io/badge/Status-In_Progress-yellow.svg)
 
-**CodeVerse** is a real-time, secure **Online Judge** platform built with **Django + PostgreSQL + Docker** for evaluating Python, C, and C++ code.  
-It includes sandboxed execution, custom problems, admin control, and an intuitive frontend with AI debugging and tab monitoring planned.
-
----
-
-## 📌 Features Implemented So Far
-
-- ✅ User Registration, Login, Logout
-- ✅ PostgreSQL Integration
-- ✅ Custom User Model (Full Name support)
-- ✅ Problem Listing `/problems/`
-- ✅ Problem Detail View `/problems/<code>/`
-- ✅ Admin Panel for Problems + Submissions
-- ✅ Code Submission UI
-- ✅ Responsive Styling with Bootstrap
-- ✅ Superuser Login via `/admin`
+> **CodeVerse** is a secure, real-time Online Judge built using **Django**, **PostgreSQL**, and **Docker**.  
+> It supports code execution in **Python**, **C**, **C++**, and **Java** (via sandboxing), and features a sleek Monaco-powered code editor.
 
 ---
 
-## 🌿 Branches Overview
+## 🚀 Key Features
 
-| Branch                       | Description                                                                                                          |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `main`                       | Core backend + frontend structure — fully working problem submission and admin panel                                 |
-| `monaco-integration-started` | Adds Monaco Editor (VS Code–like editor) for rich coding experience — auto-indent, IntelliSense (WIP), syntax colors |
-
-🔄 **You are currently on: `main`**  
-💡 Use `git checkout monaco-integration-started` to explore the editor enhancements.
-
----
-
-## 🔜 Feature Roadmap (Phase-wise TODO)
-
-| Phase | Feature                                        | Status                                    |
-| ----- | ---------------------------------------------- | ----------------------------------------- |
-| ✅ 1   | PostgreSQL Setup                               | ✔️ Complete                                |
-| ✅ 2   | Custom User + Admin                            | ✔️ Complete                                |
-| ✅ 3   | Problem Pages                                  | ✔️ Complete                                |
-| 4️⃣     | Login / Logout                                 | 🚧 In Progress                             |
-| 5️⃣     | Code Submission + Verdicts (Docker Sandboxing) | 🔜                                         |
-| 6️⃣     | Leaderboard Page                               | 🔜                                         |
-| 7️⃣     | Tab Switch Detection (JS Visibility API)       | 🔜                                         |
-| 8️⃣     | AI Debug Assistant (OpenAI / Gemini API)       | 🔜                                         |
-| 9️⃣     | **Monaco Editor Integration**                  | ✅ Started in `monaco-integration-started` |
-| 🔟     | Final Hosting (AWS EC2)                        | 🔜                                         |
+- ✅ User Registration, Login, Logout (with custom user model)
+- ✅ PostgreSQL integration with Django ORM
+- ✅ Admin panel for managing problems, users, and submissions
+- ✅ Problem listing & detail views with code submission form
+- ✅ Verdict system (AC, WA, TLE, MLE, RTE, CE)
+- ✅ Monaco Editor-based IDE (via `monaco-integration-started` branch)
+- ✅ Resizable IDE layout and custom input/output support
+- ✅ Bootstrap-powered responsive frontend
 
 ---
 
-## 🛠️ Tech Stack
+## 🌱 Branches Overview
 
-| Layer          | Tech Used                                                                    |
-| -------------- | ---------------------------------------------------------------------------- |
-| Backend        | Django 5.2                                                                   |
-| Database       | PostgreSQL 16                                                                |
-| Auth           | Custom User Model                                                            |
-| Code Execution | Docker (Upcoming)                                                            |
-| Task Queue     | Celery + Redis (Planned)                                                     |
-| AI API         | OpenAI / Gemini (Planned)                                                    |
-| Hosting        | AWS EC2                                                                      |
-| Frontend       | Django Templates + Bootstrap                                                 |
-| Code Editor    | Basic Textarea (in `main`) / Monaco Editor (in `monaco-integration-started`) |
+| Branch                       | Purpose                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `main`                       | Core features – problems, submissions, verdict system, and basic code submission UI |
+| `monaco-integration-started` | Advanced editor with Monaco integration (syntax highlighting, IntelliSense – WIP)   |
+
+ℹ️ **Current Branch:** `main`  
+
 
 ---
 
-## 🧪 Local Development Setup
+## 🔭 Roadmap: Upcoming Milestones
+
+| Phase | Feature                                            | Status                                   |
+| ----- | -------------------------------------------------- | ---------------------------------------- |
+| ✅ 1   | PostgreSQL Setup                                   | ✔️ Complete                               |
+| ✅ 2   | Custom User Model + Admin Panel                    | ✔️ Complete                               |
+| ✅ 3   | Problem Pages + Basic Submission UI                | ✔️ Complete                               |
+| ✅ 4   | User Authentication                                | ✔️ Complete                               |
+| ✅ 5   | Verdict System (with Memory, Time, Runtime checks) | ✔️ Complete                               |
+| 🔜 6   | Leaderboard                                        | 🔄 In Progress                            |
+| 🔜 7   | Tab Switch Detection (JS Visibility API)           | 🔜 Planned                                |
+| 🔜 8   | AI Debug Assistant (OpenAI or Gemini API)          | 🔜 Planned                                |
+| ✅ 9   | Monaco Editor Integration                          | ✅ Started 
+| 🔜 10  | Production Deployment (Docker + AWS EC2)           | 🔜 Planned                                |
+
+---
+
+## 🧰 Tech Stack
+
+| Layer           | Tech Used                                                                 |
+| --------------- | ------------------------------------------------------------------------- |
+| Backend         | Django 5.2                                                                |
+| Database        | PostgreSQL 16                                                             |
+| Code Execution  | Verdict system (TLE, MLE, RTE, WA, CE, AC) via subprocess (Docker coming) |
+| Frontend        | Django Templates + Bootstrap 5                                            |
+| Editor          | Basic `<textarea>` (in `main`) / Monaco Editor (in feature branch)        |
+| Auth            | Custom Django User Model with full name                                   |
+| Async Execution | Celery + Redis (Planned)                                                  |
+| AI Integration  | OpenAI / Gemini API (Planned)                                             |
+| Deployment      | AWS EC2 (Planned)                                                         |
+
+---
+
+## 🛠️ Local Development Setup
 
 ```bash
-# Clone the repo
+# 1. Clone the repository
 git clone https://github.com/gsri-18/Summer-Project.git
 cd Summer-Project
 
-# Create virtual environment
+# 2. Set up virtual environment
 python3 -m venv codeverse-env
 source codeverse-env/bin/activate
 
-# Install dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# Apply DB Migrations
+# 4. Apply database migrations
 python manage.py migrate
 
-# Run the dev server
+# 5. Run development server
 python manage.py runserver
+```
+
+
+---
+
+## 📁 Project Directory Structure
+
+<details>
+<summary>Click to view the structure (13 directories)</summary>
+
+```bash
+.
+├── codeverse
+│   ├── asgi.py
+│   ├── __init__.py
+│   ├── __pycache__/
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── codeverse-env/
+│   ├── bin/
+│   ├── include/
+│   ├── lib/
+│   ├── lib64 -> lib
+│   └── pyvenv.cfg
+├── judge
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── __init__.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── __pycache__/
+│   ├── templates/
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── manage.py
+├── ojfinal_hld_Srivardhan_Ginjala.pdf
+├── README.md
+├── requirements.txt
+└── submission_files/
+```
+
+</details>
+
+---
+
