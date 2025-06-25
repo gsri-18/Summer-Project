@@ -8,7 +8,6 @@
     height: calc(100vh - 100px);
     overflow: hidden;
   }
-
   .left-pane {
     width: 40%;
     min-width: 300px;
@@ -16,214 +15,181 @@
     padding: 1rem;
     overflow-y: auto;
   }
-
   .right-pane {
     flex-grow: 1;
     padding: 1rem;
     overflow-y: auto;
   }
 
-  /* 🔹 Sleek Blue Vertical Separator */
+  /* 🔹 Sleek blue, dotted vertical splitter */
   .resizer {
-    width: 6px;
+    width: 4px;
     cursor: ew-resize;
     background-color: #1a2b4c;
-    background-image: radial-gradient(circle, #4da6ff 1.2px, transparent 1.2px);
-    background-size: 4px 8px;
+    background-image: radial-gradient(circle, #4da6ff 1px, transparent 1px);
+    background-size: 2px 6px;
     background-repeat: repeat-y;
-    border-left: 1px solid #4da6ff33;
-    border-right: 1px solid #4da6ff33;
-    transition: background-color 0.2s, transform 0.2s ease;
+    transition: background-color .2s, transform .2s;
   }
-
   .resizer:hover {
     background-color: #263b6e;
-    transform: scaleX(1.05);
+    transform: scaleX(1.1);
   }
 
   #editor {
     height: 300px;
     border: 1px solid #007bff;
-    border-radius: 0.5rem;
+    border-radius: .5rem;
   }
 
-  /* 🔸 Right Pane Scrollbar (Code Workspace) - consistent dark theme */
+  /* scrollbars */
+  .left-pane::-webkit-scrollbar,
   .right-pane::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
-
-  .right-pane::-webkit-scrollbar-track {
-    background: #0e1a33;
-  }
-
+  .left-pane::-webkit-scrollbar-thumb,
   .right-pane::-webkit-scrollbar-thumb {
     background-color: #4da6ff;
-    border-radius: 4px;
+    border-radius: 3px;
   }
 
-  .right-pane::-webkit-scrollbar-thumb:hover {
-    background-color: #80cfff;
-  }
-
-  /* Optional: Match left-pane too */
-  .left-pane::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .left-pane::-webkit-scrollbar-thumb {
-    background-color: #4da6ff;
-    border-radius: 4px;
-  }
-
+  /* custom-input styling */
   #custom-input {
-    background-color: #ffffff; /* white background for clarity */
-    color: #000000; /* black text */
+    background: #fff;
+    color: #000;
   }
-  
   #custom-input::placeholder {
-    color: #666666; /* darker grey placeholder for visibility */
-    opacity: 1; /* ensure placeholder is fully visible */
+    color: #666;
+    opacity: 1;
   }
-  
+  /* Monaco scrollbar styling */
+  .monaco-scrollable-element > .scrollbar > .slider {
+    background: #4da6ff !important;
+    border-radius: 3px !important;
+  }
+
+  /* Monaco draggers (sashes) - usually invisible unless in split editor mode */
+  .monaco-sash {
+    width: 3px !important;
+    height: 3px !important;
+    background: transparent !important;
+  }
+  .monaco-sash:hover {
+    background: #4da6ff !important;
+    opacity: 0.5 !important;
+  }
+
 
 </style>
 
-
 <div class="split-container">
-  <!-- 🔹 Problem Description -->
+  <!-- Problem description -->
   <div class="left-pane">
     <div class="problem-card">
       <div class="problem-card-title">🧠 {{ problem.name }}</div>
       <div class="problem-card-meta mb-2">
-        Code: <code class="problem-code">{{ problem.code }}</code> |
+        Code: <code>{{ problem.code }}</code> |
         Difficulty:
-        <span class="badge 
+        <span class="badge
           {% if problem.difficulty == 'E' %}badge-easy
           {% elif problem.difficulty == 'M' %}badge-medium
-          {% else %}badge-hard
-          {% endif %}">
+          {% else %}badge-hard{% endif %}">
           {{ problem.get_difficulty_display }}
         </span>
       </div>
-      <h5 class="mb-2">📝 Problem Statement</h5>
+      <h5>📝 Problem Statement</h5>
       <p style="white-space: pre-wrap;">{{ problem.statement }}</p>
     </div>
   </div>
 
-  <!-- 🔁 Drag Handle -->
+  <!-- the one, thin vertical splitter -->
   <div class="resizer" id="resizer"></div>
 
-  <!-- 🔸 Code Workspace -->
+  <!-- Code workspace -->
   <div class="right-pane">
     <div class="problem-card">
       <div class="problem-card-title">🚀 Code Workspace</div>
       <form id="submission-form" method="post">
         {% csrf_token %}
-
         <div class="mb-2">
-          <label for="language">Language:</label>
-          <select name="language" id="language" class="form-select w-auto d-inline-block ms-2" required>
+          <label>Language:</label>
+          <select name="language" id="language"
+                  class="form-select w-auto d-inline-block ms-2">
             <option value="java">Java</option>
             <option value="python">Python</option>
             <option value="cpp">C++</option>
             <option value="c">C</option>
           </select>
         </div>
-
         <div class="mb-3">
-          <label for="code">Your Code:</label>
+          <label>Your Code:</label>
           <div id="editor"></div>
-          <textarea name="code" id="hidden-code" style="display: none;"></textarea>
+          <textarea name="code" id="hidden-code" hidden></textarea>
         </div>
-
         <div class="mb-2">
-          <label for="custom-input">📥 Custom Input:</label>
-          <textarea id="custom-input" class="form-control" rows="3" placeholder="Enter custom input..."></textarea>
+          <label>📥 Custom Input:</label>
+          <textarea id="custom-input" class="form-control"
+                    rows="3" placeholder="Enter custom input…"></textarea>
         </div>
-
         <div class="mb-2">
-          <label for="custom-output">📤 Output:</label>
-          <textarea id="custom-output" class="form-control" rows="4" readonly></textarea>
+          <label>📤 Output:</label>
+          <textarea id="custom-output" class="form-control"
+                    rows="4" readonly></textarea>
         </div>
-
         <div class="d-flex gap-3">
-          <button type="button" class="btn btn-outline-primary" id="run-button">▶️ Run Code</button>
-          <button type="submit" class="btn btn-success">✅ Submit Code</button>
+          <button type="button" class="btn btn-outline-primary"
+                  id="run-button">▶️ Run Code</button>
+          <button type="submit" class="btn btn-success">✅ Submit</button>
         </div>
       </form>
-
       {% if verdict %}
-        <div class="mt-3 alert alert-info">
-          <strong>🧾 Verdict:</strong> {{ verdict }}
-        </div>
+      <div class="mt-3 alert alert-info">
+        <strong>🧾 Verdict:</strong> {{ verdict }}
+      </div>
       {% endif %}
     </div>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
 <script>
-  // 💡 Make the vertical divider draggable
-  const resizer = document.getElementById('resizer');
-  const leftPane = resizer.previousElementSibling;
-  const rightPane = resizer.nextElementSibling;
+  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' }});
+  require(['vs/editor/editor.main'], function() {
+    window.editor = monaco.editor.create(
+      document.getElementById('editor'),
+      {
+        value: '',
+        language: 'java',
+        theme: 'vs-dark',
+        automaticLayout: true,
+    
+        minimap: {
+          enabled: false
+        },
+    
+        scrollBeyondLastLine: false,
+        overviewRulerLanes: 0,
+        lineDecorationsWidth: 0,
+    
+        // Make scrollbars thin
+        scrollbar: {
+          verticalScrollbarSize: 4,
+          horizontalScrollbarSize: 4,
+          useShadows: false,
+        },
+    
+        // Prevent internal sashes showing up (if they are active)
+        renderLineHighlight: "none",
+        guides: {
+          indentation: false
+        }
+      }
+    );
+    
 
-  let isResizing = false;
-
-  resizer.addEventListener('mousedown', function (e) {
-    isResizing = true;
-    document.body.style.cursor = 'ew-resize';
-  });
-
-  document.addEventListener('mousemove', function (e) {
-    if (!isResizing) return;
-
-    const containerOffsetLeft = leftPane.parentNode.offsetLeft;
-    const newLeftWidth = e.clientX - containerOffsetLeft;
-
-    if (newLeftWidth < 250 || newLeftWidth > window.innerWidth * 0.7) return;
-
-    leftPane.style.width = `${newLeftWidth}px`;
-  });
-
-  document.addEventListener('mouseup', function () {
-    isResizing = false;
-    document.body.style.cursor = 'default';
-  });
-</script>
-
-<script>
-  document.getElementById('run-button').addEventListener('click', function() {
-      const code = editor.getValue();  // assuming Monaco
-      const language = document.getElementById('language').value;
-      const customInput = document.getElementById('custom-input').value;
-  
-      const formData = new FormData();
-      formData.append('code', code);
-      formData.append('language', language);
-      formData.append('custom_input', customInput);
-  
-      fetch('/run-code/', {
-          method: 'POST',
-          headers: {
-              'X-CSRFToken': '{{ csrf_token }}'
-          },
-          body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
-          const output = data.output || data.details || data.error;
-          document.getElementById('custom-output').value = output;
-      })
-      .catch(err => {
-          document.getElementById('custom-output').value = '⚠️ Error occurred: ' + err;
-      });
-  });
-  </script>
-  
-  <script>
-  // Boilerplate code snippets for each language
-  const boilerplateCode = {
-    java: `import java.util.Scanner;
+    // boilerplate snippets
+    const boilerplate = {
+      java: `import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -233,7 +199,7 @@ public class Main {
     }
 }
 `,
-    python: `# Read input from stdin
+      python: `# Read input from stdin
 def main():
     # Your code here
     pass
@@ -241,47 +207,68 @@ def main():
 if __name__ == "__main__":
     main()
 `,
-    cpp: `#include <iostream>
+      cpp: `#include <iostream>
 using namespace std;
 
-int main() {
+int main(){
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     // Your code here
     return 0;
 }
 `,
-    c: `#include <stdio.h>
+      c: `#include <stdio.h>
 
-int main() {
+int main(){
     // Your code here
     return 0;
 }
 `
-  };
+    };
 
-  const languageSelect = document.getElementById('language');
-
-  // Wait until Monaco editor is ready
-  function setEditorContentForLang() {
-    if (window.editor && languageSelect) {
-      const lang = languageSelect.value;
-      const code = boilerplateCode[lang] || '';
-      editor.setValue(code);
+    const langSel = document.getElementById('language');
+    function loadTemplate() {
+      editor.setValue(boilerplate[langSel.value] || '');
     }
-  }
+    langSel.addEventListener('change', loadTemplate);
+    loadTemplate();
 
-  // Initial load - insert boilerplate based on selected language
-  window.addEventListener('DOMContentLoaded', () => {
-    setEditorContentForLang();
+    document.getElementById('submission-form')
+      .addEventListener('submit', ()=>{
+        document.getElementById('hidden-code').value = editor.getValue();
+      });
+
+    document.getElementById('run-button')
+      .addEventListener('click', ()=>{
+        const data = new FormData();
+        data.append('code', editor.getValue());
+        data.append('language', langSel.value);
+        data.append('custom_input', document.getElementById('custom-input').value);
+        fetch('/run-code/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken':'{{ csrf_token }}' },
+          body: data
+        })
+        .then(res=>res.json())
+        .then(json=> {
+          document.getElementById('custom-output').value =
+            json.output || json.details || json.error || '';
+        });
+      });
   });
 
-  // On language change, update boilerplate snippet
-  languageSelect.addEventListener('change', () => {
-    setEditorContentForLang();
-  });
+  // ——— vertical splitter logic ———
+  const rz = document.getElementById('resizer'),
+        lp = rz.previousElementSibling;
+  let dragging = false;
+  rz.onmousedown = ()=>{ dragging=true; document.body.style.cursor='ew-resize'; };
+  document.onmousemove = e=>{
+    if (!dragging) return;
+    let newW = e.clientX - lp.parentNode.offsetLeft;
+    if (newW > 250 && newW < window.innerWidth*0.7) {
+      lp.style.width = newW + 'px';
+    }
+  };
+  document.onmouseup = ()=>{ dragging=false; document.body.style.cursor=''; };
 </script>
-
-
-
 {% endblock %}
