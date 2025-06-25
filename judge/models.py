@@ -28,7 +28,7 @@ class Problem(models.Model):
 class TestCase(models.Model):
     input = models.TextField()
     output = models.TextField()
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='testcases')
 
     def __str__(self):
         return f"TestCase for {self.problem.name} - Input: {self.input[:30]}..."

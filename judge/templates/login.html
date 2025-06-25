@@ -7,6 +7,12 @@
 <div class="d-flex justify-content-center align-items-center" style="min-height: 85vh;">
   <div class="auth-card">
     <h2 class="auth-heading">🚀 Login to CodeVerse</h2>
+
+    {% if form.errors %}
+      <div class="alert alert-danger">
+        Invalid username or password. Please try again.
+      </div>
+    {% endif %}
     
     <form method="POST" novalidate>
       {% csrf_token %}

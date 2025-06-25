@@ -217,7 +217,10 @@
     <div>
       {% if user.is_authenticated %}
         <span class="me-2">👋 Hello, {{ user.full_name|default:user.username }}!</span>
-        <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger">Logout</a>
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+        </form>        
       {% else %}
         <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary me-2">Login</a>
         <a href="{% url 'register' %}" class="btn btn-sm btn-outline-success">Register</a>
@@ -228,36 +231,35 @@
   {% block content %}{% endblock %}
 
   <!-- Monaco Editor loader -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
-    <script>
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' }});
-    require(['vs/editor/editor.main'], function () {
-        window.editor = monaco.editor.create(document.getElementById('editor'), {
-        value: document.getElementById('hidden-code').value,
-        language: 'cpp',        // default language
-        theme: 'vs-dark',       // dark theme
-        automaticLayout: true,  // auto-resize
-        minimap: { enabled: false },
-        fontSize: 14
-        });
+
+<!-- Load Monaco's AMD loader -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+
+<!-- Monaco Editor binding -->
+<script>
+  require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' } });
+
+  require(['vs/editor/editor.main'], function () {
+    window.editor = monaco.editor.create(document.getElementById('editor'), {
+      value: document.getElementById('hidden-code').value,
+      language: document.getElementById('language').value || 'cpp',
+      theme: 'vs-dark',
+      automaticLayout: true,
+      minimap: { enabled: false },
+      fontSize: 14
     });
-    </script>
 
-    <script>
-        // Wait until the DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', function () {
-          const form = document.querySelector('form');
-          const hiddenInput = document.getElementById('hidden-code');
-      
-          if (form && window.editor) {
-            form.addEventListener('submit', function () {
-              // Put Monaco code inside the hidden textarea
-              hiddenInput.value = window.editor.getValue();
-            });
-          }
-        });
-      </script>      
+    const form = document.getElementById('submission-form');
+    const hiddenInput = document.getElementById('hidden-code');
 
+    form.addEventListener('submit', function () {
+      hiddenInput.value = window.editor.getValue();
+      console.log("✅ Hidden code updated:", hiddenInput.value);
+    });
+  });
+</script>
+
+  
 
 </body>
 </html>

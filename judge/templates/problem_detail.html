@@ -26,14 +26,15 @@
   <!-- 🔸 Code Submission Card -->
   <div class="problem-card">
     <div class="problem-card-title">🚀 Submit Your Code</div>
-    <form method="post">
+    <form id="submission-form" method="post">
       {% csrf_token %}
       <div class="mb-3">
         <label for="language" class="form-label">Language:</label>
         <select name="language" id="language" class="form-select w-auto d-inline-block ms-2" required>
+          <option value="java">Java</option>
           <option value="python">Python</option>
           <option value="cpp">C++</option>
-          <option value="C">C</option>
+          <option value="c">C</option>
         </select>
       </div>
 
