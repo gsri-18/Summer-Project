@@ -220,6 +220,67 @@
   });
   </script>
   
+  <script>
+  // Boilerplate code snippets for each language
+  const boilerplateCode = {
+    java: `import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        // Your code here
+        sc.close();
+    }
+}
+`,
+    python: `# Read input from stdin
+def main():
+    # Your code here
+    pass
+
+if __name__ == "__main__":
+    main()
+`,
+    cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    // Your code here
+    return 0;
+}
+`,
+    c: `#include <stdio.h>
+
+int main() {
+    // Your code here
+    return 0;
+}
+`
+  };
+
+  const languageSelect = document.getElementById('language');
+
+  // Wait until Monaco editor is ready
+  function setEditorContentForLang() {
+    if (window.editor && languageSelect) {
+      const lang = languageSelect.value;
+      const code = boilerplateCode[lang] || '';
+      editor.setValue(code);
+    }
+  }
+
+  // Initial load - insert boilerplate based on selected language
+  window.addEventListener('DOMContentLoaded', () => {
+    setEditorContentForLang();
+  });
+
+  // On language change, update boilerplate snippet
+  languageSelect.addEventListener('change', () => {
+    setEditorContentForLang();
+  });
+</script>
 
 
 
