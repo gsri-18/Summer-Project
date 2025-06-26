@@ -1,6 +1,10 @@
 
 ---
 
+<p align="center">
+  <img src="static/images/codeverse-logo.png" alt="CodeVerse Logo" width="200"/>
+</p>
+
 # ⚡️ CodeVerse – Online Judge Platform
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue.svg)
@@ -8,21 +12,26 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)
 ![Status](https://img.shields.io/badge/Status-In_Progress-yellow.svg)
 
-> **CodeVerse** is a secure, real-time Online Judge built using **Django**, **PostgreSQL**, and **Docker**.
-> It supports code execution in **Python**, **C**, **C++**, and **Java** (via sandboxing), and features a sleek Monaco-powered code editor.
+> **CodeVerse** is a secure, real-time Online Judge built using **Django**, **PostgreSQL**, and **Docker**.  
+> It supports code execution in **Python**, **C**, **C++**, and **Java**, and features a sleek Monaco-powered code editor.
 
 ---
 
 ## 🚀 Key Features
 
-* ✅ User Registration, Login, Logout (with custom user model)
+* ✅ Custom User Model (Full Name, Timestamps)
 * ✅ PostgreSQL integration with Django ORM
-* ✅ Admin panel for managing problems, users, and submissions
-* ✅ Problem listing & detail views with code submission form
-* ✅ Verdict system (AC, WA, TLE, MLE, RTE, CE)
-* ✅ Monaco Editor-based IDE (via `monaco-integration-started` branch)
-* ✅ Resizable IDE layout and custom input/output support
-* ✅ Bootstrap-powered responsive frontend
+* ✅ Admin panel for managing Users, Problems, Submissions
+* ✅ Problem listing and detail views
+* ✅ Code submission and live verdict display
+* ✅ Verdict System with: `AC`, `WA`, `TLE`, `MLE`, `RTE`, `CE`
+* ✅ Memory limit and timeout enforcement (128MB, timeouts)
+* ✅ Monaco Editor integration (branch: `monaco-integration-started`)
+* ✅ Secure folder execution (`runs/`, `submissions/`)
+* ✅ Toggleable file cleanup (`DELETE_SUBMISSION_FILES_AFTER_EVALUATION`, etc.)
+* ✅ Admin panel to **promote/demote users**
+* ✅ Add new problems via `/add-problem/` route
+* ✅ Galaxy-themed UI, verdict boxes, and responsive layout
 
 ---
 
@@ -82,7 +91,7 @@ CodeVerse supports code execution in multiple languages. The following **system 
 | Java       | `javac`, `java` | [Adoptium JDK](https://adoptium.net) or [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) |
 | PostgreSQL | `psql`          | [Download](https://www.postgresql.org/download/) and install                                              |
 
-> ✅ You can verify installation using: `gcc --version`, `g++ --version`, `javac -version`, `psql --version`, `python3 --version`
+> ✅ You can verify installation using: `gcc --version`, `g++ --version`, `javac -version`, `psql --version`, `python3 --version`  
 > ⚠️ These tools are **not included** in the virtual environment (`venv`). They must be installed **system-wide**.
 
 ---
@@ -110,7 +119,7 @@ python manage.py migrate
 
 # 5. Run development server
 python manage.py runserver
-```
+````
 
 ### 🪟 Windows (Command Prompt)
 
@@ -149,36 +158,23 @@ python manage.py runserver
 
 ```bash
 .
-├── codeverse
-│   ├── asgi.py
-│   ├── __init__.py
-│   ├── __pycache__/
+├── codeverse/
 │   ├── settings.py
 │   ├── urls.py
-│   └── wsgi.py
-├── codeverse-env/
-│   ├── bin/
-│   ├── include/
-│   ├── lib/
-│   ├── lib64 -> lib
-│   └── pyvenv.cfg
-├── judge
-│   ├── admin.py
-│   ├── apps.py
-│   ├── forms.py
-│   ├── __init__.py
-│   ├── migrations/
+│   └── ...
+├── judge/
 │   ├── models.py
-│   ├── __pycache__/
+│   ├── views.py
 │   ├── templates/
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-├── manage.py
-├── ojfinal_hld_Srivardhan_Ginjala.pdf
-├── README.md
+│   └── ...
+├── static/
+│   └── images/
+│       └── codeverse-logo.png
+├── submissions/
+├── runs/
 ├── requirements.txt
-└── submission_files/
+├── README.md
+└── manage.py
 ```
 
 </details>
