@@ -79,7 +79,6 @@
     opacity: 0.5 !important;
   }
 
-
 </style>
 
 <div class="split-container">
@@ -142,13 +141,10 @@
           <button type="submit" class="btn btn-success">✅ Submit</button>
         </div>
       </form>
-      {% if verdict %}
-      <div class="mt-3 alert alert-info">
-        <strong>🧾 Verdict:</strong> {{ verdict }}
-      </div>
-      {% endif %}
     </div>
   </div>
+
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
@@ -195,6 +191,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         // Your code here
+
+
         sc.close();
     }
 }
@@ -202,25 +200,33 @@ public class Main {
       python: `# Read input from stdin
 def main():
     # Your code here
+    
+
     pass
 
 if __name__ == "__main__":
     main()
 `,
-      cpp: `#include <iostream>
+      cpp: `#include <bits/stdc++.h>
 using namespace std;
 
-int main(){
+int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     // Your code here
+
+
+
+
     return 0;
 }
 `,
       c: `#include <stdio.h>
 
-int main(){
+int main() {
     // Your code here
+
+
     return 0;
 }
 `
