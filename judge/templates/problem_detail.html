@@ -89,10 +89,11 @@
       <div class="problem-card-meta mb-2">
         Code: <code>{{ problem.code }}</code> |
         Difficulty:
-        <span class="badge
-          {% if problem.difficulty == 'E' %}badge-easy
-          {% elif problem.difficulty == 'M' %}badge-medium
-          {% else %}badge-hard{% endif %}">
+          <span class="badge
+          {% if problem.difficulty == 'E' %}bg-success text-light
+          {% elif problem.difficulty == 'M' %}bg-warning text-dark
+          {% elif problem.difficulty == 'H' %}bg-danger text-light
+          {% else %}bg-secondary text-light{% endif %}">
           {{ problem.get_difficulty_display }}
         </span>
       </div>
