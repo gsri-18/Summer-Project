@@ -301,22 +301,35 @@ def update_problem_view(request, code):
 
     if request.method == "POST":
         form = ProblemForm(request.POST, instance=problem)
-        formset = TestCaseFormSet(request.POST, queryset=TestCase.objects.filter(problem=problem))
+        formset = TestCaseFormSet(request.POST, queryset=TestCase.objects.filter(problem=problem), prefix='testcases')
+
 
         if form.is_valid() and formset.is_valid():
             form.save()
-            formset.save()
+
+            # Associate all test cases with this problem
+            test_cases = formset.save(commit=False)
+            for tc in test_cases:
+                tc.problem = problem
+                tc.save()
+
+            # Handle deletions (important!)
+            for obj in formset.deleted_objects:
+                obj.delete()
+
             messages.success(request, "Problem updated successfully.")
             return redirect('manage_problems')
+
     else:
         form = ProblemForm(instance=problem)
-        formset = TestCaseFormSet(queryset=TestCase.objects.filter(problem=problem))
+        formset = TestCaseFormSet(queryset=TestCase.objects.filter(problem=problem), prefix='testcases')
 
     return render(request, 'update_problem.html', {
         'form': form,
         'formset': formset,
         'problem': problem
     })
+
 
 
 from django.contrib.admin.views.decorators import staff_member_required

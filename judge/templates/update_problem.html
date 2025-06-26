@@ -34,6 +34,7 @@
 
   <form method="post" novalidate>
     {% csrf_token %}
+
     {{ formset.management_form }}
 
     <!-- Problem fields -->
@@ -72,26 +73,26 @@
     <div id="test-cases-container">
       {% for tc_form in formset.forms %}
         <div class="row test-case-row mb-3">
-            {% for hidden in tc_form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
-        
-            <div class="col-md-6">
-                <label class="form-label">Input:</label>
-                {{ tc_form.input|add_class:"form-control form-control-sm" }}
-            </div>
-        
-            <div class="col-md-6">
-                <label class="form-label">Expected Output:</label>
-                {{ tc_form.output|add_class:"form-control form-control-sm" }}
-            </div>
-        
-            <div class="d-flex align-items-start justify-content-end mt-4">
+          {% for hidden in tc_form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+
+          <div class="col-md-6">
+            <label class="form-label">Input:</label>
+            {{ tc_form.input|add_class:"form-control form-control-sm" }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Expected Output:</label>
+            {{ tc_form.output|add_class:"form-control form-control-sm" }}
+          </div>
+
+          <div class="d-flex align-items-start justify-content-end mt-4">
             {% if tc_form.instance.pk %}
-                {{ tc_form.DELETE }}
-                <button type="button" class="btn btn-outline-danger btn-sm remove-test-case">🗑️ Delete</button>
+              {{ tc_form.DELETE }}
+              <button type="button" class="btn btn-outline-danger btn-sm remove-test-case">🗑️ Delete</button>
             {% endif %}
-            </div>
+          </div>
         </div>
       {% endfor %}
     </div>
@@ -103,62 +104,85 @@
   </form>
 </div>
 
-<!-- JavaScript -->
+<!-- ✅ JavaScript -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const container = document.getElementById("test-cases-container");
-      const addBtn = document.getElementById("add-test-case");
-      const totalForms = document.getElementById("id_testcases-TOTAL_FORMS");
-    
-      // Add new test case functionality
-      addBtn.addEventListener("click", function () {
-        const formCount = parseInt(totalForms.value);
-        const firstForm = container.querySelector(".test-case-row");
-    
-        if (!firstForm) return;
-    
-        const newForm = firstForm.cloneNode(true);
-    
-        // Update names and IDs for the new form fields
-        newForm.querySelectorAll("textarea").forEach((textarea) => {
-          const oldName = textarea.getAttribute("name");
-          const newName = oldName.replace(/-\d+-/, `-${formCount}-`);
-          textarea.name = newName;
-          textarea.id = `id_${newName}`;
-          textarea.value = ""; // Clear the value for the new form
-        });
-    
-        newForm.querySelectorAll("input[type=checkbox]").forEach((checkbox) => {
-          const oldName = checkbox.getAttribute("name");
-          if (oldName) {
-            const newName = oldName.replace(/-\d+-/, `-${formCount}-`);
-            checkbox.name = newName;
-            checkbox.id = `id_${newName}`;
-          }
-          checkbox.checked = false; // Reset checkbox state
-        });
-    
-        // Remove hidden DELETE input if not needed
-        const deleteInput = newForm.querySelector("input[type=checkbox][name$='-DELETE']");
-        if (deleteInput) deleteInput.remove();
-    
-        totalForms.value = formCount + 1; // Increment the total forms count
-        container.appendChild(newForm); // Append the new form to the container
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("🟢 DOM fully loaded. JS is running.");
+
+    const container = document.getElementById("test-cases-container");
+    const addBtn = document.getElementById("add-test-case");
+    const totalForms = document.getElementById("id_testcases-TOTAL_FORMS");
+
+    if (!container) {
+      console.error("❌ test-cases-container not found.");
+      return;
+    }
+
+    if (!addBtn) {
+      console.error("❌ Add Test Case button not found.");
+      return;
+    }
+
+    if (!totalForms) {
+      console.error("❌ TOTAL_FORMS input not found.");
+      return;
+    }
+
+    addBtn.addEventListener("click", function () {
+      console.log("🆕 Add Test Case button clicked.");
+
+      const formCount = parseInt(totalForms.value);
+      const firstForm = container.querySelector(".test-case-row");
+
+      if (!firstForm) {
+        console.error("❌ No test-case-row found to clone.");
+        return;
+      }
+
+      const newForm = firstForm.cloneNode(true);
+
+      // Update field names/IDs
+      newForm.querySelectorAll("textarea").forEach((textarea) => {
+        const oldName = textarea.getAttribute("name");
+        const newName = oldName.replace(/-\d+-/, `-${formCount}-`);
+        textarea.name = newName;
+        textarea.id = `id_${newName}`;
+        textarea.value = "";
       });
-    
-      // Remove test case functionality
-      document.addEventListener("click", function (e) {
-        if (e.target.classList.contains("remove-test-case")) {
-          const row = e.target.closest(".test-case-row");
-          const deleteCheckbox = row.querySelector("input[type='checkbox'][name$='-DELETE']");
-          if (deleteCheckbox) {
-            deleteCheckbox.checked = true; // Mark for deletion
-            row.style.display = "none"; // Hide the row
-          } else {
-            row.remove(); // Remove the row entirely
-          }
-        }
+
+      newForm.querySelectorAll("input[type=checkbox]").forEach((checkbox) => {
+        const oldName = checkbox.getAttribute("name");
+        const newName = oldName.replace(/-\d+-/, `-${formCount}-`);
+        checkbox.name = newName;
+        checkbox.id = `id_${newName}`;
+        checkbox.checked = false;
       });
+
+      // Remove the DELETE checkbox if present
+      const deleteInput = newForm.querySelector("input[type=checkbox][name$='-DELETE']");
+      if (deleteInput) deleteInput.remove();
+
+      totalForms.value = formCount + 1;
+      container.appendChild(newForm);
+
+      console.log(`✅ New test case form added. Total: ${totalForms.value}`);
     });
-    </script>
+
+    // Remove test case
+    document.addEventListener("click", function (e) {
+      if (e.target.classList.contains("remove-test-case")) {
+        const row = e.target.closest(".test-case-row");
+        const deleteCheckbox = row.querySelector("input[type='checkbox'][name$='-DELETE']");
+        if (deleteCheckbox) {
+          deleteCheckbox.checked = true;
+          row.style.display = "none";
+          console.log("🗑️ Marked test case for deletion.");
+        } else {
+          row.remove();
+          console.log("🗑️ Removed unsaved test case row.");
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}
