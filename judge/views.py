@@ -64,11 +64,14 @@ def problem_detail(request, code):
         print("🔍 Code content:\n", submitted_code)
 
         verdict = 'Accepted'
+        output_paths = []
 
         for tc in testcases:
 
             # Generate unique output file path for each test case
             output_path = os.path.join(base_path, f"output_{uid}_{tc.id}.txt")
+
+            output_paths.append(output_path)
 
 
             # Save test input
@@ -198,6 +201,21 @@ def problem_detail(request, code):
             language=language,
             verdict=verdict,
         )
+
+        # Clean up only if enabled
+        if getattr(settings, 'DELETE_SUBMISSION_FILES_AFTER_EVALUATION', True):
+            for path in [code_path, input_path] + output_paths:
+                if os.path.exists(path):
+                    os.remove(path)
+
+            if language in ['c', 'cpp'] and 'exe_path' in locals() and os.path.exists(exe_path):
+                os.remove(exe_path)
+
+            if language == 'java':
+                class_file = os.path.join(base_path, 'Main.class')
+                if os.path.exists(class_file):
+                    os.remove(class_file)
+
 
         return redirect('submission_detail', id=submission.id)
 

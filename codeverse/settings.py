@@ -140,4 +140,6 @@ LOGIN_REDIRECT_URL = '/problems/'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
 
+# settings.py
+DELETE_SUBMISSION_FILES_AFTER_EVALUATION = True  # default: delete after submission
 
