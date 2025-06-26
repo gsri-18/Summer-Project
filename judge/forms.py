@@ -4,9 +4,20 @@ from .models import User, Problem, TestCase
 
 
 class RegisterForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=True, label="First Name")
+    last_name = forms.CharField(max_length=30, required=True, label="Last Name")
+
     class Meta:
-        model  = User 
-        fields = ['username', 'email', 'password1', 'password2']
+        model = User
+        fields = [
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'password1',
+            'password2'
+        ]
+
 
 
 class ProblemForm(forms.ModelForm):
