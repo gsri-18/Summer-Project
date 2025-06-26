@@ -1,4 +1,6 @@
 
+---
+
 # ⚡️ CodeVerse – Online Judge Platform
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue.svg)
@@ -6,21 +8,21 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)
 ![Status](https://img.shields.io/badge/Status-In_Progress-yellow.svg)
 
-> **CodeVerse** is a secure, real-time Online Judge built using **Django**, **PostgreSQL**, and **Docker**.  
+> **CodeVerse** is a secure, real-time Online Judge built using **Django**, **PostgreSQL**, and **Docker**.
 > It supports code execution in **Python**, **C**, **C++**, and **Java** (via sandboxing), and features a sleek Monaco-powered code editor.
 
 ---
 
 ## 🚀 Key Features
 
-- ✅ User Registration, Login, Logout (with custom user model)
-- ✅ PostgreSQL integration with Django ORM
-- ✅ Admin panel for managing problems, users, and submissions
-- ✅ Problem listing & detail views with code submission form
-- ✅ Verdict system (AC, WA, TLE, MLE, RTE, CE)
-- ✅ Monaco Editor-based IDE (via `monaco-integration-started` branch)
-- ✅ Resizable IDE layout and custom input/output support
-- ✅ Bootstrap-powered responsive frontend
+* ✅ User Registration, Login, Logout (with custom user model)
+* ✅ PostgreSQL integration with Django ORM
+* ✅ Admin panel for managing problems, users, and submissions
+* ✅ Problem listing & detail views with code submission form
+* ✅ Verdict system (AC, WA, TLE, MLE, RTE, CE)
+* ✅ Monaco Editor-based IDE (via `monaco-integration-started` branch)
+* ✅ Resizable IDE layout and custom input/output support
+* ✅ Bootstrap-powered responsive frontend
 
 ---
 
@@ -31,25 +33,24 @@
 | `main`                       | Core features – problems, submissions, verdict system, and basic code submission UI |
 | `monaco-integration-started` | Advanced editor with Monaco integration (syntax highlighting, IntelliSense – WIP)   |
 
-ℹ️ **Current Branch:** `main`  
-
+ℹ️ **Current Branch:** `main`
 
 ---
 
 ## 🔭 Roadmap: Upcoming Milestones
 
-| Phase | Feature                                            | Status                                   |
-| ----- | -------------------------------------------------- | ---------------------------------------- |
-| ✅ 1   | PostgreSQL Setup                                   | ✔️ Complete                               |
-| ✅ 2   | Custom User Model + Admin Panel                    | ✔️ Complete                               |
-| ✅ 3   | Problem Pages + Basic Submission UI                | ✔️ Complete                               |
-| ✅ 4   | User Authentication                                | ✔️ Complete                               |
-| ✅ 5   | Verdict System (with Memory, Time, Runtime checks) | ✔️ Complete                               |
-| 🔜 6   | Leaderboard                                        | 🔄 In Progress                            |
-| 🔜 7   | Tab Switch Detection (JS Visibility API)           | 🔜 Planned                                |
-| 🔜 8   | AI Debug Assistant (OpenAI or Gemini API)          | 🔜 Planned                                |
-| ✅ 9   | Monaco Editor Integration                          | ✅ Started 
-| 🔜 10  | Production Deployment (Docker + AWS EC2)           | 🔜 Planned                                |
+| Phase | Feature                                            | Status        |
+| ----- | -------------------------------------------------- | ------------- |
+| ✅ 1   | PostgreSQL Setup                                   | ✔️ Complete    |
+| ✅ 2   | Custom User Model + Admin Panel                    | ✔️ Complete    |
+| ✅ 3   | Problem Pages + Basic Submission UI                | ✔️ Complete    |
+| ✅ 4   | User Authentication                                | ✔️ Complete    |
+| ✅ 5   | Verdict System (with Memory, Time, Runtime checks) | ✔️ Complete    |
+| 🔜 6   | Leaderboard                                        | 🔄 In Progress |
+| 🔜 7   | Tab Switch Detection (JS Visibility API)           | 🔜 Planned     |
+| 🔜 8   | AI Debug Assistant (OpenAI or Gemini API)          | 🔜 Planned     |
+| ✅ 9   | Monaco Editor Integration                          | ✅ Started     |
+| 🔜 10  | Production Deployment (Docker + AWS EC2)           | 🔜 Planned     |
 
 ---
 
@@ -69,7 +70,28 @@
 
 ---
 
+## ⚙️ System Requirements (Must Be Installed Manually)
+
+CodeVerse supports code execution in multiple languages. The following **system tools must be installed and available in your PATH**:
+
+| Language   | Required Tools  | How to Install                                                                                            |
+| ---------- | --------------- | --------------------------------------------------------------------------------------------------------- |
+| Python     | `python3`       | [Download](https://www.python.org/downloads/) and install                                                 |
+| C          | `gcc`           | ✅ Linux/macOS: pre-installed<br>🪟 Windows: Install [MinGW](https://www.mingw-w64.org/) and add to PATH    |
+| C++        | `g++`           | ✅ Same as above                                                                                           |
+| Java       | `javac`, `java` | [Adoptium JDK](https://adoptium.net) or [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) |
+| PostgreSQL | `psql`          | [Download](https://www.postgresql.org/download/) and install                                              |
+
+> ✅ You can verify installation using: `gcc --version`, `g++ --version`, `javac -version`, `psql --version`, `python3 --version`
+> ⚠️ These tools are **not included** in the virtual environment (`venv`). They must be installed **system-wide**.
+
+---
+
 ## 🛠️ Local Development Setup
+
+> 💡 **Note for Windows users:** If you're using PowerShell or CMD, you'll need to activate the virtual environment differently. See below.
+
+### 🐧 Linux / macOS
 
 ```bash
 # 1. Clone the repository
@@ -90,6 +112,33 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+### 🪟 Windows (Command Prompt)
+
+```cmd
+git clone https://github.com/gsri-18/Summer-Project.git
+cd Summer-Project
+
+python -m venv codeverse-env
+codeverse-env\Scripts\activate
+
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+
+### 🪟 Windows (PowerShell)
+
+```powershell
+git clone https://github.com/gsri-18/Summer-Project.git
+cd Summer-Project
+
+python -m venv codeverse-env
+.\codeverse-env\Scripts\Activate.ps1
+
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
 
 ---
 
@@ -135,4 +184,3 @@ python manage.py runserver
 </details>
 
 ---
-
