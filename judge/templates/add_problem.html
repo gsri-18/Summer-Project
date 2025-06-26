@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">🧠 Add New Problem</h2>
+    <a href="{% url 'problem_list' %}" class="btn btn-secondary">← Back to Problems</a>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="name" class="form-label">Name:</label>
+        <input type="text" class="form-control" name="name" required placeholder="e.g. Sum of Two Numbers">
+      </div>
+      <div class="col-md-6">
+        <label for="code" class="form-label">Code:</label>
+        <input type="text" class="form-control" name="code" required placeholder="e.g. SUM2">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="difficulty" class="form-label">Difficulty:</label>
+        <select class="form-select" name="difficulty" required>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="time_limit" class="form-label">Time Limit (sec):</label>
+        <input type="number" step="0.1" class="form-control" name="time_limit" required placeholder="e.g. 1.0 (in seconds)">
+      </div>
+      <div class="col-md-3">
+        <label for="memory_limit" class="form-label">Memory Limit (MB):</label>
+        <input type="number" class="form-control" name="memory_limit" required placeholder="e.g. 128 (in MB)">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description:</label>
+      <textarea class="form-control" name="description" rows="4" required placeholder="Describe the problem in detail here..."></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Input Format:</label>
+      <textarea class="form-control" name="input_format" rows="2" required placeholder="Explain the input format..."></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Output Format:</label>
+      <textarea class="form-control" name="output_format" rows="2" required placeholder="Explain the output format..."></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Constraints:</label>
+      <textarea class="form-control" name="constraints" rows="2" required placeholder="Mention constraints like 1 ≤ N ≤ 10^5"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Sample Input:</label>
+      <textarea class="form-control" name="sample_input" rows="2" required placeholder="e.g. 2 3"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Sample Output:</label>
+      <textarea class="form-control" name="sample_output" rows="2" required placeholder="e.g. 5"></textarea>
+    </div>
+
+    <hr class="my-4">
+
+    <h4 class="mb-3">🧪 Test Cases</h4>
+
+    <div id="test-cases-container">
+      <div class="row mb-2 test-case-row">
+        <div class="col-md-5">
+          <textarea class="form-control" name="test_input" rows="2" placeholder="Input..."></textarea>
+        </div>
+        <div class="col-md-5">
+          <textarea class="form-control" name="test_output" rows="2" placeholder="Expected Output..."></textarea>
+        </div>
+        <div class="col-md-2 d-flex align-items-start">
+          <button type="button" class="btn btn-danger btn-sm remove-test-case ms-2">🗑️ Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-outline-primary btn-sm mb-4" id="add-test-case">➕ Add Test Case</button>
+
+    <br>
+    <button type="submit" class="btn btn-success">✅ Save Problem</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("add-test-case").addEventListener("click", function () {
+    const container = document.getElementById("test-cases-container");
+    const newTestCase = document.createElement("div");
+    newTestCase.classList.add("row", "mb-2", "test-case-row");
+    newTestCase.innerHTML = `
+      <div class="col-md-5">
+        <textarea class="form-control" name="test_input" rows="2" placeholder="Input..."></textarea>
+      </div>
+      <div class="col-md-5">
+        <textarea class="form-control" name="test_output" rows="2" placeholder="Expected Output..."></textarea>
+      </div>
+      <div class="col-md-2 d-flex align-items-start">
+        <button type="button" class="btn btn-danger btn-sm remove-test-case ms-2">🗑️ Delete</button>
+      </div>
+    `;
+    container.appendChild(newTestCase);
+  });
+
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.classList.contains("remove-test-case")) {
+      e.target.closest(".test-case-row").remove();
+    }
+  });
+</script>
+{% endblock %}

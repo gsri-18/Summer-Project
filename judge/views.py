@@ -17,7 +17,8 @@ from django.conf import settings
 ext_map = {'python': '.py', 'c': '.c', 'cpp': '.cpp', 'java': '.java'}
 
 # --- Utility Function ---
-def run_code_util(code, language, input_data, base_path):
+def run_code_util(code, language, input_data, base_path,
+                  time_limit=1, memory_limit=128):
     uid = str(uuid.uuid4())
     base_path = Path(base_path)
     code_dir = base_path / 'code'
@@ -68,16 +69,16 @@ def run_code_util(code, language, input_data, base_path):
                 run_cmd = [str(exe_path)]
                 run_dir = None
             elif language == 'java':
-                run_cmd = ['java', '-Xmx128m', '-cp', str(code_dir), 'Main']
+                run_cmd = ['java', f'-Xmx{memory_limit}m', '-cp', str(code_dir), 'Main']
                 run_dir = str(code_dir)
 
             run_cmd_str = (
                 " ".join(run_cmd) if language == 'java'
-                else f'ulimit -v 131072; {" ".join(run_cmd)}'
+                else f'ulimit -v {memory_limit * 1024}; timeout {time_limit} {" ".join(run_cmd)}'
             )
 
             result = subprocess.run(run_cmd_str, stdin=infile, stdout=outfile,
-                                    stderr=subprocess.PIPE, timeout=1, cwd=run_dir, shell=True)
+                                    stderr=subprocess.PIPE, timeout=time_limit + 1, cwd=run_dir, shell=True)
 
         stderr = result.stderr.decode().strip().lower()
         if result.returncode == 137 or 'outofmemoryerror' in stderr or 'killed' in stderr:
@@ -126,7 +127,11 @@ def problem_detail(request, code):
 
         verdict = 'Accepted'
         for tc in testcases:
-            result = run_code_util(submitted_code, language, tc.input, base_path)
+            result = run_code_util(
+                submitted_code, language, tc.input, base_path,
+                time_limit=problem.time_limit,
+                memory_limit=problem.memory_limit
+            )
 
             if 'error' in result:
                 verdict = result['error']
@@ -196,3 +201,60 @@ def login_view(request):
 def submission_detail(request, id):
     submission = get_object_or_404(Submission, id=id)
     return render(request, 'submission_detail.html', {'submission': submission})
+
+
+# --- Admin: Add Problem ---
+from django.contrib.admin.views.decorators import staff_member_required
+from .forms import ProblemForm, TestCaseFormSet
+
+@staff_member_required
+def add_problem_view(request):
+    if request.method == 'POST':
+        form = ProblemForm(request.POST)
+        formset = TestCaseFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            problem = form.save()
+            testcases = formset.save(commit=False)
+            for tc in testcases:
+                tc.problem = problem
+                tc.save()
+            return redirect('problem_detail', code=problem.code)
+    else:
+        form = ProblemForm()
+        formset = TestCaseFormSet()
+
+    return render(request, 'add_problem.html', {
+        'form': form,
+        'formset': formset,
+    })
+
+
+# --- Admin: Promote Users ---
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib import messages
+
+User = get_user_model()
+
+@user_passes_test(lambda u: u.is_superuser)
+def promote_users_view(request):
+    users = User.objects.exclude(id=request.user.id)
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        action = request.POST.get("action")  # either promote or demote
+
+        try:
+            user = User.objects.get(id=user_id)
+            if action == "promote":
+                user.is_staff = True
+                messages.success(request, f"{user.username} promoted to admin.")
+            elif action == "demote":
+                user.is_staff = False
+                messages.success(request, f"{user.username} demoted to regular user.")
+            user.save()
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+        return redirect("promote-users")
+
+    return render(request, "promote_users.html", {"users": users})
+

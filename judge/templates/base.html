@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -237,7 +238,32 @@
       vertical-align: middle;
       filter: brightness(110%);
     }
-     
+
+    /* Make all placeholder texts brighter */
+    ::placeholder {
+      color: #cccccc !important; /* Light gray for visibility */
+      opacity: 1; /* Fully visible */
+    }
+    
+    /* For WebKit browsers (Chrome, Safari) */
+    ::-webkit-input-placeholder {
+      color: #cccccc !important;
+    }
+    
+    /* For Firefox */
+    ::-moz-placeholder {
+      color: #cccccc !important;
+    }
+    
+    /* For Internet Explorer 10-11 */
+    :-ms-input-placeholder {
+      color: #cccccc !important;
+    }
+    
+    /* For Edge */
+    ::-ms-input-placeholder {
+      color: #cccccc !important;
+    }
     
   </style>
 
@@ -245,21 +271,35 @@
 <body class="container py-4">
 
   <!-- 🔹 Navbar -->
-  <nav class="navbar-custom d-flex justify-content-between align-items-center">
-    <h3 class="mb-0 fw-bold">⚡ CodeVerse</h3>
-    <div>
-      {% if user.is_authenticated %}
-        <span class="me-2">👋 Hello, {{ user.full_name|default:user.username }}!</span>
-        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+  <!-- 🚀 Custom Cosmic Navbar -->
+  <nav class="navbar navbar-expand-lg px-4 py-3"
+  style="background: linear-gradient(to right, #162c5c, #204a87, #2a73b3); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);">
+ <a class="navbar-brand d-flex align-items-center fw-bold text-light" href="/">
+      <img src="{% static 'images/codeverse-logo.png' %}" alt="CodeVerse Logo" height="36" class="me-2" style="filter: drop-shadow(0 0 4px #30cfcf);">
+      CodeVerse
+    </a>
+
+    <div class="ms-auto d-flex align-items-center flex-wrap gap-2">
+      {% if request.user.is_authenticated %}
+        <span class="text-light me-2">👋 Hello, {{ request.user.full_name|default:request.user.username }}!</span>
+
+        <a class="btn btn-outline-info btn-sm" href="{% url 'add_problem' %}">Add Problem</a>
+        {% if request.user.is_superuser %}
+          <a class="btn btn-outline-warning btn-sm" href="{% url 'promote-users' %}">Promote Users</a>
+        {% endif %}
+
+        <form method="post" action="{% url 'logout' %}" class="d-inline">
           {% csrf_token %}
-          <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
-        </form>        
+          <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+        </form>
       {% else %}
-        <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary me-2">Login</a>
-        <a href="{% url 'register' %}" class="btn btn-sm btn-outline-success">Register</a>
+        <a class="btn btn-outline-primary btn-sm me-2" href="{% url 'login' %}">Login</a>
+        <a class="btn btn-outline-success btn-sm" href="{% url 'register' %}">Register</a>
       {% endif %}
     </div>
   </nav>
+
+  
 
   {% block content %}{% endblock %}
 

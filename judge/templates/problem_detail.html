@@ -97,8 +97,25 @@
           {{ problem.get_difficulty_display }}
         </span>
       </div>
-      <h5>📝 Problem Statement</h5>
-      <p style="white-space: pre-wrap;">{{ problem.statement }}</p>
+      
+      <h5>📝 Description</h5>
+      <p style="white-space: pre-wrap;">{{ problem.description }}</p>
+      
+      <h5>🔽 Input Format</h5>
+      <pre>{{ problem.input_format }}</pre>
+      
+      <h5>🔼 Output Format</h5>
+      <pre>{{ problem.output_format }}</pre>
+      
+      <h5>📌 Constraints</h5>
+      <pre>{{ problem.constraints }}</pre>
+      
+      <h5>🔂 Sample Input</h5>
+      <pre>{{ problem.sample_input }}</pre>
+      
+      <h5>🔁 Sample Output</h5>
+      <pre>{{ problem.sample_output }}</pre>
+      
     </div>
   </div>
 

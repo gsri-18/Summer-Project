@@ -13,16 +13,24 @@ class Problem(models.Model):
         ('M', 'Medium'),
         ('H', 'Hard'),
     ]
-    
-    name = models.CharField(max_length = 255)
-    statement = models.TextField()
-    code = models.CharField(max_length = 50, unique=True, default="TEMP")  # Unique identifier for the problem
+
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=50, unique=True, default="TEMP")  # Unique identifier like "SUM001"
     difficulty = models.CharField(max_length=1, choices=DIFFICULTY_CHOICES)
-    time_limit = models.IntegerField(default = 1) # In seconds
-    memory_limit = models.IntegerField(default = 128) # In MB
+    time_limit = models.IntegerField(default=1)  # seconds
+    memory_limit = models.IntegerField(default=128)  # MB
+
+    # NEW STRUCTURED FIELDS
+    description = models.TextField()
+    input_format = models.TextField(blank=True)
+    output_format = models.TextField(blank=True)
+    constraints = models.TextField(blank=True)
+    sample_input = models.TextField(blank=True)
+    sample_output = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
+
     
 
 class TestCase(models.Model):

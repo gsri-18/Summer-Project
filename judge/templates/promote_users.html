@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}Manage Admins – CodeVerse{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #0a192f !important;
+    color: #e2e8f0;
+  }
+
+  .admin-panel-card {
+    background-color: #132f4c;
+    color: #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .admin-table {
+    background-color: #1f3a5b; /* fixed - not white */
+    color: #e2e8f0;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .admin-table thead {
+    background-color: #274a6a;
+    color: #cbd5e1;
+  }
+
+  .admin-table tbody tr:hover {
+    background-color: #2e5a85;
+    transition: background-color 0.2s ease;
+  }
+
+  .admin-table th, .admin-table td {
+    padding: 12px;
+    vertical-align: middle;
+    border: none;
+  }
+
+  /* ✅ Updated: Alert box (notifications) - now blue-themed */
+  .alert {
+    background-color: #1c3b5a; /* softly blue, not black */
+    border-left: 5px solid #60a5fa; /* nice bluish line */
+    color: #e0f2fe;
+    font-weight: 500;
+  }
+
+  .alert-success {
+    background-color: #1f4e3d;
+    border-left-color: #34d399;
+    color: #d1fae5;
+  }
+
+  .alert-error, .alert-danger {
+    background-color: #4a1c1c;
+    border-left-color: #f87171;
+    color: #fee2e2;
+  }
+
+  .alert-info {
+    background-color: #1e3a5f;
+    border-left-color: #3b82f6;
+    color: #dbeafe;
+  }
+</style>
+
+
+<div class="py-5" style="min-height: 100vh;">
+  <div class="container">
+    <div class="card admin-panel-card p-4">
+      <h3 class="mb-3">🛡️ Manage Admin Privileges</h3>
+      <p class="text-muted">Promote or demote users to/from admin (staff) role.</p>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert rounded-3 mb-3 fade show" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+        <script>
+          setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(el => {
+              el.style.transition = 'opacity 0.5s ease-out';
+              el.style.opacity = '0';
+              setTimeout(() => el.remove(), 500);
+            });
+          }, 3000);
+        </script>
+      {% endif %}
+
+      <div class="table-responsive mt-4">
+        <table class="admin-table text-center align-middle">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>{{ user.username }}</td>
+              <td>{{ user.full_name }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                {% if user.is_staff %}
+                  <span class="text-success fw-bold">✅ Admin</span>
+                {% else %}
+                  <span class="text-danger fw-bold">❌ User</span>
+                {% endif %}
+              </td>
+              <td>
+                <form method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="user_id" value="{{ user.id }}">
+                  {% if not user.is_staff %}
+                    <input type="hidden" name="action" value="promote">
+                    <button class="btn btn-sm btn-outline-success rounded-pill px-3">
+                      🔼 Promote
+                    </button>
+                  {% else %}
+                    <input type="hidden" name="action" value="demote">
+                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                      🔽 Demote
+                    </button>
+                  {% endif %}
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
