@@ -15,3 +15,11 @@ codeverse-env/
 
 # Ignore environment and secret settings
 .env
+
+# Ignore all files inside these folders except .gitkeep
+submission_files/submissions/*
+!submission_files/submissions/.gitkeep
+
+submission_files/runs/*
+!submission_files/runs/.gitkeep
+
