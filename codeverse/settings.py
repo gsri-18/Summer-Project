@@ -69,6 +69,9 @@ TEMPLATES = [
     },
 ]
 
+# Optional but good to add:
+MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
+
 WSGI_APPLICATION = 'codeverse.wsgi.application'
 
 

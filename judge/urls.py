@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import home_view, run_code_view, add_problem_view, promote_users_view
+from .views import home_view, run_code_view, add_problem_view, promote_users_view, update_problem_view
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -17,4 +17,8 @@ urlpatterns = [
 
     path('promote-users/', promote_users_view, name='promote-users'),
     path('add-problem/', add_problem_view, name='add_problem'),
+    path('update-problem/<str:code>/', update_problem_view, name='update_problem'),
+    path('manage-problems/', views.manage_problems_view, name='manage_problems'),
+    path('delete-problem/<str:code>/', views.delete_problem_view, name='delete_problem'),
+
 ]

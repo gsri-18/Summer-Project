@@ -90,9 +90,9 @@
         Code: <code>{{ problem.code }}</code> |
         Difficulty:
           <span class="badge
-          {% if problem.difficulty == 'E' %}bg-success text-light
-          {% elif problem.difficulty == 'M' %}bg-warning text-dark
-          {% elif problem.difficulty == 'H' %}bg-danger text-light
+          {% if problem.difficulty == 'Easy' %}bg-success text-light
+          {% elif problem.difficulty == 'Medium' %}bg-warning text-dark
+          {% elif problem.difficulty == 'Hard' %}bg-danger text-light
           {% else %}bg-secondary text-light{% endif %}">
           {{ problem.get_difficulty_display }}
         </span>

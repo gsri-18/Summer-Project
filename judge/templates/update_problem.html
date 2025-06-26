@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load form_tags %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold">✏️ Update Problem – {{ problem.name }}</h4>
+    <a href="{% url 'manage_problems' %}" class="btn btn-outline-secondary btn-sm">← Back to Manage</a>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if form.errors or formset.non_form_errors or formset.errors %}
+    <div class="alert alert-danger">
+      <strong>There were errors in your submission. Please fix them.</strong>
+      <ul class="mb-0">
+        {{ form.non_field_errors }}
+        {{ formset.non_form_errors }}
+        {% for tc_form in formset.forms %}
+          {% for error in tc_form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    <!-- Problem fields -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label>Name:</label> {{ form.name }}
+      </div>
+      <div class="col-md-6">
+        <label>Code:</label> {{ form.code }}
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label>Difficulty:</label> {{ form.difficulty }}
+      </div>
+      <div class="col-md-3">
+        <label>Time Limit (sec):</label> {{ form.time_limit }}
+      </div>
+      <div class="col-md-3">
+        <label>Memory Limit (MB):</label> {{ form.memory_limit }}
+      </div>
+    </div>
+
+    <div class="mb-3"><label>Description:</label> {{ form.description }}</div>
+    <div class="mb-3"><label>Input Format:</label> {{ form.input_format }}</div>
+    <div class="mb-3"><label>Output Format:</label> {{ form.output_format }}</div>
+    <div class="mb-3"><label>Constraints:</label> {{ form.constraints }}</div>
+    <div class="mb-3"><label>Sample Input:</label> {{ form.sample_input }}</div>
+    <div class="mb-3"><label>Sample Output:</label> {{ form.sample_output }}</div>
+
+    <hr class="my-4" />
+
+    <!-- Test Cases -->
+    <h4 class="mb-3">🧪 Test Cases</h4>
+
+    <div id="test-cases-container">
+      {% for tc_form in formset.forms %}
+        <div class="row test-case-row mb-3">
+            {% for hidden in tc_form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+        
+            <div class="col-md-6">
+                <label class="form-label">Input:</label>
+                {{ tc_form.input|add_class:"form-control form-control-sm" }}
+            </div>
+        
+            <div class="col-md-6">
+                <label class="form-label">Expected Output:</label>
+                {{ tc_form.output|add_class:"form-control form-control-sm" }}
+            </div>
+        
+            <div class="d-flex align-items-start justify-content-end mt-4">
+            {% if tc_form.instance.pk %}
+                {{ tc_form.DELETE }}
+                <button type="button" class="btn btn-outline-danger btn-sm remove-test-case">🗑️ Delete</button>
+            {% endif %}
+            </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-between my-4">
+      <button type="submit" class="btn btn-success">✅ Save Changes</button>
+      <button type="button" class="btn btn-outline-primary btn-sm" id="add-test-case">➕ Add Test Case</button>
+    </div>
+  </form>
+</div>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const container = document.getElementById("test-cases-container");
+      const addBtn = document.getElementById("add-test-case");
+      const totalForms = document.getElementById("id_testcases-TOTAL_FORMS");
+    
+      // Add new test case functionality
+      addBtn.addEventListener("click", function () {
+        const formCount = parseInt(totalForms.value);
+        const firstForm = container.querySelector(".test-case-row");
+    
+        if (!firstForm) return;
+    
+        const newForm = firstForm.cloneNode(true);
+    
+        // Update names and IDs for the new form fields
+        newForm.querySelectorAll("textarea").forEach((textarea) => {
+          const oldName = textarea.getAttribute("name");
+          const newName = oldName.replace(/-\d+-/, `-${formCount}-`);
+          textarea.name = newName;
+          textarea.id = `id_${newName}`;
+          textarea.value = ""; // Clear the value for the new form
+        });
+    
+        newForm.querySelectorAll("input[type=checkbox]").forEach((checkbox) => {
+          const oldName = checkbox.getAttribute("name");
+          if (oldName) {
+            const newName = oldName.replace(/-\d+-/, `-${formCount}-`);
+            checkbox.name = newName;
+            checkbox.id = `id_${newName}`;
+          }
+          checkbox.checked = false; // Reset checkbox state
+        });
+    
+        // Remove hidden DELETE input if not needed
+        const deleteInput = newForm.querySelector("input[type=checkbox][name$='-DELETE']");
+        if (deleteInput) deleteInput.remove();
+    
+        totalForms.value = formCount + 1; // Increment the total forms count
+        container.appendChild(newForm); // Append the new form to the container
+      });
+    
+      // Remove test case functionality
+      document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("remove-test-case")) {
+          const row = e.target.closest(".test-case-row");
+          const deleteCheckbox = row.querySelector("input[type='checkbox'][name$='-DELETE']");
+          if (deleteCheckbox) {
+            deleteCheckbox.checked = true; // Mark for deletion
+            row.style.display = "none"; // Hide the row
+          } else {
+            row.remove(); // Remove the row entirely
+          }
+        }
+      });
+    });
+    </script>
+{% endblock %}

@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User, Problem, TestCase
 
-
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True, label="First Name")
     last_name = forms.CharField(max_length=30, required=True, label="Last Name")
@@ -10,14 +9,8 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = [
-            'username',
-            'email',
-            'first_name',
-            'last_name',
-            'password1',
-            'password2'
+            'username', 'email', 'first_name', 'last_name', 'password1', 'password2'
         ]
-
 
 
 class ProblemForm(forms.ModelForm):
@@ -29,24 +22,43 @@ class ProblemForm(forms.ModelForm):
             'sample_input', 'sample_output'
         ]
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
-            'input_format': forms.Textarea(attrs={'rows': 2}),
-            'output_format': forms.Textarea(attrs={'rows': 2}),
-            'constraints': forms.Textarea(attrs={'rows': 2}),
-            'sample_input': forms.Textarea(attrs={'rows': 2}),
-            'sample_output': forms.Textarea(attrs={'rows': 2}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'code': forms.TextInput(attrs={'class': 'form-control'}),
+            'difficulty': forms.Select(attrs={'class': 'form-select'}),
+            'time_limit': forms.NumberInput(attrs={'class': 'form-control'}),
+            'memory_limit': forms.NumberInput(attrs={'class': 'form-control'}),
+
+            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'input_format': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'output_format': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'constraints': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'sample_input': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'sample_output': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
         }
+
+
+# ✅ judge/forms.py
+
+from django import forms
+from django.forms import inlineformset_factory
+from .models import Problem, TestCase
 
 class TestCaseForm(forms.ModelForm):
     class Meta:
         model = TestCase
         fields = ['input', 'output']
         widgets = {
-            'input': forms.Textarea(attrs={'rows': 2}),
-            'output': forms.Textarea(attrs={'rows': 2}),
+            'input': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'output': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
         }
 
-TestCaseFormSet = forms.inlineformset_factory(
-    Problem, TestCase, form=TestCaseForm,
-    extra=2, can_delete=True
+# ✅ Define the inline formset here (DON'T pass prefix)
+TestCaseFormSet = inlineformset_factory(
+    Problem,
+    TestCase,
+    form=TestCaseForm,
+    extra=1,
+    can_delete=True
 )
+
+

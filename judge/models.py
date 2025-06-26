@@ -9,14 +9,14 @@ class User(AbstractUser):
 
 class Problem(models.Model):
     DIFFICULTY_CHOICES = [
-        ('E', 'Easy'),
-        ('M', 'Medium'),
-        ('H', 'Hard'),
+        ('Easy', 'Easy'),
+        ('Medium', 'Medium'),
+        ('Hard', 'Hard'),
     ]
 
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=50, unique=True, default="TEMP")  # Unique identifier like "SUM001"
-    difficulty = models.CharField(max_length=1, choices=DIFFICULTY_CHOICES)
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES)
     time_limit = models.IntegerField(default=1)  # seconds
     memory_limit = models.IntegerField(default=128)  # MB
 
