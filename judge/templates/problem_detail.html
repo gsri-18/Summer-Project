@@ -14,6 +14,10 @@
     max-width: 70%;
     padding: 1rem;
     overflow-y: auto;
+
+    /* 🔹 Add space between left pane and resizer */
+    margin-right: 8px;
+    box-sizing: border-box;
   }
   .right-pane {
     flex-grow: 1;
@@ -203,15 +207,12 @@
 
     // boilerplate snippets
     const boilerplate = {
-      java: `import java.util.Scanner;
+      java: `import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
         // Your code here
 
-
-        sc.close();
     }
 }
 `,
@@ -229,11 +230,11 @@ if __name__ == "__main__":
 using namespace std;
 
 int main() {
+
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     // Your code here
-
-
 
 
     return 0;
@@ -242,6 +243,7 @@ int main() {
       c: `#include <stdio.h>
 
 int main() {
+
     // Your code here
 
 
