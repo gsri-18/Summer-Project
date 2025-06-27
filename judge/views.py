@@ -321,57 +321,45 @@ def submission_detail(request, id):
     return render(request, 'submission_detail.html', {'submission': submission})
 
 
-# --- Admin: Add Problem ---
-from django.shortcuts import render, redirect
+# judge/views.py
+
+
+from .forms import ProblemForm, TestCaseFormSet  # make sure these are imported
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
-from .models import Problem, TestCase
 
 @login_required
 @staff_member_required
 def add_problem_view(request):
     if request.method == "POST":
-        name = request.POST.get("name")
-        code = request.POST.get("code")
-        difficulty = request.POST.get("difficulty")
-        time_limit = request.POST.get("time_limit")
-        memory_limit = request.POST.get("memory_limit")
-        description = request.POST.get("description")
-        input_format = request.POST.get("input_format")
-        output_format = request.POST.get("output_format")
-        constraints = request.POST.get("constraints")
-        sample_input = request.POST.get("sample_input")
-        sample_output = request.POST.get("sample_output")
+        problem_form = ProblemForm(request.POST)
+        formset = TestCaseFormSet(request.POST)
 
-        test_inputs = request.POST.getlist("test_input")
-        test_outputs = request.POST.getlist("test_output")
+        if problem_form.is_valid() and formset.is_valid():
+            problem = problem_form.save()
 
-        if name and code and difficulty and time_limit and memory_limit and description and input_format and output_format and constraints and sample_input and sample_output:
-            problem = Problem.objects.create(
-                name=name,
-                code=code,
-                difficulty=difficulty,
-                time_limit=time_limit,
-                memory_limit=memory_limit,
-                description=description,
-                input_format=input_format,
-                output_format=output_format,
-                constraints=constraints,
-                sample_input=sample_input,
-                sample_output=sample_output,
-            )
-
-            for inp, out in zip(test_inputs, test_outputs):
-                if inp.strip() and out.strip():
-                    TestCase.objects.create(problem=problem, input=inp, output=out)
+            for form in formset:
+                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                    test_case = form.save(commit=False)
+                    test_case.problem = problem
+                    test_case.save()
 
             messages.success(request, "✅ Problem added successfully!")
-            return redirect('add_problem')
+            return redirect("add_problem")
         else:
-            messages.error(request, "⚠️ Please fill in all required fields.")
+            messages.error(request, "⚠️ Please fix the errors below.")
+            print("Problem form errors:", problem_form.errors)
+            print("Testcase formset errors:", [f.errors for f in formset])
 
-    return render(request, "add_problem.html")
+    else:
+        problem_form = ProblemForm()
+        formset = TestCaseFormSet()
+
+    return render(request, "add_problem.html", {
+        "problem_form": problem_form,
+        "formset": formset,
+    })
 
 
 
@@ -404,50 +392,67 @@ def promote_users_view(request):
 
     return render(request, "promote_users.html", {"users": users})
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib import messages
-from .models import Problem, TestCase
-from .forms import ProblemForm, TestCaseFormSet, TestCaseForm
-from django.forms import modelformset_factory
 
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.forms import inlineformset_factory
+from .models import Problem, TestCase
+from .forms import ProblemForm, TestCaseForm
 
 @staff_member_required
 def update_problem_view(request, code):
     problem = get_object_or_404(Problem, code=code)
-    TestCaseFormSet = modelformset_factory(TestCase, form=TestCaseForm, extra=0)
+
+    TestCaseFormSet = inlineformset_factory(
+        Problem,
+        TestCase,
+        form=TestCaseForm,
+        extra=1,
+        can_delete=True
+    )
 
     if request.method == "POST":
         form = ProblemForm(request.POST, instance=problem)
-        formset = TestCaseFormSet(request.POST, queryset=TestCase.objects.filter(problem=problem), prefix='testcases')
+        formset = TestCaseFormSet(request.POST, instance=problem, prefix='testcases')
 
+        form_valid = form.is_valid()
+        formset_valid = formset.is_valid()
 
-        if form.is_valid() and formset.is_valid():
+        if form_valid and formset_valid:
             form.save()
 
-            # Associate all test cases with this problem
             test_cases = formset.save(commit=False)
             for tc in test_cases:
                 tc.problem = problem
                 tc.save()
 
-            # Handle deletions (important!)
             for obj in formset.deleted_objects:
                 obj.delete()
 
             messages.success(request, "Problem updated successfully.")
             return redirect('manage_problems')
 
+        else:
+            messages.error(request, "⚠️ Please fix the errors below.")
+            print("❌ Problem form errors:", form.errors)
+
+            for f in formset.forms:
+                # Avoid printing errors of deleted forms
+                if f.cleaned_data.get('DELETE', False):
+                    continue
+                if f.errors:
+                    print("❌ TestCase form errors:", f.errors)
+
     else:
         form = ProblemForm(instance=problem)
-        formset = TestCaseFormSet(queryset=TestCase.objects.filter(problem=problem), prefix='testcases')
+        formset = TestCaseFormSet(instance=problem, prefix='testcases')
 
     return render(request, 'update_problem.html', {
         'form': form,
         'formset': formset,
-        'problem': problem
+        'problem': problem,
     })
-
 
 
 from django.contrib.admin.views.decorators import staff_member_required

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load form_tags %}
 
 {% block content %}
 <div class="container mt-5">
@@ -84,6 +85,8 @@
 
     <h4 class="mb-3">🧪 Test Cases</h4>
     
+    {{ formset.management_form }}
+
     <div id="test-cases-container">
       {% for tc_form in formset.forms %}
         <div class="row mb-2 test-case-row">
@@ -91,20 +94,10 @@
             {{ hidden }}
           {% endfor %}
           <div class="col-md-5">
-            {# NO LABEL #}
-            {{ tc_form.input.as_widget(attrs={
-                'class': 'form-control',
-                'rows': '2',
-                'placeholder': 'Input...'
-              }) }}
+            {{ tc_form.input }}
           </div>
           <div class="col-md-5">
-            {# NO LABEL #}
-            {{ tc_form.output.as_widget(attrs={
-                'class': 'form-control',
-                'rows': '2',
-                'placeholder': 'Expected Output...'
-              }) }}
+            {{ tc_form.output }}
           </div>
           <div class="col-md-2 d-flex align-items-start">
             {% if tc_form.instance.pk %}
