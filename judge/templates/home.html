@@ -1,10 +1,122 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Welcome to CodeVerse{% endblock %}
 
 {% block content %}
-<div class="text-center mt-5">
-  <h1 class="auth-heading">👋 Welcome to CodeVerse</h1>
-  <p class="lead">Start solving problems and testing your skills!</p>
-  <a href="{% url 'problem_list' %}" class="btn btn-primary mt-3">🚀 Go to Problems</a>
+<style>
+  .home-hero {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+  }
+
+  .logo-banner {
+    max-width: 180px;
+    margin: 0 auto 1rem;
+  }
+
+  .feature-card {
+    background: linear-gradient(145deg, #173b6c, #0e2239);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    color: #e2e8f0;
+    text-decoration: none;
+    display: block;
+    height: 100%;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #4da6ff;
+  }
+
+  .coming-soon {
+    font-size: 0.75rem;
+    color: #ffc107;
+    opacity: 0.75;
+  }
+
+  .main-cta-buttons .btn {
+    margin: 0.25rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+</style>
+
+<div class="container text-center home-hero">
+  <!-- 🔹 Logo on top -->
+  <div class="logo-banner">
+    <img src="{% static 'images/codeverse-logo.png' %}" class="img-fluid" alt="CodeVerse Logo">
+  </div>
+
+  <h1 class="text-primary fw-bold">Welcome to CodeVerse</h1>
+  <p class="lead text-muted mb-4">
+    Your all-in-one platform to solve, compile, and dominate the coding universe.
+  </p>
+
+  <!-- 🔹 Multi-CTA Buttons -->
+  <div class="main-cta-buttons mb-5">
+    <a href="{% url 'problem_list' %}" class="btn btn-primary btn-lg">🧠 Solve Problems</a>
+    <a href="{% url 'online_compiler' %}" class="btn btn-outline-light btn-lg">💻 Try Online Compiler</a>
+    <a href="{% url 'ai_suggestions' %}" class="btn btn-outline-warning btn-lg">🧠 AI Assistant</a>
+  </div>
+
+  <!-- 🔹 Feature Grid -->
+  <div class="row g-4">
+    <div class="col-md-4">
+      <a href="{% url 'problem_list' %}" class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h5>Problem Solving</h5>
+        <p class="small">Practice coding with instant verdicts and custom test cases.</p>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'online_compiler' %}" class="feature-card">
+        <div class="feature-icon">💻</div>
+        <h5>Online Compiler</h5>
+        <p class="small">Run Python, C, C++, Java in-browser with custom limits and inputs.</p>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'ai_suggestions' %}" class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h5>AI Assistant <span class="coming-soon">(beta)</span></h5>
+        <p class="small">Get hints, debug help, and analysis powered by AI.</p>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="#" class="feature-card disabled">
+        <div class="feature-icon">📈</div>
+        <h5>Leaderboard <span class="coming-soon">(coming soon)</span></h5>
+        <p class="small">Climb the ranks, compete with others, and track your progress.</p>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'add_problem' %}" class="feature-card">
+        <div class="feature-icon">🧑‍💼</div>
+        <h5>Admin Controls</h5>
+        <p class="small">Create, update, and manage problems and users.</p>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="#" class="feature-card disabled">
+        <div class="feature-icon">🛡️</div>
+        <h5>Docker Sandbox <span class="coming-soon">(coming soon)</span></h5>
+        <p class="small">Secure code execution with time and memory sandboxing.</p>
+      </a>
+    </div>
+  </div>
 </div>
 {% endblock %}

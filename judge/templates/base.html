@@ -336,88 +336,141 @@
 
 </head>
 <body class="container py-4">
-
   <!-- 🔹 Navbar -->
-  <!-- 🚀 Custom Cosmic Navbar -->
   <nav class="navbar navbar-expand-lg px-4 py-2 mb-4"
     style="background: linear-gradient(to right, #162c5c, #204a87, #2a73b3); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);">
     <div class="container-fluid">
-
+      
       <!-- 🔹 Logo -->
       <a class="navbar-brand d-flex align-items-center fw-bold text-light" href="/">
         <img src="{% static 'images/codeverse-logo.png' %}" alt="CodeVerse Logo" height="27" class="me-2"
           style="filter: drop-shadow(0 0 4px #30cfcf);">
         CodeVerse
       </a>
-
-      <!-- 🔹 Toggler for mobile view -->
+  
+      <!-- 🔹 Toggler for mobile -->
       <button class="navbar-toggler text-light border-light" type="button" data-bs-toggle="collapse"
         data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false"
         aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-
+  
       <!-- 🔹 Navbar Content -->
-      <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+      <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
+
+        <!-- 🔹 Center greeting -->
         {% if request.user.is_authenticated %}
-          <ul class="navbar-nav align-items-center gap-2">
+        <span class="navbar-text text-light mx-auto d-none d-lg-block fw-semibold">
+          👋 Hello, {{ request.user.full_name|default:request.user.username }}
+        </span>
+        {% endif %}
 
-            <!-- 👋 Welcome -->
-            <li class="nav-item text-light me-2">
-              👋 Hello, {{ request.user.full_name|default:request.user.username }}
-            </li>
+        <ul class="navbar-nav align-items-center gap-2 ms-auto">
 
-            <!-- 🛠 Admin Dropdown -->
-            <li class="nav-item position-relative">
-              <button class="btn btn-outline-info btn-sm text-light" onclick="toggleDropdown('admin-menu')">
-                🛠 Admin ⌄
-              </button>
-              <ul id="admin-menu" class="custom-dropdown">
-                {% if request.user.is_staff %}
-                  <li><a href="{% url 'manage_problems' %}">Manage Problems</a></li>
-                {% endif %}
-                {% if request.user.is_superuser %}
-                  <li><a href="{% url 'promote-users' %}">Promote Users</a></li>
-                {% endif %}
-              </ul>
-            </li>
-            
+          <!-- 📘 Explore Dropdown -->
+          <li class="nav-item position-relative">
+            <button class="btn btn-outline-light btn-sm" onclick="toggleDropdown('explore-menu')">
+              📘 Explore ⌄
+            </button>
+            <ul id="explore-menu" class="custom-dropdown">
+              <li><a href="{% url 'home' %}">🏠 Home</a></li>
+              <li><a href="{% url 'problem_list' %}">📘 Problems</a></li>
+              <li><a href="{% url 'online_compiler' %}">💻 Compiler</a></li>
+              <li><a href="{% url 'ai_suggestions' %}">🤖 AI Assistant</a></li>
+            </ul>
+          </li>
 
-            <!-- 🚀 Features Dropdown -->
-            <li class="nav-item position-relative">
-              <button class="btn btn-outline-primary btn-sm text-light" onclick="toggleDropdown('features-menu')">
-                🚀 Features ⌄
-              </button>
-              <ul id="features-menu" class="custom-dropdown">
-                <li><a href="{% url 'problem_list' %}">Problems</a></li>
-                <li><a href="{% url 'online_compiler' %}">Online Compiler</a></li>
-                <li><a href="{% url 'ai_suggestions' %}">AI Suggestions</a></li>
-              </ul>
-            </li>
+          {% if request.user.is_staff or request.user.is_superuser %}
+          <!-- 🛠 Admin Dropdown -->
+          <li class="nav-item position-relative">
+            <button class="btn btn-outline-info btn-sm text-light" onclick="toggleDropdown('admin-menu')">
+              🛠 Admin ⌄
+            </button>
+            <ul id="admin-menu" class="custom-dropdown">
+              {% if request.user.is_staff %}
+                <li><a href="{% url 'manage_problems' %}">🧩 Manage Problems</a></li>
+              {% endif %}
+              {% if request.user.is_superuser %}
+                <li><a href="{% url 'promote-users' %}">🎓 Promote Users</a></li>
+              {% endif %}
+            </ul>
+          </li>
+          {% endif %}
 
-            
-            <!-- 🔒 Logout -->
-            <li class="nav-item">
-              <form method="post" action="{% url 'logout' %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-              </form>
-            </li>
-          </ul>
-
-        {% else %}
-          <!-- 🔐 Login/Register -->
+          <!-- 🔒 Auth Buttons -->
+          {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <form method="post" action="{% url 'logout' %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+            </form>
+          </li>
+          {% else %}
           <div class="d-flex gap-2">
             <a class="btn btn-outline-primary btn-sm" href="{% url 'login' %}">Login</a>
             <a class="btn btn-outline-success btn-sm" href="{% url 'register' %}">Register</a>
           </div>
-        {% endif %}
+          {% endif %}
+        </ul>
       </div>
+
     </div>
   </nav>
-
-
-    
+  
+  <!-- 🔧 Dropdown Toggle Script -->
+  <script>
+    function toggleDropdown(id) {
+      const menu = document.getElementById(id);
+      menu.classList.toggle('show');
+    }
+  
+    // Close dropdowns on outside click
+    document.addEventListener('click', function (e) {
+      const dropdowns = document.querySelectorAll('.custom-dropdown');
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.previousElementSibling.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+  </script>
+  
+  <!-- 🔧 Custom Dropdown Styles -->
+  <style>
+    .custom-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      z-index: 1000;
+      display: none;
+      background-color: #0a192f;
+      border: 1px solid #204a87;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0;
+      min-width: 180px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    }
+  
+    .custom-dropdown.show {
+      display: block;
+    }
+  
+    .custom-dropdown li {
+      list-style: none;
+    }
+  
+    .custom-dropdown a {
+      display: block;
+      padding: 8px 16px;
+      color: #e2e8f0;
+      text-decoration: none;
+    }
+  
+    .custom-dropdown a:hover {
+      background-color: #1a2b4c;
+    }
+  </style>
+  
 
   {% block content %}{% endblock %}
 

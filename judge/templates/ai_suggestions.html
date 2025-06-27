@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}AI Assistant – CodeVerse{% endblock %}
+
+{% block content %}
+<style>
+  .ai-container {
+    max-width: 800px;
+    margin: 3rem auto;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 1rem;
+    background-color: #0e2239;
+    color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .ai-logo {
+    height: 48px;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+  }
+
+  .coming-soon {
+    font-size: 0.85rem;
+    color: #ffc107;
+    margin-top: 0.5rem;
+  }
+
+  .placeholder-icon {
+    font-size: 3rem;
+    color: #4da6ff;
+    margin-bottom: 1rem;
+  }
+
+  .back-button {
+    margin-top: 2rem;
+  }
+</style>
+
+<div class="ai-container">
+  <h2 class="fw-bold">
+    <img src="{% static 'images/codeverse-logo.png' %}" class="ai-logo" alt="CodeVerse Logo" />
+    CodeVerse AI Assistant
+  </h2>
+
+  <div class="placeholder-icon">🤖</div>
+
+  <p class="fs-5 mb-3">
+    Coming soon: Get smart suggestions, debug help, and AI-powered insights on your code.
+  </p>
+
+  <p class="text-muted">
+    Our AI assistant will analyze your code, provide hints, and help you understand errors better —
+    all in real-time. Stay tuned for launch!
+  </p>
+
+  <div class="coming-soon">🚧 This feature is under development 🚧</div>
+
+  <div class="back-button">
+    <a href="{% url 'problem_list' %}" class="btn btn-outline-light">
+      🔙 Back to Problems
+    </a>
+  </div>
+</div>
+{% endblock %}
