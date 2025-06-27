@@ -23,6 +23,7 @@
     display: flex;
     z-index: 9999;
     overflow: hidden;
+    transition: opacity 0.8s ease;
   }
 
   #terminal-pane {
@@ -105,6 +106,11 @@
 
   #launch-btn {
     display: none;
+    top: auto;
+    bottom: 30px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .fade-in {
@@ -261,14 +267,14 @@
     if (charIndex < currentLine.length) {
       terminalEl.textContent += currentLine.charAt(charIndex);
       charIndex++;
-      setTimeout(typeChar, 20); // Typing speed
+      setTimeout(typeChar, 20);
     } else {
       terminalEl.textContent += "\n";
       charIndex = 0;
       lineIndex++;
       const fillHeight = Math.floor((lineIndex / bootLines.length) * 100);
       logoFill.style.height = `${fillHeight}%`;
-      setTimeout(typeChar, 400); // Delay between lines
+      setTimeout(typeChar, 400);
     }
   }
 
@@ -286,7 +292,7 @@
   launchBtn.addEventListener("click", finishIntro);
 
   window.addEventListener("DOMContentLoaded", () => {
-    setTimeout(typeChar, 600); // Initial pause
+    setTimeout(typeChar, 600);
   });
 </script>
 {% endblock %}
