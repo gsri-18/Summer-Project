@@ -21,4 +21,7 @@ urlpatterns = [
     path('manage-problems/', views.manage_problems_view, name='manage_problems'),
     path('delete-problem/<str:code>/', views.delete_problem_view, name='delete_problem'),
 
+    path('compiler/', views.online_compiler, name='online_compiler'),
+    path('ai/', views.ai_suggestions, name='ai_suggestions'),
+
 ]

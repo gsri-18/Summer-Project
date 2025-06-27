@@ -276,12 +276,16 @@ def run_code_view(request):
     code = request.POST.get('code', '')
     language = request.POST.get('language', '').lower()
     custom_input = request.POST.get('custom_input', '')
+    time_limit = int(request.POST.get('time_limit', 1) or 1)
+    memory_limit = int(request.POST.get('memory_limit', 128) or 128)
 
     uid = str(uuid.uuid4())
     base_path = Path(settings.BASE_DIR) / 'submission_files' / 'runs' / f"{language}_{uid}"
 
-    result = run_code_util(code, language, custom_input, base_path)
+    result = run_code_util(code, language, custom_input, base_path,
+                           time_limit=time_limit, memory_limit=memory_limit)
     return JsonResponse(result)
+
 
 
 def register_view(request):
@@ -469,4 +473,14 @@ def delete_problem_view(request, code):
         messages.error(request, "❌ Invalid delete request.")
         return redirect('manage_problems')
 
+
+@login_required
+def online_compiler(request):
+    return render(request, 'online_compiler.html')
+
+@login_required
+def ai_suggestions(request):
+    # Placeholder for AI suggestions logic
+    # This could be integrated with an AI model or API to provide code suggestions
+    return render(request, 'ai_suggestions.html')
 
