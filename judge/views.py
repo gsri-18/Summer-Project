@@ -163,7 +163,7 @@ def run_code_util(code, language, input_data, base_path,
         with input_path.open('r') as infile, output_path.open('w') as outfile:
             run_dir = None
             if language == 'python':
-                run_cmd = ['python3', str(code_path)]
+                run_cmd = ['python3' if system != 'Windows' else 'python', str(code_path)]
                 full_cmd = run_cmd
             elif language in ['c', 'cpp']:
                 run_cmd = [str(exe_path)]
