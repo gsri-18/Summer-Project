@@ -77,13 +77,37 @@ Make sure these are installed **system-wide** (not just in `venv`):
 
 | Language   | Required Tools  | How to Install                                                                                            |
 | ---------- | --------------- | --------------------------------------------------------------------------------------------------------- |
-| Python     | `python3`       | [Download](https://www.python.org/downloads/) and install                                                 |
+| Python     | `python3` / `python` | [Download](https://www.python.org/downloads/) and install                                          |
 | C          | `gcc`           | ✅ Linux/macOS: pre-installed<br>🪟 Windows: Install [MinGW](https://www.mingw-w64.org/) and add to PATH    |
 | C++        | `g++`           | ✅ Same as above                                                                                           |
 | Java       | `javac`, `java` | [Adoptium JDK](https://adoptium.net) or [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) |
 | PostgreSQL | `psql`          | [Download](https://www.postgresql.org/download/) and install                                              |
 
-> Check versions using: `gcc --version`, `javac -version`, `psql --version`, `python3 --version`
+---
+
+## 🔎 Check Tool Versions
+
+### 🐧 Linux / macOS
+
+```bash
+gcc --version
+g++ --version
+javac -version
+java -version
+psql --version
+python3 --version
+````
+
+### 🪟 Windows (CMD / PowerShell)
+
+```cmd
+gcc --version
+g++ --version
+javac -version
+java -version
+psql --version
+python --version  :: use `python`, not `python3` on most Windows setups
+```
 
 ---
 
@@ -100,8 +124,9 @@ source codeverse-env/bin/activate
 
 pip install -r requirements.txt
 python manage.py migrate
+python manage.py createsuperuser   # 🔐 Create your first admin user
 python manage.py runserver
-````
+```
 
 ### 🪟 Windows (CMD)
 
@@ -111,8 +136,35 @@ codeverse-env\Scripts\activate
 
 pip install -r requirements.txt
 python manage.py migrate
+python manage.py createsuperuser   :: 🔐 Create your first admin user
 python manage.py runserver
 ```
+
+---
+
+## 🔐 Why You Need a Superuser (a.k.a. Admin)
+
+While regular users can **submit problems and view verdicts**, only superusers can:
+
+* Add/edit/delete problems
+* Manage test cases
+* Promote or demote users
+* Access Django Admin Panel (`/admin/`)
+
+To avoid random users gaining elevated access, the system does **not** automatically make new signups into admins.
+Instead, you **must manually** create a superuser:
+
+```bash
+python manage.py createsuperuser
+```
+
+Then visit:
+
+```
+http://127.0.0.1:8000/admin/
+```
+
+> ✅ **Bonus:** You don’t have to use Django Admin all the time. CodeVerse also has a sleek UI dropdown, to let superusers/staff-members manage problems in a more user-friendly way.
 
 ---
 
@@ -150,6 +202,4 @@ python manage.py runserver
 ```
 
 </details>
-
-
-
+```
