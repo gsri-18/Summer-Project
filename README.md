@@ -1,6 +1,4 @@
 
----
-
 <p align="center">
   <img src="static/images/codeverse-logo.png" alt="CodeVerse Logo" width="200"/>
 </p>
@@ -12,37 +10,31 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)
 ![Status](https://img.shields.io/badge/Status-In_Progress-yellow.svg)
 
-> **CodeVerse** is a secure, real-time Online Judge built using **Django**, **PostgreSQL**, and **Docker**.  
-> It supports code execution in **Python**, **C**, **C++**, and **Java**, and features a sleek Monaco-powered code editor.
+> **CodeVerse** is a secure, real-time Online Judge built using **Django**, **PostgreSQL**, and **subprocess-based execution**.  
+> It supports multiple languages including **Python**, **C**, **C++**, and **Java**, with a powerful Monaco editor and custom verdict system.
 
 ---
 
 ## 🚀 Key Features
 
-* ✅ Custom User Model (Full Name, Timestamps)
+* ✅ Custom User Model (full name, timestamps)
 * ✅ PostgreSQL integration with Django ORM
-* ✅ Admin panel for managing Users, Problems, Submissions
-* ✅ Problem listing and detail views
-* ✅ Code submission and live verdict display
-* ✅ Verdict System with: `AC`, `WA`, `TLE`, `MLE`, `RTE`, `CE`
-* ✅ Memory limit and timeout enforcement (128MB, timeouts)
-* ✅ Monaco Editor integration (branch: `monaco-integration-started`)
-* ✅ Secure folder execution (`runs/`, `submissions/`)
-* ✅ Toggleable file cleanup (`DELETE_SUBMISSION_FILES_AFTER_EVALUATION`, etc.)
-* ✅ Admin panel to **promote/demote users**
-* ✅ Add new problems via `/add-problem/` route
-* ✅ Galaxy-themed UI, verdict boxes, and responsive layout
+* ✅ Admin panel to **add/edit/delete problems**
+* ✅ Promote/Demote users to admin
+* ✅ Problem listing + Problem detail with code submission
+* ✅ Live verdict system: `AC`, `WA`, `TLE`, `MLE`, `RTE`, `CE`
+* ✅ Memory and Time limits enforced (e.g. 128MB, 5s cap)
+* ✅ Online compiler (non-submission, testing-only)
+* ✅ Monaco Editor (syntax highlighting, theme, autosize)
+* ✅ AI Debug Assistant (planned)
+* ✅ Tab Switch Detection (planned anti-cheating)
+* ✅ Responsive Galaxy-themed UI with stylish verdict boxes
 
 ---
 
-## 🌱 Branches Overview
+## 🧠 Current Branch: `main`
 
-| Branch                       | Purpose                                                                             |
-| ---------------------------- | ----------------------------------------------------------------------------------- |
-| `main`                       | Core features – problems, submissions, verdict system, and basic code submission UI |
-| `monaco-integration-started` | Advanced editor with Monaco integration (syntax highlighting, IntelliSense – WIP)   |
-
-ℹ️ **Current Branch:** `main`
+> All previous branches like `monaco-integration-started` have been **merged into `main`** and deleted.
 
 ---
 
@@ -55,33 +47,33 @@
 | ✅ 3   | Problem Pages + Basic Submission UI                | ✔️ Complete    |
 | ✅ 4   | User Authentication                                | ✔️ Complete    |
 | ✅ 5   | Verdict System (with Memory, Time, Runtime checks) | ✔️ Complete    |
-| 🔜 6   | Leaderboard                                        | 🔄 In Progress |
-| 🔜 7   | Tab Switch Detection (JS Visibility API)           | 🔜 Planned     |
-| 🔜 8   | AI Debug Assistant (OpenAI or Gemini API)          | 🔜 Planned     |
-| ✅ 9   | Monaco Editor Integration                          | ✅ Started     |
-| 🔜 10  | Production Deployment (Docker + AWS EC2)           | 🔜 Planned     |
+| ✅ 6   | Monaco Editor Integration                          | ✔️ Complete    |
+| 🔜 7   | Leaderboard                                        | 🔄 In Progress |
+| 🔜 8   | Tab Switch Detection (JS Visibility API)           | 🔜 Planned     |
+| 🔜 9   | AI Debug Assistant (OpenAI or Gemini API)          | 🔜 Planned     |
+| 🔜 10  | Docker + EC2 Deployment                            | 🔜 Planned     |
 
 ---
 
 ## 🧰 Tech Stack
 
-| Layer           | Tech Used                                                                 |
-| --------------- | ------------------------------------------------------------------------- |
-| Backend         | Django 5.2                                                                |
-| Database        | PostgreSQL 16                                                             |
-| Code Execution  | Verdict system (TLE, MLE, RTE, WA, CE, AC) via subprocess (Docker coming) |
-| Frontend        | Django Templates + Bootstrap 5                                            |
-| Editor          | Basic `<textarea>` (in `main`) / Monaco Editor (in feature branch)        |
-| Auth            | Custom Django User Model with full name                                   |
-| Async Execution | Celery + Redis (Planned)                                                  |
-| AI Integration  | OpenAI / Gemini API (Planned)                                             |
-| Deployment      | AWS EC2 (Planned)                                                         |
+| Layer          | Tech Used                                                                   |
+| -------------- | --------------------------------------------------------------------------- |
+| Backend        | Django 5.2                                                                  |
+| Database       | PostgreSQL 16                                                               |
+| Code Execution | Python `subprocess` (Docker sandboxing planned)                             |
+| Languages      | Python 3, C, C++, Java (JDK)                                                |
+| Frontend       | Bootstrap 5, custom CSS, Fira Code font                                     |
+| Editor         | Monaco Editor (theme, layout, code parsing)                                 |
+| Admin Tools    | Promote/demote users, manage problems via `/manage/`                        |
+| File Handling  | Organized into `submission_files/runs/` and `submission_files/submissions/` |
+| Deployment     | Local dev (Docker + AWS planned)                                            |
 
 ---
 
-## ⚙️ System Requirements (Must Be Installed Manually)
+## ⚙️ System Requirements (Manual)
 
-CodeVerse supports code execution in multiple languages. The following **system tools must be installed and available in your PATH**:
+Make sure these are installed **system-wide** (not just in `venv`):
 
 | Language   | Required Tools  | How to Install                                                                                            |
 | ---------- | --------------- | --------------------------------------------------------------------------------------------------------- |
@@ -91,58 +83,31 @@ CodeVerse supports code execution in multiple languages. The following **system 
 | Java       | `javac`, `java` | [Adoptium JDK](https://adoptium.net) or [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) |
 | PostgreSQL | `psql`          | [Download](https://www.postgresql.org/download/) and install                                              |
 
-> ✅ You can verify installation using: `gcc --version`, `g++ --version`, `javac -version`, `psql --version`, `python3 --version`  
-> ⚠️ These tools are **not included** in the virtual environment (`venv`). They must be installed **system-wide**.
+> Check versions using: `gcc --version`, `javac -version`, `psql --version`, `python3 --version`
 
 ---
 
 ## 🛠️ Local Development Setup
 
-> 💡 **Note for Windows users:** If you're using PowerShell or CMD, you'll need to activate the virtual environment differently. See below.
-
 ### 🐧 Linux / macOS
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/gsri-18/Summer-Project.git
 cd Summer-Project
 
-# 2. Set up virtual environment
 python3 -m venv codeverse-env
 source codeverse-env/bin/activate
 
-# 3. Install dependencies
 pip install -r requirements.txt
-
-# 4. Apply database migrations
 python manage.py migrate
-
-# 5. Run development server
 python manage.py runserver
 ````
 
-### 🪟 Windows (Command Prompt)
+### 🪟 Windows (CMD)
 
 ```cmd
-git clone https://github.com/gsri-18/Summer-Project.git
-cd Summer-Project
-
 python -m venv codeverse-env
 codeverse-env\Scripts\activate
-
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
-```
-
-### 🪟 Windows (PowerShell)
-
-```powershell
-git clone https://github.com/gsri-18/Summer-Project.git
-cd Summer-Project
-
-python -m venv codeverse-env
-.\codeverse-env\Scripts\Activate.ps1
 
 pip install -r requirements.txt
 python manage.py migrate
@@ -154,29 +119,37 @@ python manage.py runserver
 ## 📁 Project Directory Structure
 
 <details>
-<summary>Click to view the structure (13 directories)</summary>
+<summary>Click to view the structure (20 directories)</summary>
 
 ```bash
 .
-├── codeverse/
+├── codeverse/              # Django project config (settings, urls, wsgi, etc.)
+│   ├── asgi.py
 │   ├── settings.py
-│   ├── urls.py
 │   └── ...
-├── judge/
-│   ├── models.py
-│   ├── views.py
+├── codeverse-env/          # Python virtual environment (not pushed to Git)
+│   ├── bin/
+│   ├── lib/
+│   └── ...
+├── judge/                  # Core app: models, views, admin, templates
+│   ├── admin.py
+│   ├── forms.py
 │   ├── templates/
+│   ├── templatetags/
 │   └── ...
-├── static/
+├── static/                 # Static assets (images, css, js)
 │   └── images/
 │       └── codeverse-logo.png
-├── submissions/
-├── runs/
-├── requirements.txt
-├── README.md
-└── manage.py
+├── submission_files/       # Isolated run and submission folders
+│   ├── runs/
+│   └── submissions/
+├── manage.py               # Django CLI launcher
+├── requirements.txt        # Python package dependencies
+├── README.md               # You're reading it ;)
+├── ojfinal_hld_Srivardhan_Ginjala.pdf  # Project report (HLD)
 ```
 
 </details>
 
----
+
+
