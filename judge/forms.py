@@ -37,7 +37,6 @@ class ProblemForm(forms.ModelForm):
         }
 
 
-# ✅ judge/forms.py
 
 from django import forms
 from django.forms import inlineformset_factory
@@ -52,7 +51,6 @@ class TestCaseForm(forms.ModelForm):
             'output': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
         }
 
-# ✅ Define the inline formset here (DON'T pass prefix)
 TestCaseFormSet = inlineformset_factory(
     Problem,
     TestCase,
@@ -60,5 +58,28 @@ TestCaseFormSet = inlineformset_factory(
     extra=1,
     can_delete=True
 )
+
+
+from django import forms
+from .models import User
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['full_name', 'email']
+        widgets = {
+            'full_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+
+from django.contrib.auth.forms import PasswordChangeForm
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+    
 
 

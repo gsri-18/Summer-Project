@@ -490,16 +490,21 @@ def ai_suggestions(request):
     return render(request, 'ai_suggestions.html')
 
 from django.contrib.auth.decorators import login_required
-from judge.models import Submission, Problem
-from collections import Counter
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.db.models import Count
+from judge.models import Submission
+from judge.forms import EditProfileForm, CustomPasswordChangeForm
+
 
 @login_required
 def profile_view(request):
     user = request.user
-    limit = request.GET.get('limit', '10')  # default 10
+    limit = request.GET.get('limit', '10')
     all_subs = Submission.objects.filter(user=user).order_by('-submitted_at')
 
+    # ✅ Apply limit filter
     if limit != 'all':
         try:
             limit = int(limit)
@@ -508,21 +513,45 @@ def profile_view(request):
             limit = 10
             all_subs = all_subs[:limit]
 
+    # ✅ Stats calculation
     total = Submission.objects.filter(user=user).count()
     ac = Submission.objects.filter(user=user, verdict='Accepted').count()
     accuracy = (ac / total) * 100 if total > 0 else 0
 
     lang_counter = Submission.objects.filter(user=user).values('language', 'verdict').annotate(count=Count('id'))
-
     lang_stats = {}
     for entry in lang_counter:
         lang = entry['language']
         verdict = entry['verdict']
         count = entry['count']
-        if lang not in lang_stats:
-            lang_stats[lang] = {}
-        lang_stats[lang][verdict] = count
+        lang_stats.setdefault(lang, {})[verdict] = count
 
+    # ✅ Always initialize both forms (whether POST or GET)
+    profile_form = EditProfileForm(instance=user)
+    password_form = CustomPasswordChangeForm(user=user)
+
+    # ✅ Handle POST forms
+    if request.method == 'POST':
+        if 'update_profile' in request.POST:
+            profile_form = EditProfileForm(request.POST, instance=user)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Profile updated successfully.')
+                return redirect('profile')
+            else:
+                messages.error(request, 'Please correct the errors below.')
+
+        elif 'change_password' in request.POST:
+            password_form = CustomPasswordChangeForm(user=user, data=request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)
+                messages.success(request, 'Password changed successfully.')
+                return redirect('profile')
+            else:
+                messages.error(request, 'Please fix the password form errors.')
+
+    # ✅ Final context rendering
     return render(request, 'profile.html', {
         'submissions': all_subs,
         'stats': {
@@ -530,5 +559,8 @@ def profile_view(request):
             'ac': ac,
             'accuracy': accuracy,
             'lang_stats': lang_stats,
-        }
+        },
+        'profile_form': profile_form,
+        'password_form': password_form,
     })
+

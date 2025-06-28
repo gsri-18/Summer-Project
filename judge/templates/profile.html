@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load filters %}
 
-
 {% block title %}Your Profile – CodeVerse{% endblock %}
 
 {% block content %}
@@ -94,6 +93,44 @@
     background: #1e293b;
   }
 
+  .form-control {
+    width: 100%;
+    background-color: #1e293b;
+    color: #e2e8f0;
+    border: 1px solid #334155;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+  }
+
+  .btn {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background-color: #1e40af;
+  }
+
+  .message {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+  }
+
+  .message.success {
+    background-color: #1e3a5f;
+    color: #4ade80;
+  }
+
+  .message.error {
+    background-color: #1e293b;
+    color: #f87171;
+  }
 </style>
 
 <div class="dashboard">
@@ -118,11 +155,11 @@
     <h3>📜 Your Submissions</h3>
 
     <div class="dropdown-wrapper">
-      <form method="get">
+      <form method="get" onsubmit="appendAnchor(this)">
         <label for="limit">Show last</label>
         <select name="limit" id="limit" onchange="this.form.submit()">
           <option value="5" {% if request.GET.limit == "5" %}selected{% endif %}>5</option>
-          <option value="10" {% if request.GET.limit == "10" %}selected{% endif %}>10</option>
+          <option value="10" {% if request.GET.limit == "10" or not request.GET.limit %}selected{% endif %}>10</option>
           <option value="25" {% if request.GET.limit == "25" %}selected{% endif %}>25</option>
           <option value="50" {% if request.GET.limit == "50" %}selected{% endif %}>50</option>
           <option value="100" {% if request.GET.limit == "100" %}selected{% endif %}>100</option>
@@ -182,7 +219,28 @@
   <!-- ✏️ Edit -->
   <div id="edit" class="tab-content">
     <h3>✏️ Edit Profile</h3>
-    <p>Coming soon: form to change full name, email, and password.</p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <h4>📝 Update Details</h4>
+      {{ profile_form.as_p }}
+      <button type="submit" name="update_profile" class="btn">Save Changes</button>
+    </form>
+
+    <hr style="margin: 2rem 0; border-color: #334155;">
+
+    <form method="post">
+      {% csrf_token %}
+      <h4>🔐 Change Password</h4>
+      {{ password_form.as_p }}
+      <button type="submit" name="change_password" class="btn">Change Password</button>
+    </form>
   </div>
 </div>
 
@@ -193,6 +251,20 @@
 
     document.querySelector(`.tab[onclick="showTab('${id}')"]`).classList.add('active');
     document.getElementById(id).classList.add('active');
+
+    // Store tab in URL hash
+    history.replaceState(null, null, `#${id}`);
+  }
+
+  // Auto-load correct tab based on hash
+  window.onload = function () {
+    const hash = window.location.hash.substring(1);
+    if (hash) showTab(hash);
+  };
+
+  function appendAnchor(form) {
+    const active = document.querySelector('.tab.active').innerText.trim().toLowerCase();
+    form.action = `#${active}`;
   }
 </script>
 {% endblock %}
