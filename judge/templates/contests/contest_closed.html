@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contest Unavailable – {{ contest.name }}{% endblock %}
+
+{% block content %}
+<style>
+  .closed-container {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #e2e8f0;
+    background-color: #0f172a;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .closed-box {
+    background-color: #1e293b;
+    padding: 3rem;
+    border-radius: 1rem;
+    text-align: center;
+    max-width: 600px;
+  }
+
+  .closed-box h2 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .closed-box p {
+    font-size: 1.2rem;
+  }
+
+  .btn-back {
+    margin-top: 2rem;
+  }
+</style>
+
+<div class="container closed-container">
+  <div class="closed-box shadow">
+    <h2>⏳ Contest Not Active</h2>
+    {% if contest.start_time > now %}
+      <p>This contest hasn’t started yet.</p>
+      <p><strong>Starts at:</strong> {{ contest.start_time|date:"D, d M Y – H:i" }}</p>
+    {% elif contest.end_time < now %}
+      <p>This contest has ended.</p>
+      <p><strong>Ended at:</strong> {{ contest.end_time|date:"D, d M Y – H:i" }}</p>
+    {% else %}
+      <p>Contest is currently inactive.</p>
+    {% endif %}
+
+    <a href="{% url 'contest_list' %}" class="btn btn-outline-light btn-back">← Back to Contests</a>
+  </div>
+</div>
+{% endblock %}

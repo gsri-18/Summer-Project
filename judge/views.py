@@ -606,3 +606,116 @@ def profile_view(request):
         'password_form': password_form,
     })
 
+
+from .models import Contest, Problem, ContestSubmission
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+def contest_list_view(request):
+    now = timezone.now()
+    upcoming = Contest.objects.filter(start_time__gt=now).order_by('start_time')
+    ongoing = Contest.objects.filter(start_time__lte=now, end_time__gte=now).order_by('end_time')
+    past = Contest.objects.filter(end_time__lt=now).order_by('-end_time')
+    return render(request, 'contests/contest_list.html', {
+        'upcoming': upcoming,
+        'ongoing': ongoing,
+        'past': past,
+    })
+
+
+def contest_detail_view(request, code):
+    contest = get_object_or_404(Contest, code=code)
+    problems = contest.problems.all()
+    return render(request, 'contests/contest_detail.html', {
+        'contest': contest,
+        'problems': problems
+    })
+
+
+import re
+import uuid
+from pathlib import Path
+from django.conf import settings
+
+@login_required
+def contest_problem_view(request, code, problem_code):
+    contest = get_object_or_404(Contest, code=code)
+    problem = get_object_or_404(Problem, code=problem_code)
+
+    if not contest.is_active():
+        return render(request, 'contests/contest_closed.html', {
+            'contest': contest,
+            'now' : timezone.now()
+        })
+
+    verdict = None
+
+    if request.method == 'POST':
+        code_submitted = request.POST.get('code')
+        language = request.POST.get('language', '').lower()
+        testcases = problem.testcases.all()
+
+        uid = str(uuid.uuid4())
+        base_path = Path(settings.BASE_DIR) / 'submission_files' / 'runs' / f"{language}_{uid}"
+
+        for test in testcases:
+            result = run_code_util(
+                code_submitted,
+                language,
+                test.input,
+                base_path,
+                time_limit=problem.time_limit,
+                memory_limit=problem.memory_limit
+            )
+
+            if 'error' in result:
+                verdict = result['error']  # Could be CE, RTE, TLE, MLE, described above in the utility function.
+                break
+
+            normalized_output = re.sub(r'\s+', ' ', result['output'].strip())
+            expected_output = re.sub(r'\s+', ' ', test.output.strip())
+            if normalized_output != expected_output:
+                verdict = 'Wrong Answer'
+                break
+        else:
+            verdict = 'Accepted'
+
+        # ✅ Save contest submission with verdict
+        ContestSubmission.objects.create(
+            user=request.user,
+            contest=contest,
+            problem=problem,
+            code=code_submitted,
+            language=language,
+            verdict=verdict
+        )
+
+    return render(request, 'contests/contest_problem.html', {
+        'contest': contest,
+        'problem': problem,
+        'verdict': verdict
+    })
+
+
+from .forms import ContestForm  
+
+@login_required
+@staff_member_required
+def add_contest_view(request):
+    if request.method == 'POST':
+        form = ContestForm(request.POST)
+        if form.is_valid():
+            contest = form.save(commit=False)  # Don't commit yet!
+            contest.created_by = request.user  # Set the missing field
+            contest.save()                     # Now save safely
+            form.save_m2m()                    # For the ManyToManyField: problems
+            return redirect('contest_list')    # Your contest listing page
+    else:
+        form = ContestForm()
+    return render(request, 'contests/add_contest.html', {'form': form})
+
+
+
+
+

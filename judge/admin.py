@@ -27,3 +27,8 @@ class ProblemAdmin(admin.ModelAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.register(TestCase)
 admin.site.register(Submission)
+
+
+from .models import Contest, ContestSubmission
+admin.site.register(Contest)
+admin.site.register(ContestSubmission)

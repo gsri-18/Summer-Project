@@ -399,6 +399,11 @@
               {% if request.user.is_staff %}
                 <li><a href="{% url 'manage_problems' %}">🧩 Manage Problems</a></li>
               {% endif %}
+              {% if request.user.is_staff %}
+                <a class="btn btn-outline-light" href="{% url 'add_contest' %}">
+                  ➕ Make Contest
+                </a>
+            {% endif %}
               {% if request.user.is_superuser %}
                 <li><a href="{% url 'promote-users' %}">🎓 Promote Users</a></li>
               {% endif %}

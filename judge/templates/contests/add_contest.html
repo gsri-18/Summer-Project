@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Create New Contest – CodeVerse{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Create a New Contest</h2>
+  <hr />
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary">🚀 Create Contest</button>
+  </form>
+</div>
+{% endblock %}

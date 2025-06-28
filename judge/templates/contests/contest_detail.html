@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}{{ contest.name }} – CodeVerse{% endblock %}
+
+{% block content %}
+<style>
+  .contest-meta {
+    background-color: #0f172a;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    color: #cbd5e1;
+  }
+
+  .problem-list {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .problem-item {
+    padding: 1rem;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    background-color: #1e293b;
+    transition: background-color 0.2s ease;
+  }
+
+  .problem-item:hover {
+    background-color: #334155;
+  }
+
+  .problem-item a {
+    text-decoration: none;
+    color: #93c5fd;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .inactive-msg {
+    color: #f87171;
+    background-color: #1e293b;
+    padding: 1rem;
+    border-radius: 1rem;
+    margin-top: 2rem;
+    font-weight: bold;
+    text-align: center;
+  }
+</style>
+
+<div class="container">
+  <div class="contest-meta">
+    <h1>{{ contest.name }}</h1>
+    <p>{{ contest.description|linebreaks }}</p>
+    <p>🕒 Start: {{ contest.start_time }} | End: {{ contest.end_time }}</p>
+  </div>
+
+  {% if contest.is_active %}
+    <h2>Problems in this contest:</h2>
+    <ul class="problem-list">
+      {% for problem in problems %}
+        <li class="problem-item">
+          <a href="{% url 'contest_problem' contest.code problem.code %}">
+            {{ problem.code }} — {{ problem.name }}
+          </a>
+        </li>
+      {% empty %}
+        <li>No problems added to this contest yet.</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="inactive-msg">
+      This contest is not currently active.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ problem.name }} – {{ contest.name }} | CodeVerse{% endblock %}
+
+{% block content %}
+<style>
+  .split-container {
+    display: flex;
+    gap: 1.5rem;
+    padding-top: 2rem;
+  }
+
+  .left-pane {
+    flex: 2;
+    background-color: #0f172a;
+    padding: 2rem;
+    border-radius: 1rem;
+    color: #e2e8f0;
+  }
+
+  .right-pane {
+    flex: 3;
+    background-color: #1e293b;
+    padding: 2rem;
+    border-radius: 1rem;
+  }
+
+  pre {
+    background-color: #1f2937;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+  }
+
+  .verdict-box {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .Accepted { background-color: #14532d; color: #bbf7d0; }
+  .Wrong\ Answer { background-color: #7f1d1d; color: #fecaca; }
+  .Time\ Limit\ Exceeded,
+  .Memory\ Limit\ Exceeded,
+  .Runtime\ Error,
+  .Compilation\ Error {
+    background-color: #78350f; color: #fef3c7;
+  }
+</style>
+
+<div class="container split-container">
+  <div class="left-pane">
+    <h2>{{ problem.name }}</h2>
+    <p><strong>Time Limit:</strong> {{ problem.time_limit }}s</p>
+    <p><strong>Memory Limit:</strong> {{ problem.memory_limit }}MB</p>
+    <hr>
+    <h4>Description</h4>
+    <p>{{ problem.description|safe }}</p>
+
+    <h4>Input Format</h4>
+    <p>{{ problem.input_format|safe }}</p>
+
+    <h4>Output Format</h4>
+    <p>{{ problem.output_format|safe }}</p>
+
+    <h4>Constraints</h4>
+    <p>{{ problem.constraints|safe }}</p>
+
+    <h4>Sample Input</h4>
+    <pre>{{ problem.sample_input|safe }}</pre>
+
+    <h4>Sample Output</h4>
+    <pre>{{ problem.sample_output|safe }}</pre>
+
+    <hr>
+    <a href="{% url 'contest_detail' contest.code %}" class="btn btn-outline-light mt-3">← Back to Contest</a>
+  </div>
+
+  <div class="right-pane">
+    <form method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="language" class="form-label">Select Language:</label>
+        <select name="language" id="language" class="form-select">
+          <option value="python">Python</option>
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="code" class="form-label">Your Code:</label>
+        <textarea name="code" rows="15" class="form-control" placeholder="Write your solution here..."></textarea>
+        <!-- Replace this with Monaco later -->
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    {% if verdict %}
+      <div class="verdict-box {{ verdict|escape }}">
+        Verdict: {{ verdict }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

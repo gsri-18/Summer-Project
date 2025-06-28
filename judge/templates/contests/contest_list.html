@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Contests – CodeVerse{% endblock %}
+
+{% block content %}
+<style>
+  .contest-box {
+    background-color: #1e2a38;
+    color: #e2e8f0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+  }
+
+  .contest-box:hover {
+    transform: translateY(-4px);
+  }
+
+  .status-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+  }
+
+  .status-upcoming {
+    background-color: #6c63ff;
+  }
+
+  .status-ongoing {
+    background-color: #28a745;
+  }
+
+  .status-ended {
+    background-color: #dc3545;
+  }
+
+  .section-heading {
+    color: #a0aec0;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #2d3748;
+    padding-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+</style>
+
+<div class="container">
+  <h1 class="mb-4">Contests</h1>
+
+  {% if upcoming %}
+    <div class="section-heading">🕐 Upcoming Contests</div>
+    {% for contest in upcoming %}
+      <div class="contest-box">
+        <h3><a href="{% url 'contest_detail' contest.code %}">{{ contest.name }}</a></h3>
+        <p>⏰ Starts: {{ contest.start_time }} | Ends: {{ contest.end_time }}</p>
+        <p>⏳ Duration: {{ contest.end_time|timesince:contest.start_time }}</p>
+        <span class="status-badge status-upcoming">Upcoming</span>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if ongoing %}
+    <div class="section-heading">🟢 Ongoing Contests</div>
+    {% for contest in ongoing %}
+      <div class="contest-box">
+        <h3><a href="{% url 'contest_detail' contest.code %}">{{ contest.name }}</a></h3>
+        <p>⏰ Ends at: {{ contest.end_time }}</p>
+        <p>⏳ Time Remaining: {{ contest.end_time|timeuntil }}</p>
+        <span class="status-badge status-ongoing">Ongoing</span>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if past %}
+    <div class="section-heading">📜 Past Contests</div>
+    {% for contest in past %}
+      <div class="contest-box">
+        <h3><a href="{% url 'contest_detail' contest.code %}">{{ contest.name }}</a></h3>
+        <p>🕐 Held on: {{ contest.start_time.date }} — {{ contest.end_time.date }}</p>
+        <span class="status-badge status-ended">Ended</span>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if not upcoming and not ongoing and not past %}
+    <p>No contests found. Stay tuned!</p>
+  {% endif %}
+</div>
+{% endblock %}

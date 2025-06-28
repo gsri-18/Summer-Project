@@ -40,6 +40,11 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'judge',
+    'compiler',  
+    'users',  
+    'contests',  
+    'submissions',  
+    'problems',  
 ]
 
 MIDDLEWARE = [

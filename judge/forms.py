@@ -93,6 +93,20 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
 
+
+from django import forms
+from .models import Contest
+
+class ContestForm(forms.ModelForm):
+    class Meta:
+        model = Contest
+        fields = ['title', 'code', 'start_time', 'end_time']
+        widgets = {
+            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+
     
 
 
