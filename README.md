@@ -27,6 +27,7 @@
 - User profile with overview, submission history, accuracy, and per-language verdict stats
 - Profile editing and password change support
 - Stylish UI with dark theme and clear feedback
+- Simplified the problem add feature, Just upload your Problem in .md format, using the template.
 
 ---
 

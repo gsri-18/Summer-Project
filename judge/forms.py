@@ -12,29 +12,41 @@ class RegisterForm(UserCreationForm):
             'username', 'email', 'first_name', 'last_name', 'password1', 'password2'
         ]
 
+from django import forms
+from .models import Problem
+import bleach
 
 class ProblemForm(forms.ModelForm):
     class Meta:
         model = Problem
-        fields = [
-            'name', 'code', 'difficulty', 'time_limit', 'memory_limit',
-            'description', 'input_format', 'output_format', 'constraints',
-            'sample_input', 'sample_output'
-        ]
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'code': forms.TextInput(attrs={'class': 'form-control'}),
-            'difficulty': forms.Select(attrs={'class': 'form-select'}),
-            'time_limit': forms.NumberInput(attrs={'class': 'form-control'}),
-            'memory_limit': forms.NumberInput(attrs={'class': 'form-control'}),
+        fields = '__all__'
 
-            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
-            'input_format': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
-            'output_format': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
-            'constraints': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
-            'sample_input': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
-            'sample_output': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
-        }
+    def _sanitize_markdown_field(self, value):
+        if not value:
+            return ''
+        # Step 1: Replace <br> tags with \n (even if bleach doesn't catch them)
+        value = value.replace('<br>', '\n').replace('<br/>', '\n').replace('<br />', '\n')
+        # Step 2: Remove all other HTML tags
+        return bleach.clean(value, tags=[], strip=True)
+
+    def clean_description(self):
+        return self._sanitize_markdown_field(self.cleaned_data.get("description"))
+
+    def clean_input_format(self):
+        return self._sanitize_markdown_field(self.cleaned_data.get("input_format"))
+
+    def clean_output_format(self):
+        return self._sanitize_markdown_field(self.cleaned_data.get("output_format"))
+
+    def clean_constraints(self):
+        return self._sanitize_markdown_field(self.cleaned_data.get("constraints"))
+
+    def clean_sample_input(self):
+        return self._sanitize_markdown_field(self.cleaned_data.get("sample_input"))
+
+    def clean_sample_output(self):
+        return self._sanitize_markdown_field(self.cleaned_data.get("sample_output"))
+
 
 
 
@@ -80,6 +92,7 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+
     
 
 

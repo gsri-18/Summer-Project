@@ -221,11 +221,52 @@ def problem_list(request):
     problems = Problem.objects.all()
     return render(request, 'problems.html', {'problems': problems})
 
+import markdown
+import bleach
+from django.utils.html import escape
 
 @login_required
 def problem_detail(request, code):
     problem = get_object_or_404(Problem, code=code)
     verdict = None
+
+    # Optional: allow basic safe tags including <hr>, <strong>, etc.
+    allowed_tags = [
+        "p", "strong", "em", "ul", "ol", "li", "pre", "code",
+        "br", "hr", "h1", "h2", "h3", "blockquote"
+    ]
+
+    # def render_md(content):
+    #     return bleach.clean(
+    #         markdown.markdown(content or "", extensions=["extra"]),
+    #         tags=allowed_tags,
+    #         strip=True
+    #     )
+
+    def render_md(content):
+        if not content:
+            return ''
+        # Clean whitespace first
+        content = content.strip()
+
+        # Remove extra empty lines (e.g., double \n)
+        content = re.sub(r'\n{2,}', '\n', content)
+
+        rendered = markdown.markdown(content, extensions=["extra"])
+        return bleach.clean(rendered, tags=allowed_tags, strip=True)
+
+
+
+    # Render markdown into HTML
+    problem.description = render_md(problem.description)
+    problem.input_format = render_md(problem.input_format)
+    problem.output_format = render_md(problem.output_format)
+    problem.constraints = render_md(problem.constraints)
+    # problem.sample_input = f"<pre>{escape(problem.sample_input.strip())}</pre>"
+    # problem.sample_output = f"<pre>{escape(problem.sample_output.strip())}</pre>"
+    problem.sample_input = render_md(problem.sample_input)
+    problem.sample_output = render_md(problem.sample_output)
+
 
     if request.method == 'POST':
         submitted_code = request.POST.get('code')
@@ -264,7 +305,10 @@ def problem_detail(request, code):
         )
         return redirect('submission_detail', id=submission.id)
 
-    return render(request, 'problem_detail.html', {'problem': problem, 'verdict': verdict})
+    return render(request, 'problem_detail.html', {
+        'problem': problem,
+        'verdict': verdict
+    })
 
 
 @csrf_exempt
@@ -320,8 +364,6 @@ def submission_detail(request, id):
     submission = get_object_or_404(Submission, id=id)
     return render(request, 'submission_detail.html', {'submission': submission})
 
-
-# judge/views.py
 
 
 from .forms import ProblemForm, TestCaseFormSet  # make sure these are imported

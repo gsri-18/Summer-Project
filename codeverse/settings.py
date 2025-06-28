@@ -155,3 +155,20 @@ LOGIN_URL = '/login/'
 DELETE_SUBMISSION_FILES_AFTER_EVALUATION = True
 DELETE_RUN_FILES_AFTER_EXECUTION = True
 
+
+INSTALLED_APPS += ["markdownify"]
+
+MARKDOWNIFY = {
+    "default": {
+        "WHITELIST_TAGS": ["a", "abbr", "acronym", "b", "blockquote", "code",
+                           "em", "i", "li", "ol", "p", "strong", "ul", "pre", "h1", "h2", "h3"],
+        "MARKDOWN_EXTENSIONS": [
+            "markdown.extensions.fenced_code",
+            "markdown.extensions.codehilite",
+        ],
+        "STRIP": False,
+        "BLEACH": True,
+    }
+}
+
+

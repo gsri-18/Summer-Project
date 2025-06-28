@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load form_tags %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-5">
@@ -8,7 +9,6 @@
     <a href="{% url 'problem_list' %}" class="btn btn-secondary">← Back to Problems</a>
   </div>
 
-  <!-- 🔔 MESSAGE ALERTS -->
   {% if messages %}
     {% for message in messages %}
       <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -18,17 +18,45 @@
     {% endfor %}
   {% endif %}
 
-  <form method="post">
-    {% csrf_token %}
+  <!-- 📄 Markdown Input Section -->
+  <div class="mb-4">
+    <label class="form-label">📄 Load from Markdown:</label>
 
+    <div class="mb-2">
+      <a href="{% static 'downloads/codeverse_problem_template.md' %}" 
+        class="btn btn-outline-secondary"
+        download="codeverse_problem_template.md">
+        📥 Download Sample Template (.md)
+      </a>
+   
+    </div>
+
+    <label for="markdown-input" class="form-label mt-3">📝 Paste Markdown (Optional):</label>
+    <textarea id="markdown-input" class="form-control" rows="10"
+              placeholder="Paste your .md file content here…"></textarea>
+
+    <div class="mb-3">
+      <label for="markdown-file" class="form-label">📁 Or Upload Markdown File:</label>
+      <input type="file" id="markdown-file" class="form-control" accept=".md">
+    </div>
+
+    <button type="button" class="btn btn-outline-primary mt-2" id="parse-markdown-btn">
+      🔍 Autofill from Markdown
+    </button>
+  </div>
+
+
+  <!-- 📝 Problem Form -->
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
     <div class="row mb-3">
       <div class="col-md-6">
         <label class="form-label">Name:</label>
-        <input type="text" class="form-control" name="name" required placeholder="e.g. Sum of Two Numbers">
+        <input type="text" class="form-control" name="name" required>
       </div>
       <div class="col-md-6">
         <label class="form-label">Code:</label>
-        <input type="text" class="form-control" name="code" required placeholder="e.g. SUM2">
+        <input type="text" class="form-control" name="code" required>
       </div>
     </div>
 
@@ -43,115 +71,156 @@
       </div>
       <div class="col-md-3">
         <label class="form-label">Time Limit (sec):</label>
-        <input type="number" step="0.1" class="form-control" name="time_limit" required placeholder="e.g. 1.0">
+        <input type="number" step="0.1" class="form-control" name="time_limit" required>
       </div>
       <div class="col-md-3">
         <label class="form-label">Memory Limit (MB):</label>
-        <input type="number" class="form-control" name="memory_limit" required placeholder="e.g. 128">
+        <input type="number" class="form-control" name="memory_limit" required>
       </div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Description:</label>
-      <textarea class="form-control" name="description" rows="4" required placeholder="Describe the problem..."></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Input Format:</label>
-      <textarea class="form-control" name="input_format" rows="2" required placeholder="Input description..."></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Output Format:</label>
-      <textarea class="form-control" name="output_format" rows="2" required placeholder="Output description..."></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Constraints:</label>
-      <textarea class="form-control" name="constraints" rows="2" required placeholder="e.g. 1 ≤ N ≤ 10^5"></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Sample Input:</label>
-      <textarea class="form-control" name="sample_input" rows="2" required placeholder="e.g. 2 3"></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Sample Output:</label>
-      <textarea class="form-control" name="sample_output" rows="2" required placeholder="e.g. 5"></textarea>
-    </div>
+    <div class="mb-3"><label class="form-label">Description:</label>
+      <textarea class="form-control" name="description" rows="4" required></textarea></div>
+    <div class="mb-3"><label class="form-label">Input Format:</label>
+      <textarea class="form-control" name="input_format" rows="2" required></textarea></div>
+    <div class="mb-3"><label class="form-label">Output Format:</label>
+      <textarea class="form-control" name="output_format" rows="2" required></textarea></div>
+    <div class="mb-3"><label class="form-label">Constraints:</label>
+      <textarea class="form-control" name="constraints" rows="2" required></textarea></div>
+    <div class="mb-3"><label class="form-label">Sample Input:</label>
+      <textarea class="form-control" name="sample_input" rows="2" required></textarea></div>
+    <div class="mb-3"><label class="form-label">Sample Output:</label>
+      <textarea class="form-control" name="sample_output" rows="2" required></textarea></div>
 
     <hr class="my-4">
 
     <h4 class="mb-3">🧪 Test Cases</h4>
-    
     {{ formset.management_form }}
-
     <div id="test-cases-container">
       {% for tc_form in formset.forms %}
         <div class="row mb-2 test-case-row">
-          {% for hidden in tc_form.hidden_fields %}
-            {{ hidden }}
-          {% endfor %}
-          <div class="col-md-5">
-            {{ tc_form.input }}
-          </div>
-          <div class="col-md-5">
-            {{ tc_form.output }}
-          </div>
+          {% for hidden in tc_form.hidden_fields %}{{ hidden }}{% endfor %}
+          <div class="col-md-5">{{ tc_form.input }}</div>
+          <div class="col-md-5">{{ tc_form.output }}</div>
           <div class="col-md-2 d-flex align-items-start">
             {% if tc_form.instance.pk %}
-              <input type="checkbox" name="{{ tc_form.prefix }}-DELETE" id="{{ tc_form.prefix }}-DELETE" class="d-none delete-checkbox">
+              <input type="checkbox" name="{{ tc_form.prefix }}-DELETE" class="d-none delete-checkbox">
             {% endif %}
             <button type="button" class="btn btn-danger btn-sm remove-test-case ms-2">🗑️ Delete</button>
           </div>
         </div>
       {% endfor %}
     </div>
-    
+
     <div class="d-flex justify-content-between mb-4">
       <button type="submit" class="btn btn-success">✅ Save Changes</button>
       <button type="button" class="btn btn-outline-primary btn-sm" id="add-test-case">➕ Add Test Case</button>
     </div>
-    
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const container = document.getElementById("test-cases-container");
-        const addBtn = document.getElementById("add-test-case");
-        const totalForms = document.querySelector("#id_testcases-TOTAL_FORMS");
-    
-        addBtn.addEventListener("click", () => {
-          const formCount = parseInt(totalForms.value);
-          const firstForm = container.querySelector(".test-case-row");
-          const newForm = firstForm.cloneNode(true);
-    
-          // Clear textarea values & uncheck delete checkboxes
-          newForm.querySelectorAll("textarea").forEach(field => field.value = "");
-          newForm.querySelectorAll("input[type=checkbox]").forEach(cb => cb.checked = false);
-    
-          // Update management form indexes
-          newForm.innerHTML = newForm.innerHTML.replaceAll(
-            new RegExp(`testcases-(\\d+)`, 'g'),
-            `testcases-${formCount}`
-          );
-    
-          totalForms.value = formCount + 1;
-          container.appendChild(newForm);
-        });
-    
-        document.addEventListener("click", function (e) {
-          if (e.target.classList.contains("remove-test-case")) {
-            const row = e.target.closest(".test-case-row");
-            const deleteCheckbox = row.querySelector(".delete-checkbox");
-            if (deleteCheckbox) {
-              deleteCheckbox.checked = true;
-              row.style.display = "none";
-            } else {
-              row.remove();
-            }
-          }
-        });
+  </form>
+
+  <!-- 🔧 JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("test-cases-container");
+      const addBtn = document.getElementById("add-test-case");
+      const totalForms = document.querySelector("#id_testcases-TOTAL_FORMS");
+
+      addBtn.addEventListener("click", () => {
+        const formCount = parseInt(totalForms.value);
+        const firstForm = container.querySelector(".test-case-row");
+        const newForm = firstForm.cloneNode(true);
+
+        newForm.querySelectorAll("textarea").forEach(f => f.value = "");
+        newForm.querySelectorAll("input[type=checkbox]").forEach(cb => cb.checked = false);
+        newForm.innerHTML = newForm.innerHTML.replaceAll(/testcases-(\d+)/g, `testcases-${formCount}`);
+        totalForms.value = formCount + 1;
+        container.appendChild(newForm);
       });
-    </script>
-    
+
+      document.addEventListener("click", e => {
+        if (e.target.classList.contains("remove-test-case")) {
+          const row = e.target.closest(".test-case-row");
+          const delCb = row.querySelector(".delete-checkbox");
+          if (delCb) { delCb.checked = true; row.style.display = "none"; }
+          else row.remove();
+        }
+      });
+
+      document.getElementById("markdown-file").addEventListener("change", function () {
+        const file = this.files[0];
+        if (file && file.name.endsWith(".md")) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById("markdown-input").value = e.target.result;
+          };
+          reader.readAsText(file);
+        } else {
+          alert("Please upload a valid .md file.");
+        }
+      });
+
+      document.getElementById("parse-markdown-btn").addEventListener("click", () => {
+        let md = document.getElementById("markdown-input").value;
+
+        // Strip comment blocks (<!-- ... -->)
+        md = md.replace(/<!--[\s\S]*?-->/g, '');
+        md = md.replace(/<hr\s*\/?>/gi, '---');
+
+        
+        const extract = (label) => {
+          const regex = new RegExp(`\\*\\*${label}:\\*\\*\\s*(.+)`);
+          const match = md.match(regex);
+          return match ? match[1].trim() : "";
+        };
+        const extractSection = (header) => {
+          const regex = new RegExp(`## ${header}\\s+([\\s\\S]+?)(?=\\n## |$)`, 'i');
+          const match = md.match(regex);
+          return match ? match[1].trim() : "";
+        };
+
+        const nameMatch = md.match(/^#\s+([^\n]+)/m);
+        document.querySelector("input[name='name']").value = nameMatch ? nameMatch[1].trim() : "";
+        document.querySelector("input[name='code']").value = extract("Code");
+        document.querySelector("select[name='difficulty']").value = extract("Difficulty");
+        document.querySelector("input[name='time_limit']").value = extract("Time Limit");
+        document.querySelector("input[name='memory_limit']").value = extract("Memory Limit");
+        document.querySelector("textarea[name='description']").value = extractSection("Description");
+        document.querySelector("textarea[name='input_format']").value = extractSection("Input Format");
+        document.querySelector("textarea[name='output_format']").value = extractSection("Output Format");
+        document.querySelector("textarea[name='constraints']").value = extractSection("Constraints");
+        document.querySelector("textarea[name='sample_input']").value = extractSection("Sample Input");
+        document.querySelector("textarea[name='sample_output']").value = extractSection("Sample Output");
+
+        const testCasesMatch = md.match(/## Test Cases([\s\S]*)/i);
+        if (testCasesMatch) {
+          const block = testCasesMatch[1];
+          const testCaseRegex = /### Input\s+([\s\S]+?)### Output\s+([\s\S]+?)(?=###|$)/g;
+          container.innerHTML = "";
+          let count = 0, match;
+          while ((match = testCaseRegex.exec(block)) !== null) {
+            const input = match[1].trim();
+            const output = match[2].trim();
+            const div = document.createElement("div");
+            div.innerHTML = `
+              <div class="row mb-2 test-case-row">
+                <div class="col-md-5">
+                  <textarea name="testcases-${count}-input" class="form-control" rows="2">${input}</textarea>
+                </div>
+                <div class="col-md-5">
+                  <textarea name="testcases-${count}-output" class="form-control" rows="2">${output}</textarea>
+                </div>
+                <div class="col-md-2 d-flex align-items-start">
+                  <button type="button" class="btn btn-danger btn-sm remove-test-case ms-2">🗑️ Delete</button>
+                </div>
+              </div>
+            `.trim();
+            container.appendChild(div.firstChild);
+            count++;
+          }
+          totalForms.value = count;
+        }
+      });
+    });
+  </script>
+</div>
 {% endblock %}
