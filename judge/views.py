@@ -489,3 +489,46 @@ def ai_suggestions(request):
     # This could be integrated with an AI model or API to provide code suggestions
     return render(request, 'ai_suggestions.html')
 
+from django.contrib.auth.decorators import login_required
+from judge.models import Submission, Problem
+from collections import Counter
+from django.db.models import Count
+
+@login_required
+def profile_view(request):
+    user = request.user
+    limit = request.GET.get('limit', '10')  # default 10
+    all_subs = Submission.objects.filter(user=user).order_by('-submitted_at')
+
+    if limit != 'all':
+        try:
+            limit = int(limit)
+            all_subs = all_subs[:limit]
+        except ValueError:
+            limit = 10
+            all_subs = all_subs[:limit]
+
+    total = Submission.objects.filter(user=user).count()
+    ac = Submission.objects.filter(user=user, verdict='Accepted').count()
+    accuracy = (ac / total) * 100 if total > 0 else 0
+
+    lang_counter = Submission.objects.filter(user=user).values('language', 'verdict').annotate(count=Count('id'))
+
+    lang_stats = {}
+    for entry in lang_counter:
+        lang = entry['language']
+        verdict = entry['verdict']
+        count = entry['count']
+        if lang not in lang_stats:
+            lang_stats[lang] = {}
+        lang_stats[lang][verdict] = count
+
+    return render(request, 'profile.html', {
+        'submissions': all_subs,
+        'stats': {
+            'total': total,
+            'ac': ac,
+            'accuracy': accuracy,
+            'lang_stats': lang_stats,
+        }
+    })

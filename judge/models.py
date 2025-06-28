@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 # Create your models here.
 class User(AbstractUser):
     full_name = models.CharField(max_length=200, blank=True)
@@ -41,12 +42,16 @@ class TestCase(models.Model):
     def __str__(self):
         return f"TestCase for {self.problem.name} - Input: {self.input[:30]}..."
 
+from django.utils import timezone
+
 class Submission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
     code = models.TextField()
     language = models.CharField(max_length=20)  # e.g., 'Python', 'Java', etc.
     verdict = models.CharField(max_length = 50) 
+    submitted_at = models.DateTimeField(default=timezone.now)
+
 
     def __str__(self):
         return f"Submission by {self.user.username} for {self.problem.name} - Verdict: {self.verdict}"

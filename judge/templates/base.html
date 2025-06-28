@@ -399,20 +399,32 @@
           </li>
           {% endif %}
 
-          <!-- 🔒 Auth Buttons -->
-          {% if request.user.is_authenticated %}
-          <li class="nav-item">
-            <form method="post" action="{% url 'logout' %}" class="d-inline">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-            </form>
+        <!-- 🔒 Auth Buttons -->
+        <!-- 🔒 Profile Dropdown for Logged-in Users -->
+        {% if request.user.is_authenticated %}
+          <!-- 👤 Profile Dropdown -->
+          <li class="nav-item position-relative">
+            <button class="btn btn-outline-light btn-sm" onclick="toggleDropdown('user-menu')">
+              👤 {{ request.user.username }} ⌄
+            </button>
+            <ul id="user-menu" class="custom-dropdown">
+              <li><a href="{% url 'profile' %}">🧑‍💻 My Profile</a></li>
+              <li>
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" style="background: none; border: none; color: white;">🚪 Logout</button>
+                </form>
+              </li>
+            </ul>
           </li>
-          {% else %}
-          <div class="d-flex gap-2">
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'login' %}">Login</a>
-            <a class="btn btn-outline-success btn-sm" href="{% url 'register' %}">Register</a>
-          </div>
-          {% endif %}
+
+        {% else %}
+        <div class="d-flex gap-2">
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'login' %}">Login</a>
+          <a class="btn btn-outline-success btn-sm" href="{% url 'register' %}">Register</a>
+        </div>
+        {% endif %}
+
         </ul>
       </div>
 
