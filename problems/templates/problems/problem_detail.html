@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load markdownify %}
+{% load static %}
+
 
 {% block title %}{{ problem.name }} – CodeVerse{% endblock %}
 
@@ -140,24 +142,48 @@
 
 </style>
 
-
+<div class="mb-3">
+  <a href="{% url 'problem_list' %}" class="btn btn-outline-secondary">
+    ← Back to Problems
+  </a>
+</div>
 
 <div class="split-container">
   <!-- Problem description -->
   <div class="left-pane">
     <div class="problem-card markdown-body">
       <div class="problem-card-title">🧠 {{ problem.name }}</div>
-      <div class="problem-card-meta mb-2">
-        Code: <code>{{ problem.code }}</code> |
-        Difficulty:
-          <span class="badge
-          {% if problem.difficulty == 'Easy' %}bg-success text-light
-          {% elif problem.difficulty == 'Medium' %}bg-warning text-dark
-          {% elif problem.difficulty == 'Hard' %}bg-danger text-light
-          {% else %}bg-secondary text-light{% endif %}">
-          {{ problem.get_difficulty_display }}
-        </span>
+      <div class="problem-card-meta mb-3 d-flex flex-wrap gap-3 align-items-center">
+        <div>
+          <strong>Code:</strong> <code>{{ problem.code }}</code>
+        </div>
+      
+        <div>
+          <strong>Difficulty:</strong>
+          <span class="badge 
+            {% if problem.difficulty == 'Easy' %}bg-success text-light
+            {% elif problem.difficulty == 'Medium' %}bg-warning text-dark
+            {% elif problem.difficulty == 'Hard' %}bg-danger text-light
+            {% else %}bg-secondary text-light{% endif %}">
+            {{ problem.get_difficulty_display }}
+          </span>
+        </div>
+      
+        <div>
+          <strong>Time Limit:</strong>
+          <span class="badge bg-info text-dark">
+            {{ problem.time_limit }} seconds
+          </span>
+        </div>
+      
+        <div>
+          <strong>Memory Limit:</strong>
+          <span class="badge bg-info text-dark">
+            {{ problem.memory_limit }} MB
+          </span>
+        </div>
       </div>
+      
   
       <div class="mb-3">
         <h5 class="text-info">📝 Description</h5>
@@ -240,132 +266,69 @@
 
 </div>
 
+<!-- Monaco AMD Loader (must come before monaco-setup.js) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+
+
+<script src="{% static 'js/monaco-setup.js' %}"></script>
 <script>
-  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' }});
-  require(['vs/editor/editor.main'], function() {
-    window.editor = monaco.editor.create(
-      document.getElementById('editor'),
-      {
-        value: '',
-        language: 'java',
-        theme: 'vs-dark',
-        automaticLayout: true,
-    
-        minimap: {
-          enabled: false
-        },
-    
-        scrollBeyondLastLine: false,
-        overviewRulerLanes: 0,
-        lineDecorationsWidth: 0,
-    
-        // Make scrollbars thin
-        scrollbar: {
-          verticalScrollbarSize: 4,
-          horizontalScrollbarSize: 4,
-          useShadows: false,
-        },
-    
-        // Prevent internal sashes showing up (if they are active)
-        renderLineHighlight: "none",
-        guides: {
-          indentation: false
-        }
-      }
-    );
-    
+  setupMonacoEditor({
+    selector: "editor",
+    language: "cpp",
+    theme: "one-dark-pro",
+    onReady: (editor, monaco) => {
+      const boilerplate = {
+        java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Your code here\n\n\n    }\n}`,
+        python: `def main():\n    # Your code here\n\n\n    pass\n\nif __name__ == "__main__":\n    main()`,
+        cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    // Your code here\n\n\n    return 0;\n}`,
+        c: `#include <stdio.h>\n\nint main() {\n    // Your code here\n\n\n    return 0;\n}`
+      };
 
-    // boilerplate snippets
-    const boilerplate = {
-      java: `import java.util.*;
-
-public class Main {
-    public static void main(String[] args) {
-        // Your code here
-
-    }
-}
-`,
-      python: `# Read input from stdin
-def main():
-    # Your code here
-    
-
-    pass
-
-if __name__ == "__main__":
-    main()
-`,
-      cpp: `#include <bits/stdc++.h>
-using namespace std;
-
-int main() {
-
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    // Your code here
-
-
-    return 0;
-}
-`,
-      c: `#include <stdio.h>
-
-int main() {
-
-    // Your code here
-
-
-    return 0;
-}
-`
-    };
-
-    const langSel = document.getElementById('language');
-    function loadTemplate() {
-      editor.setValue(boilerplate[langSel.value] || '');
-    }
-    langSel.addEventListener('change', loadTemplate);
-    loadTemplate();
-
-    document.getElementById('submission-form')
-      .addEventListener('submit', ()=>{
-        document.getElementById('hidden-code').value = editor.getValue();
+      const langSel = document.getElementById("language");
+      langSel.addEventListener("change", () => {
+        const lang = langSel.value;
+        editor.setValue(boilerplate[lang] || "");
+        monaco.editor.setModelLanguage(editor.getModel(), lang === "cpp" ? "cpp" : lang);
       });
+      langSel.dispatchEvent(new Event("change"));
 
-    document.getElementById('run-button')
-      .addEventListener('click', ()=>{
+      document.getElementById("run-button").addEventListener("click", () => {
         const data = new FormData();
-        data.append('code', editor.getValue());
-        data.append('language', langSel.value);
-        data.append('custom_input', document.getElementById('custom-input').value);
-        fetch('/run-code/', {
-          method: 'POST',
-          headers: { 'X-CSRFToken':'{{ csrf_token }}' },
+        data.append("code", editor.getValue());
+        data.append("language", langSel.value);
+        data.append("custom_input", document.getElementById("custom-input").value);
+
+        fetch("{% url 'run_code' %}", {
+          method: "POST",
+          headers: { "X-CSRFToken": "{{ csrf_token }}" },
           body: data
         })
-        .then(res=>res.json())
-        .then(json=> {
-          document.getElementById('custom-output').value =
-            json.output || json.details || json.error || '';
+        .then(res => res.json())
+        .then(json => {
+          document.getElementById("custom-output").value =
+            json.output || json.details || json.error || "";
         });
       });
+
+      document.getElementById("submission-form").addEventListener("submit", () => {
+        document.getElementById("hidden-code").value = editor.getValue();
+      });
+    }
   });
 
-  // ——— vertical splitter logic ———
-  const rz = document.getElementById('resizer'),
+  // vertical splitter
+  const rz = document.getElementById("resizer"),
         lp = rz.previousElementSibling;
   let dragging = false;
-  rz.onmousedown = ()=>{ dragging=true; document.body.style.cursor='ew-resize'; };
-  document.onmousemove = e=>{
+  rz.onmousedown = () => { dragging = true; document.body.style.cursor = "ew-resize"; };
+  document.onmousemove = e => {
     if (!dragging) return;
     let newW = e.clientX - lp.parentNode.offsetLeft;
-    if (newW > 250 && newW < window.innerWidth*0.7) {
-      lp.style.width = newW + 'px';
+    if (newW > 250 && newW < window.innerWidth * 0.7) {
+      lp.style.width = newW + "px";
     }
   };
-  document.onmouseup = ()=>{ dragging=false; document.body.style.cursor=''; };
+  document.onmouseup = () => { dragging = false; document.body.style.cursor = ""; };
 </script>
+
 {% endblock %}

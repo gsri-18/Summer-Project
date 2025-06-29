@@ -1,0 +1,55 @@
+{
+    "base": "vs-dark",
+    "inherit": true,
+    "rules": [
+        {
+            "token": "",
+            "foreground": "abb2bf",
+            "background": "282c34"
+        },
+        {
+            "token": "comment",
+            "foreground": "5c6370",
+            "fontStyle": "italic"
+        },
+        {
+            "token": "keyword",
+            "foreground": "c678dd"
+        },
+        {
+            "token": "number",
+            "foreground": "d19a66"
+        },
+        {
+            "token": "string",
+            "foreground": "98c379"
+        },
+        {
+            "token": "operator",
+            "foreground": "56b6c2"
+        },
+        {
+            "token": "type",
+            "foreground": "e5c07b"
+        },
+        {
+            "token": "function",
+            "foreground": "61afef"
+        },
+        {
+            "token": "variable",
+            "foreground": "e06c75"
+        },
+        {
+            "token": "constant",
+            "foreground": "d19a66"
+        }
+    ],
+    "colors": {
+        "editor.background": "#282c34",
+        "editor.foreground": "#abb2bf",
+        "editor.lineHighlightBackground": "#2c313c",
+        "editorCursor.foreground": "#528bff",
+        "editorWhitespace.foreground": "#3b4048"
+    }
+}
