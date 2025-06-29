@@ -2,7 +2,7 @@
   <img src="static/images/codeverse-logo.png" alt="CodeVerse Logo" width="180"/>
 </p>
 
-<h1 align="center">⚡️ CodeVerse – Online Judge Platform</h1>
+<h1 align="center"> CodeVerse – Online Judge Platform</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.12-blue.svg"/>
@@ -11,29 +11,30 @@
   <img src="https://img.shields.io/badge/Status-In_Progress-yellow.svg"/>
 </p>
 
-> **CodeVerse** is a full-stack, real-time **Online Judge** built with 🔥 Django + PostgreSQL + subprocess-based sandboxing.  
+> **CodeVerse** is a full-stack, real-time **Online Judge** built with Django + PostgreSQL + Docker-isolated code execution.
 > Designed for performance, customizability, and clarity — it supports **Python**, **C**, **C++**, and **Java**, and features a modern **Monaco Editor** interface.
 
 ---
 
-## 🚀 Features
+##  Features
 
-- 🧑‍💻 **Custom User Model** (full name, timestamps)
-- 🔐 **User Authentication** (Register, Login, Logout, Profile Edit)
-- 🧠 **Live Verdicts** on submission: `Accepted`, `Wrong Answer`, `TLE`, `MLE`, `RTE`, `CE`
-- 🧾 **Add Problems via Markdown** template
-- ⚙️ **Time & Memory Limit Enforcement** (up to 5s / 512MB supported)
-- 🧠 **Monaco Editor Integration**: themes, syntax highlight, vertical split UI
-- ⚖️ **Compiler-only Mode** for trial runs
-- 📈 **User Dashboard** with submission stats
-- 🧑‍⚖️ **Admin Panel** to manage Problems, TestCases, Users, and Submissions
-- 🧼 **File Cleanup Toggles** to control cleanup of generated code files
-- 🌌 **Cosmic UI** with animated intro, verdict box styling, and mobile responsiveness
-- 📦 **Folder Separation** for `runs/` vs `submissions/` to avoid collisions
+*  **Custom User Model** (full name, timestamps)
+*  **User Authentication** (Register, Login, Logout, Profile Edit)
+*  **Live Verdicts** on submission: `Accepted`, `Wrong Answer`, `TLE`, `MLE`, `RTE`, `CE`
+*  **Add Problems via Markdown** template
+*  **Time & Memory Limit Enforcement** (up to 5s / 512MB supported)
+*  **Docker-based Code Execution Sandbox** for safe, isolated runs
+*  **Monaco Editor Integration**: themes, syntax highlight, vertical split UI
+*  **Compiler-only Mode** for trial runs
+*  **User Dashboard** with submission stats
+*  **Admin Panel** to manage Problems, TestCases, Users, and Submissions
+*  **File Cleanup Toggles** to control cleanup of generated code files
+*  **Cosmic UI** with animated intro, verdict box styling, and mobile responsiveness
+*  **Folder Separation** for `runs/` vs `submissions/` to avoid collisions
 
 ---
 
-## 📚 Roadmap
+##  Roadmap
 
 | Phase | Feature                                        | Status        |
 | ----- | ---------------------------------------------- | ------------- |
@@ -43,20 +44,21 @@
 | 4     | User Authentication (Register/Login/Logout)    | ✅ Complete    |
 | 5     | Code Submission Verdict System (subprocess)    | ✅ Complete    |
 | 6     | Monaco Editor Integration                      | ✅ Complete    |
-| 7     | Leaderboard System                             | 🔄 In Progress |
-| 8     | Tab Visibility/Focus Detection (anti-cheating) | 🔜 Planned     |
-| 9     | AI Debug Assistant (OpenAI/Gemini integration) | 🔜 Planned     |
-| 10    | Docker Isolation + EC2 Deployment              | 🔜 Planned     |
+| 7     | Docker Isolation for Code Execution            | ✅ Complete    |
+| 8     | Leaderboard System                             | 🔄 In Progress |
+| 9     | Tab Visibility/Focus Detection (anti-cheating) | 🔜 Planned     |
+| 10    | AI Debug Assistant (OpenAI/Gemini integration) | 🔜 Planned     |
+| 11    | EC2 Deployment                                 | 🔜 Planned     |
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 | Layer           | Technology                           |
 | --------------- | ------------------------------------ |
 | Backend         | Django 5.2                           |
 | Database        | PostgreSQL 16                        |
-| Code Execution  | Python `subprocess` (Docker planned) |
+| Code Execution  | Docker + Python `subprocess` sandbox |
 | Supported Langs | Python, C, C++, Java                 |
 | Frontend        | Bootstrap 5, custom CSS, Fira Code   |
 | Editor          | Monaco Editor (via CDN)              |
@@ -65,7 +67,7 @@
 
 ---
 
-## 💻 System Requirements
+##  System Requirements
 
 The following **tools must be installed globally** on your system:
 
@@ -76,8 +78,9 @@ The following **tools must be installed globally** on your system:
 | C++        | `g++`           | Same as above                                                                                         |
 | Java       | `javac`, `java` | [Adoptium](https://adoptium.net) or [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) |
 | PostgreSQL | `psql`          | [Download PostgreSQL](https://www.postgresql.org/download/)                                           |
+| Docker     | `docker`        | [Docker Installation Guide](https://docs.docker.com/get-docker/)                                      |
 
-### ✅ Version Check (Linux/macOS)
+###  Version Check (Linux/macOS)
 
 ```bash
 gcc --version
@@ -86,9 +89,10 @@ javac -version
 java -version
 psql --version
 python3 --version
-````
+docker --version
+```
 
-### ✅ Version Check (Windows CMD)
+###  Version Check (Windows CMD)
 
 ```cmd
 gcc --version
@@ -97,11 +101,12 @@ javac -version
 java -version
 psql --version
 python --version
+docker --version
 ```
 
 ---
 
-## 🛠️ Local Development Setup
+##  Local Development Setup
 
 > Virtual environment is highly recommended.
 
@@ -163,7 +168,7 @@ python manage.py createsuperuser
 Then visit:
 👉 [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
-You dont actually need to go to the /admin/ page to add problems, users with staff access can add problems, update and delete problems directly using the manage problems option in the admin dropdown.
+You don’t need to rely on the `/admin/` page only — users with staff privileges can add/update/delete problems from the frontend admin dropdown menu.
 
 ---
 
@@ -172,25 +177,58 @@ You dont actually need to go to the /admin/ page to add problems, users with sta
 <details>
 <summary>Click to expand</summary>
 
+
 ```bash
 .
-├── codeverse/                  # Django project config
-├── core/                       # Core merged app (User, Problems, Submissions, etc.)
-├── judge/                      # Handles views, execution, templates
-├── problems/                   # Problem handling logic
-├── static/
-│   ├── css/
-│   ├── js/
-│   ├── monaco-themes/
-│   └── images/codeverse-logo.png
-├── submission_files/
-│   ├── runs/                   # For compiler-only runs
-│   └── submissions/            # For real submissions
-├── check_project_health.sh     # Optional dev script
-├── ojfinal_hld_Srivardhan_Ginjala.pdf
-├── requirements.txt
+├── check_project_health.sh
+├── codeverse
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── core
+│   └── utils
+│       ├── code_executor.py
+│       └── code_runner.py
+├── docker_runner
+│   ├── Dockerfile
+│   └── run_code.sh
+├── judge
+│   ├── admin.py
+│   ├── forms.py
+│   ├── migrations
+│   ├── models.py
+│   ├── templates
+│   ├── templatetags
+│   ├── tests
+│   ├── urls.py
+│   └── views.py
 ├── manage.py
-└── README.md
+├── ojfinal_hld_Srivardhan_Ginjala.pdf
+├── problems
+│   ├── admin.py
+│   ├── migrations
+│   ├── models.py
+│   ├── templates
+│   ├── tests
+│   ├── urls.py
+│   └── views.py
+├── static
+│   ├── css
+│   ├── downloads
+│   ├── images
+│   ├── js
+│   └── monaco-themes
+├── staticfiles
+│   ├── admin
+│   ├── css
+│   ├── img
+│   └── js
+└── submission_files
+    ├── contest_subs
+    ├── docker_temp
+    ├── runs
+    └── submissions
 ```
 
 </details>
@@ -200,7 +238,7 @@ You dont actually need to go to the /admin/ page to add problems, users with sta
 ## 📄 License
 
 This project is intended for academic and personal use.
-For production usage or competitive deployment, Docker-based isolation is strongly recommended.
+For production or competitive deployment, Docker-based isolation is strongly recommended (and now integrated!).
 
 ---
 
@@ -208,7 +246,4 @@ For production usage or competitive deployment, Docker-based isolation is strong
 
 Made with love by [@gsri-18](https://github.com/gsri-18)
 Drop a ⭐ on the repo if you found it helpful!
-
----
-
 
