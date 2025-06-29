@@ -1,25 +1,35 @@
-# Ignore Python cache files
+# ─── Python Cache ─────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.sqlite3
 
-# Ignore your venv
+# ─── Virtual Environments ─────────────────────────────
 codeverse-env/
 
-# Ignore system files
+# ─── System/OS Artifacts ──────────────────────────────
 .DS_Store
+Thumbs.db
 
-# Ignore IDE stuff
+# ─── IDE & Editor Configs ─────────────────────────────
 .vscode/
 .idea/
 
-# Ignore environment and secret settings
+# ─── Environment and Secrets ──────────────────────────
 .env
+*.env
+.env.*
 
-# Ignore all files inside these folders except .gitkeep
+# ─── Submission and Run Temp Files ────────────────────
 submission_files/submissions/*
 !submission_files/submissions/.gitkeep
 
 submission_files/runs/*
 !submission_files/runs/.gitkeep
 
+submission_files/docker_temp/
+!submission_files/docker_temp/.gitkeep
+
+# ─── Docker-related Logs/Secrets (future-proofing) ───
+*.log
+*.pid
+docker-compose.override.yml
