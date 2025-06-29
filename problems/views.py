@@ -80,7 +80,8 @@ def problem_detail(request, code):
             result = run_code_util(
                 submitted_code, language, tc.input, base_path,
                 time_limit=problem.time_limit,
-                memory_limit=problem.memory_limit
+                memory_limit=problem.memory_limit,
+                use_docker=problem.use_docker,
             )
 
             if 'error' in result:
@@ -93,11 +94,29 @@ def problem_detail(request, code):
                 verdict = 'Wrong Answer'
                 break
 
-        submission = Submission.objects.create(
-            user=user, problem=problem,
-            code=submitted_code, language=language,
-            verdict=verdict
-        )
+            # Construct path: BASE_DIR/submission_files/submissions/user_<id>/submission_<uuid>/
+            user_id = request.user.id
+            submission_uid = str(uuid.uuid4())
+            code_dir = Path(settings.BASE_DIR) / 'submission_files' / 'submissions' / f'user_{user_id}' / f'sub_{submission_uid}'
+            code_dir.mkdir(parents=True, exist_ok=True)
+
+            # Determine file extension
+            ext_map = {'python': '.py', 'cpp': '.cpp', 'c': '.c', 'java': '.java'}
+            file_ext = ext_map.get(language, '.txt')
+            filename = f"solution{file_ext}"
+            code_file_path = code_dir / filename
+            code_file_path.write_text(submitted_code)
+
+            # Save to DB with path
+            submission = Submission.objects.create(
+                user=user,
+                problem=problem,
+                code=submitted_code,
+                language=language,
+                verdict=verdict,
+                code_file_path=str(code_file_path.relative_to(settings.BASE_DIR))  # Make it project-relative
+            )
+
         return redirect('submission_detail', id=submission.id)
 
     return render(request, 'problems/problem_detail.html', {

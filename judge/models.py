@@ -19,6 +19,7 @@ class Submission(models.Model):
     language = models.CharField(max_length=20)  # e.g., 'Python', 'Java', etc.
     verdict = models.CharField(max_length = 50) 
     submitted_at = models.DateTimeField(default=timezone.now)
+    code_file_path = models.TextField(blank=True, null=True)  # Path to the code file if stored
 
 
     def __str__(self):
@@ -75,6 +76,7 @@ class ContestSubmission(models.Model):
     language = models.CharField(max_length=20)  # 'python', 'c', 'cpp', 'java'
     verdict = models.CharField(max_length=20, blank=True)  # 'AC', 'WA', etc.
     time_submitted = models.DateTimeField(auto_now_add=True)
+    code_file_path = models.TextField(blank=True, null=True)  # Path to the code file if stored
 
     class Meta:
         ordering = ['time_submitted']

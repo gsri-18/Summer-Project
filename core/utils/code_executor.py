@@ -9,7 +9,12 @@ import shutil
 ext_map = {'python': '.py', 'c': '.c', 'cpp': '.cpp', 'java': '.java'}
 
 def run_code_util(code, language, input_data, base_path,
-                  time_limit=1, memory_limit=128):
+                  time_limit=1, memory_limit=128, use_docker=False):
+    
+    if use_docker:
+        return run_in_docker(code, language, input_data, time_limit, memory_limit)
+
+
     uid = str(uuid.uuid4())
     base_path = Path(base_path)
     code_dir = base_path / 'code'
@@ -109,3 +114,82 @@ def run_code_util(code, language, input_data, base_path,
         )
         if delete_toggle:
             shutil.rmtree(base_path, ignore_errors=True)
+
+
+
+def run_in_docker(code, language, input_data, time_limit, memory_limit):
+
+    uid = str(uuid.uuid4())
+    base_dir = Path(settings.BASE_DIR) / "submission_files" / "docker_temp" / uid
+    base_dir.mkdir(parents=True, exist_ok=True)
+
+    ext_map = {'python': '.py', 'cpp': '.cpp', 'c': '.c', 'java': '.java'}
+    file_ext = ext_map.get(language)
+    if not file_ext:
+        return {'error': 'Unsupported language'}
+
+    filename = 'Main.java' if language == 'java' else f'code_{uid}{file_ext}'
+    code_file = base_dir / filename
+    input_file = base_dir / "input.txt"
+    output_file = base_dir / "output.txt"
+
+    code_file.write_text(code)
+    input_file.write_text(input_data)
+    print("🐳 [Docker] Mount base_dir:", base_dir)
+    print("📝 Writing code to:", code_file)
+    print("📝 Writing input to:", input_file)
+    print("✅ Code file exists?", code_file.exists())
+    print("✅ Input file exists?", input_file.exists())
+
+
+    docker_cmd = [
+        "docker", "run", "--rm",
+        "-v", f"{base_dir}:/runner",
+        "--cpus", "1.0",
+        "--network", "none",
+        "codeverse-runner",
+        "/scripts/run_code.sh",
+        language,                      # $1 -> LANG
+        f"/runner/{code_file.name}",   # $2 -> CODE_FILE
+        f"/runner/{input_file.name}",  # $3 -> INPUT_FILE
+        f"/runner/{output_file.name}", # $4 -> OUTPUT_FILE
+        str(time_limit),               # $5 -> TIME_LIMIT
+        str(memory_limit)              # $6 -> MEMORY_LIMIT ✅ (was missing!)
+    ]
+
+
+    try:
+        result = subprocess.run(
+            docker_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=time_limit + 3
+        )
+
+        if result.returncode != 0:
+            return {
+                'error': 'Runtime Error',
+                'details': result.stderr.decode().strip()
+            }
+
+        output = output_file.read_text().strip()
+
+        print("📤 Docker output:", output_file.read_text().strip() if output_file.exists() else "⚠️ Output file missing")
+
+
+        return {'output': output}
+
+    except subprocess.TimeoutExpired:
+        return {'error': 'Time Limit Exceeded'}
+    except Exception as e:
+        return {'error': 'Unexpected Error', 'details': str(e)}
+    finally:
+        # delete_toggle = (
+        #     settings.DELETE_RUN_FILES_AFTER_EXECUTION if 'runs' in str(base_dir) else
+        #     settings.DELETE_SUBMISSION_FILES_AFTER_EVALUATION
+        # )
+        # if delete_toggle:
+        #     shutil.rmtree(base_dir, ignore_errors=True)
+        #     print("🗑️ Docker temp files deleted:", base_dir)
+        pass
+

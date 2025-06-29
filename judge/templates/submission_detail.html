@@ -31,8 +31,22 @@
     {% endwith %}
     </p>
   <hr>
-  <h4>Your Code:</h4>
-  <pre class="p-3 rounded bg-dark text-light"><code>{{ submission.code }}</code></pre>
+  <h4>Submitted Code:</h4>
+  <pre style="
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 1rem;
+  border-radius: 8px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  border: 1px solid #334155;
+  box-shadow: 0 0 10px rgba(0,255,255,0.05);
+  ">{{ code_content }}</pre>
+
+  </pre>
+  
 
   <a href="{% url 'problem_list' %}" class="btn btn-outline-primary mt-3">🔙 Back to Problems</a>
 </div>

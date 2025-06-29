@@ -23,7 +23,8 @@ def handle_run_code_view_logic(request):
         input_data=custom_input,
         base_path=base_path,
         time_limit=time_limit,
-        memory_limit=memory_limit
+        memory_limit=memory_limit,
+        use_docker=True,  # Assuming we want to use Docker for all runs
     )
 
     return result, 200

@@ -14,6 +14,9 @@ class Problem(models.Model):
     time_limit = models.IntegerField(default=1)  # seconds
     memory_limit = models.IntegerField(default=128)  # MB
 
+    # Docker toggle
+    use_docker = models.BooleanField(default=True)  # Whether to use Docker for this problem
+
     # NEW STRUCTURED FIELDS
     description = models.TextField()
     input_format = models.TextField(blank=True)

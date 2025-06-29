@@ -38,10 +38,28 @@ def login_view(request):
     return render(request, 'login.html', {'form': form})
 
 
+from pathlib import Path
+
 @login_required
 def submission_detail(request, id):
     submission = get_object_or_404(Submission, id=id)
-    return render(request, 'submission_detail.html', {'submission': submission})
+
+    # Handle code file reading with pathlib
+    code_path = Path(submission.code_file_path) if submission.code_file_path else None
+
+    if code_path and code_path.exists():
+        try:
+            code_content = code_path.read_text(encoding='utf-8')
+        except Exception as e:
+            code_content = f"⚠️ Error reading file: {str(e)}"
+    else:
+        code_content = submission.code  # fallback
+
+    return render(request, 'submission_detail.html', {
+        'submission': submission,
+        'code_content': code_content
+    })
+
 
 
 # --- Admin: Promote Users ---
@@ -221,7 +239,8 @@ def contest_problem_view(request, code, problem_code):
                 test.input,
                 base_path,
                 time_limit=problem.time_limit,
-                memory_limit=problem.memory_limit
+                memory_limit=problem.memory_limit,
+                use_docker=problem.use_docker,
             )
 
             if 'error' in result:
@@ -235,16 +254,30 @@ def contest_problem_view(request, code, problem_code):
                 break
         else:
             verdict = 'Accepted'
-
+ 
         # ✅ Save contest submission with verdict
+        user_id = request.user.id
+        submission_uid = str(uuid.uuid4())
+        code_dir = Path(settings.BASE_DIR) / 'submission_files' / 'contest_subs' / f'user_{user_id}' / f'sub_{submission_uid}'
+        code_dir.mkdir(parents=True, exist_ok=True)
+
+        ext_map = {'python': '.py', 'cpp': '.cpp', 'c': '.c', 'java': '.java'}
+        file_ext = ext_map.get(language, '.txt')
+        filename = f"solution{file_ext}"
+        code_file_path = code_dir / filename
+        code_file_path.write_text(code_submitted)
+
+        # Save the submission with path
         ContestSubmission.objects.create(
             user=request.user,
             contest=contest,
             problem=problem,
             code=code_submitted,
             language=language,
-            verdict=verdict
+            verdict=verdict,
+            code_file_path=str(code_file_path.relative_to(settings.BASE_DIR))  # Store relative path
         )
+
 
     return render(request, 'contests/contest_problem.html', {
         'contest': contest,
