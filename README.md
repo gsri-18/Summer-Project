@@ -1,43 +1,39 @@
-
 <p align="center">
   <img src="static/images/codeverse-logo.png" alt="CodeVerse Logo" width="180"/>
 </p>
 
-# CodeVerse – Online Judge Platform
+<h1 align="center">⚡️ CodeVerse – Online Judge Platform</h1>
 
-![Python](https://img.shields.io/badge/Python-3.12-blue.svg)
-![Django](https://img.shields.io/badge/Django-5.2-green.svg)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)
-![Status](https://img.shields.io/badge/Status-In_Progress-yellow.svg)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.12-blue.svg"/>
+  <img src="https://img.shields.io/badge/Django-5.2-green.svg"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-16-blue.svg"/>
+  <img src="https://img.shields.io/badge/Status-In_Progress-yellow.svg"/>
+</p>
 
-> **CodeVerse** is a secure, customizable Online Judge built with **Django**, **PostgreSQL**, and **subprocess-based code execution**.  
-> It supports **Python**, **C**, **C++**, and **Java**, provides real-time verdicts, and features a powerful **Monaco-based editor**. 
-
----
-
-## Features
-
-- Custom User Model (with full name & timestamps)
-- PostgreSQL-backed data integrity
-- Superuser controls to add/edit/delete problems and manage users
-- Clean submission pipeline with live verdicts: `Accepted`, `Wrong Answer`, `TLE`, `MLE`, `RTE`, `CE`
-- Time and memory limit enforcement (e.g. 5s cap, 128MB RAM cap)
-- Monaco Editor: syntax highlighting, smart layout, and theme support
-- Non-submission compiler mode (for trial runs)
-- User profile with overview, submission history, accuracy, and per-language verdict stats
-- Profile editing and password change support
-- Stylish UI with dark theme and clear feedback
-- Simplified the problem add feature, Just upload your Problem in .md format, using the template.
+> **CodeVerse** is a full-stack, real-time **Online Judge** built with 🔥 Django + PostgreSQL + subprocess-based sandboxing.  
+> Designed for performance, customizability, and clarity — it supports **Python**, **C**, **C++**, and **Java**, and features a modern **Monaco Editor** interface.
 
 ---
 
-## Current Branch
+## 🚀 Features
 
-**`main`** — all experimental branches (e.g., `monaco-integration-started`) have been merged and deleted.
+- 🧑‍💻 **Custom User Model** (full name, timestamps)
+- 🔐 **User Authentication** (Register, Login, Logout, Profile Edit)
+- 🧠 **Live Verdicts** on submission: `Accepted`, `Wrong Answer`, `TLE`, `MLE`, `RTE`, `CE`
+- 🧾 **Add Problems via Markdown** template
+- ⚙️ **Time & Memory Limit Enforcement** (up to 5s / 512MB supported)
+- 🧠 **Monaco Editor Integration**: themes, syntax highlight, vertical split UI
+- ⚖️ **Compiler-only Mode** for trial runs
+- 📈 **User Dashboard** with submission stats
+- 🧑‍⚖️ **Admin Panel** to manage Problems, TestCases, Users, and Submissions
+- 🧼 **File Cleanup Toggles** to control cleanup of generated code files
+- 🌌 **Cosmic UI** with animated intro, verdict box styling, and mobile responsiveness
+- 📦 **Folder Separation** for `runs/` vs `submissions/` to avoid collisions
 
 ---
 
-## Roadmap
+## 📚 Roadmap
 
 | Phase | Feature                                        | Status        |
 | ----- | ---------------------------------------------- | ------------- |
@@ -54,38 +50,35 @@
 
 ---
 
-## Tech Stack
+## 🧰 Tech Stack
 
-| Layer          | Technology                                |
-| -------------- | ----------------------------------------- |
-| Backend        | Django 5.2                                |
-| Database       | PostgreSQL 16                             |
-| Code Execution | Python `subprocess` (Docker planned)      |
-| Supported Lang | Python 3, C, C++, Java (JDK)              |
-| Frontend       | Bootstrap 5, Fira Code, custom CSS        |
-| Code Editor    | Monaco Editor (via CDN integration)       |
-| Admin Tools    | Django Admin + Custom UI controls         |
-| File Handling  | `submission_files/runs/` & `submissions/` |
+| Layer           | Technology                           |
+| --------------- | ------------------------------------ |
+| Backend         | Django 5.2                           |
+| Database        | PostgreSQL 16                        |
+| Code Execution  | Python `subprocess` (Docker planned) |
+| Supported Langs | Python, C, C++, Java                 |
+| Frontend        | Bootstrap 5, custom CSS, Fira Code   |
+| Editor          | Monaco Editor (via CDN)              |
+| Admin Tools     | Django Admin Panel                   |
+| File Handling   | `runs/`, `submissions/` folders      |
 
 ---
 
-## System Requirements
+## 💻 System Requirements
 
-Install the following **globally** before running the project:
+The following **tools must be installed globally** on your system:
 
-| Language   | Toolchain       | Installation Hint                                                                                     |
+| Language   | Toolchain       | Install Guide                                                                                         |
 | ---------- | --------------- | ----------------------------------------------------------------------------------------------------- |
-| Python     | `python3`       | [Python.org](https://www.python.org/downloads/)                                                       |
-| C          | `gcc`           | Use `apt`, `brew`, or [MinGW](https://www.mingw-w64.org/) on Windows                                  |
+| Python     | `python3`       | [python.org](https://www.python.org/downloads/)                                                       |
+| C          | `gcc`           | `apt install gcc` or [MinGW](https://www.mingw-w64.org/)                                              |
 | C++        | `g++`           | Same as above                                                                                         |
 | Java       | `javac`, `java` | [Adoptium](https://adoptium.net) or [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) |
-| PostgreSQL | `psql`          | [Download](https://www.postgresql.org/download/)                                                      |
+| PostgreSQL | `psql`          | [Download PostgreSQL](https://www.postgresql.org/download/)                                           |
 
----
+### ✅ Version Check (Linux/macOS)
 
-## Checking Tool Versions
-
-### On Linux/macOS:
 ```bash
 gcc --version
 g++ --version
@@ -95,7 +88,7 @@ psql --version
 python3 --version
 ````
 
-### On Windows (CMD/PowerShell):
+### ✅ Version Check (Windows CMD)
 
 ```cmd
 gcc --version
@@ -108,9 +101,11 @@ python --version
 
 ---
 
-## Local Development Setup
+## 🛠️ Local Development Setup
 
-### Linux/macOS
+> Virtual environment is highly recommended.
+
+### 🐧 Linux/macOS
 
 ```bash
 git clone https://github.com/gsri-18/Summer-Project.git
@@ -125,9 +120,12 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### Windows
+### 🪟 Windows (CMD)
 
 ```cmd
+git clone https://github.com/gsri-18/Summer-Project.git
+cd Summer-Project
+
 python -m venv codeverse-env
 codeverse-env\Scripts\activate
 
@@ -137,62 +135,80 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+### 🪟 Windows (PowerShell)
+
+```powershell
+git clone https://github.com/gsri-18/Summer-Project.git
+cd Summer-Project
+
+python -m venv codeverse-env
+.\codeverse-env\Scripts\Activate.ps1
+
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
 ---
 
-## Superuser Access
+## 🔑 Superuser Access
 
-By default, newly registered users are **not** admins. To access the admin panel:
+To manage users, problems, and verdicts:
 
 ```bash
 python manage.py createsuperuser
 ```
 
 Then visit:
+👉 [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
-```
-http://127.0.0.1:8000/admin/
-```
-
-Use this to:
-
-* Manage problems/test cases
-* Promote/demote users
-* Monitor data directly
-
-Admin-only management also available from CodeVerse’s own UI via dropdown menus.
+You dont actually need to go to the /admin/ page to add problems, users with staff access can add problems, update and delete problems directly using the manage problems option in the admin dropdown.
 
 ---
 
-## Directory Structure
+## 📁 Project Structure
 
 <details>
-<summary>Expand to view structure</summary>
+<summary>Click to expand</summary>
 
 ```bash
 .
-├── codeverse/              # Django project settings
-├── codeverse-env/          # Virtual environment (local)
-├── judge/                  # Main app (models, views, templates)
-├── static/                 # Static files (CSS, images, JS)
-│   └── images/
-│       └── codeverse-logo.png
+├── codeverse/                  # Django project config
+├── core/                       # Core merged app (User, Problems, Submissions, etc.)
+├── judge/                      # Handles views, execution, templates
+├── problems/                   # Problem handling logic
+├── static/
+│   ├── css/
+│   ├── js/
+│   ├── monaco-themes/
+│   └── images/codeverse-logo.png
 ├── submission_files/
-│   ├── runs/               # Compiler-only runs
-│   └── submissions/        # Real submissions
-├── manage.py
+│   ├── runs/                   # For compiler-only runs
+│   └── submissions/            # For real submissions
+├── check_project_health.sh     # Optional dev script
+├── ojfinal_hld_Srivardhan_Ginjala.pdf
 ├── requirements.txt
-├── README.md
-├── ojfinal_hld_Srivardhan_Ginjala.pdf  # HLD Report
+├── manage.py
+└── README.md
 ```
 
 </details>
 
 ---
 
-## License
+## 📄 License
 
-This project is intended for academic and learning purposes.
-Commercial deployment or scaling will require appropriate Docker isolation and external sandboxing.
+This project is intended for academic and personal use.
+For production usage or competitive deployment, Docker-based isolation is strongly recommended.
 
+---
+
+### 👨‍🚀 Maintainer
+
+Made with love by [@gsri-18](https://github.com/gsri-18)
+Drop a ⭐ on the repo if you found it helpful!
+
+---
 
 
