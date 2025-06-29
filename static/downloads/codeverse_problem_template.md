@@ -4,7 +4,9 @@
 - Replace all <...> placeholders with actual content
 - DO NOT remove section headers (##), metadata labels (**Code:** etc.), or formatting
 - Do not use LaTeX ($...$), HTML tags, or extra markdown features
-- Wrap the sample input/output, test cases in ```, for better rendering, at the start and end.
+- Wrap the sample input/output in ```, for better rendering, at the start and end.
+- Do not wrap any test case inputs/outputs in ```, they should be plain text
+- Ensure the problem is self-contained and clear
 -->
 
 # <Problem Title>

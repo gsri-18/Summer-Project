@@ -1,0 +1,41 @@
+body {
+    font-family: 'Fira Code', monospace;
+}
+
+a:focus,
+a:active,
+button:focus,
+button:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid #4da6ff;
+    outline-offset: 2px;
+}
+
+.helptext,
+.errorlist,
+.form-text,
+.text-muted {
+    color: #aad4ff !important;
+    font-size: 0.9rem;
+}
+
+input,
+select,
+textarea {
+    background-color: #14203C !important;
+    border: 1px solid #1a75ff !important;
+    color: #cbe7ff !important;
+    border-radius: 0.5rem !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #4da6ff !important;
+    box-shadow: 0 0 8px #4da6ff88 !important;
+}

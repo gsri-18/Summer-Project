@@ -3,357 +3,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>
-    {% block title %}CodeVerse{% endblock %}
-  </title>
+  <title>{% block title %}CodeVerse{% endblock %}</title>
 
   <!-- ✅ Favicon -->
   <link rel="icon" type="image/png" href="{% static 'images/codeverse-logo.png' %}">
 
-  <!-- Bootstrap 5 -->
+  <!-- ✅ External Styles -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-light.min.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-light.min.css">
+  <!-- ✅ Internal Static Styles -->
+  <link rel="stylesheet" href="{% static 'css/theme-dark.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/problem-card.css' %}">
+  <link rel="stylesheet" href="{% static 'css/verdict.css' %}">
+  <link rel="stylesheet" href="{% static 'css/custom-dropdown.css' %}">
 
-
-  <style>
-    body {
-      background: #0a1f44;
-      color: #cbe7ff;
-      {% comment %} font-family: 'Inter', sans-serif; {% endcomment %}
-      font-family: 'Fira Code', monospace;
-    }
-
-    body.light-mode {
-      background: #f7f9fc;
-      color: #0a1f44;
-    }
-    
-    body.dark-mode {
-      background: #0a1f44;
-      color: #cbe7ff;
-    }
-
-    .navbar-custom h3, .navbar-custom a {
-      transition: color .2s;
-    }
-    .navbar-custom h3:hover,
-    .navbar-custom a:hover {
-      color: #4da6ff;
-    }
-
-    /* 🔷 Updated problem card */
-    .problem-card {
-      background: linear-gradient(135deg, #0a1f44, #30cfcf22);
-      border: 1px solid #30cfcf55;
-      border-radius: 1rem;
-      padding: 1.6rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 8px 24px rgba(48, 207, 207, 0.25);
-      transition: transform .2s, box-shadow .2s;
-      backdrop-filter: blur(6px);
-      color: #cbe7ff;
-    }
-
-    .problem-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 24px rgba(48, 207, 207, 0.4);
-    }
-
-    .problem-card-title {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: #b3e0ff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-      margin-bottom: .5rem;
-    }
-
-    .problem-card-meta {
-      font-size: .9rem;
-      color: #89b9f0;
-      margin-bottom: 1rem;
-    }
-
-    .difficulty-badge {
-      font-size: .8rem;
-      padding: .35em .65em;
-      border-radius: .8rem;
-    }
-
-    .badge-easy    { background-color: #4da6ff; color: #fff; }
-    .badge-medium  { background-color: #1a75ff; color: #fff; }
-    .badge-hard    { background-color: #004ecc; color: #fff; }
-
-    .btn-solve {
-        background: linear-gradient(135deg, #1a75ff, #30cfcf);
-        border: none;
-        color: #fff;
-        font-size: 1rem;
-        font-weight: 600;
-        padding: 0.6rem 1.2rem;
-        border-radius: 0.6rem;
-        box-shadow: 0 4px 12px rgba(48, 207, 207, 0.4);
-        transition: all 0.25s ease-in-out;
-        letter-spacing: 0.5px;
-      }
-      
-      .btn-solve:hover {
-        background: linear-gradient(135deg, #30cfcf, #4da6ff);
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 6px 18px rgba(48, 207, 207, 0.6);
-      }
-      
-
-    a:focus, a:active,
-    button:focus, button:active {
-      outline: none !important;
-      box-shadow: none !important;
-    }
-
-    a:focus-visible, button:focus-visible {
-      outline: 2px solid #4da6ff;
-      outline-offset: 2px;
-    }
-
-    .helptext,
-    .errorlist,
-    .errorlist li,
-    .form-text,
-    .text-muted {
-      color: #aad4ff !important;
-      font-size: 0.9rem;
-    }
-
-    input, select, textarea {
-      background-color: #14203C !important;
-      border: 1px solid #1a75ff !important;
-      color: #cbe7ff !important;
-      border-radius: 0.5rem !important;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: #4da6ff !important;
-      box-shadow: 0 0 8px #4da6ff88 !important;
-    }
-
-    label {
-      color: #b3e0ff !important;
-    }
-
-    .editor-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-top: 2.5rem;
-    }
-
-    /* 🔷 Updated code editor */
-    .code-editor {
-      background: linear-gradient(135deg, #0a1f44, #30cfcf22);
-      border: 1px solid #30cfcf55;
-      border-radius: 0.75rem;
-      padding: 1rem;
-      color: #cbe7ff;
-      box-shadow: 0 8px 24px rgba(48, 207, 207, 0.2);
-      backdrop-filter: blur(6px);
-      width: 100% !important;
-      min-width: 100% !important;
-      max-width: 100%;
-      font-family: 'Fira Code', monospace;
-    }
-
-    /* Auth card */
-    .auth-card {
-      background: linear-gradient(135deg, #0a1f44, #30cfcf22);
-      border: 1px solid #30cfcf55;
-      border-radius: 1rem;
-      box-shadow: 0 8px 24px rgba(48, 207, 207, 0.25);
-      color: #cbe7ff;
-      padding: 2rem;
-      width: 100%;
-      max-width: 420px;
-      backdrop-filter: blur(8px);
-      margin: auto;
-    }
-
-    .auth-heading {
-      font-weight: 700;
-      font-size: 1.5rem;
-      text-align: center;
-      background: linear-gradient(45deg, #4da6ff, #cbe7ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 1.5rem;
-    }
-
-    .auth-card .btn {
-      background: #1a75ff;
-      color: #fff;
-      font-weight: 600;
-      transition: background 0.2s ease;
-      border-radius: 0.5rem;
-    }
-
-    .auth-card .btn:hover {
-      background: #4da6ff;
-    }
-
-    .auth-card .form-label {
-      color: #b3e0ff;
-      font-weight: 500;
-    }
-
-    .auth-card .helptext,
-    .auth-card .text-muted,
-    .auth-card .errorlist li {
-      color: #aad4ff !important;
-      font-size: 0.9rem;
-    }
-
-    .auth-card input,
-    .auth-card select,
-    .auth-card textarea {
-      background-color: #14203C !important;
-      border: 1px solid #1a75ff !important;
-      color: #cbe7ff !important;
-      border-radius: 0.5rem !important;
-    }
-
-    .auth-card input:focus,
-    .auth-card select:focus,
-    .auth-card textarea:focus {
-      border-color: #4da6ff !important;
-      box-shadow: 0 0 8px #4da6ff88 !important;
-    }
-    
-  </style>
-
-  <!-- verdict‐box overrides: load last so they win over Bootstrap -->
-  <style>
-    /* Container */
-    .verdict-ac  { background-color: #27ae60 !important; }
-    .verdict-wa  { background-color: #e74c3c !important; }
-    .verdict-tle { background-color: #d35400 !important; }
-    .verdict-mle { background-color: #c0392b !important; }
-    .verdict-ce  { background-color: #2980b9 !important; }
-    .verdict-re  { background-color: #8e44ad !important; }
-    .verdict-other { background-color: #7f8c8d !important; }
-    
-    .verdict-box {
-      padding: 0.45rem 0.9rem !important;
-      border-radius: 0.45rem !important;
-      font-weight: 600 !important;
-      display: inline-block !important;
-      letter-spacing: 0.3px !important;
-      margin-top: 0.5rem !important;
-      color: #fff !important;
-    }
-
-    .verdict-emoji {
-      margin-right: 0.4rem;
-      font-size: 1.2em;
-      vertical-align: middle;
-      filter: brightness(110%);
-    }
-
-    /* Make all placeholder texts brighter */
-    ::placeholder {
-      color: #cccccc !important; /* Light gray for visibility */
-      opacity: 1; /* Fully visible */
-    }
-    
-    /* For WebKit browsers (Chrome, Safari) */
-    ::-webkit-input-placeholder {
-      color: #cccccc !important;
-    }
-    
-    /* For Firefox */
-    ::-moz-placeholder {
-      color: #cccccc !important;
-    }
-    
-    /* For Internet Explorer 10-11 */
-    :-ms-input-placeholder {
-      color: #cccccc !important;
-    }
-    
-    /* For Edge */
-    ::-ms-input-placeholder {
-      color: #cccccc !important;
-    }
-    /* 🔆 Fix navbar button visibility at lighter gradient end */
-    /* 🚀 Cosmic Navbar Buttons for Login/Register */
-    .navbar .btn-outline-primary {
-      color: #30cfcf !important;
-      border-color: #30cfcf !important;
-      font-weight: 600;
-      text-shadow: 0 0 4px #30cfcf88;
-    }
-    
-    .navbar .btn-outline-primary:hover {
-      background-color: #30cfcf !important;
-      color: #0a1f44 !important;
-      box-shadow: 0 0 8px #30cfcf88;
-    }
-    
-    .navbar .btn-outline-success {
-      color: #6cff6c !important;
-      border-color: #6cff6c !important;
-      font-weight: 600;
-      text-shadow: 0 0 4px #6cff6c88;
-    }
-    
-    .navbar .btn-outline-success:hover {
-      background-color: #6cff6c !important;
-      color: #0a1f44 !important;
-      box-shadow: 0 0 8px #6cff6c88;
-    }
-
-    .custom-dropdown {
-      position: absolute;
-      top: 120%; /* Just below the button */
-      right: 0;
-      background: #14203C;
-      border: 1px solid #30cfcf55;
-      border-radius: 0.6rem;
-      padding: 0.5rem 0;
-      min-width: 200px;
-      z-index: 999;
-      display: none;
-      box-shadow: 0 6px 12px rgba(48, 207, 207, 0.25);
-    }
-    
-    .custom-dropdown li {
-      list-style: none;
-      padding: 0.4rem 1rem;
-      color: #cbe7ff;
-      cursor: pointer;
-    }
-    
-    .custom-dropdown li:hover {
-      background: #204a87;
-    }
-    
-    .custom-dropdown li.disabled {
-      color: #888;
-      cursor: not-allowed;
-    }
-    
-    .custom-dropdown li a {
-      color: inherit;
-      text-decoration: none;
-      display: block;
-    }
-    
-    
-  </style>
-
+  {% block extra_css %}{% endblock %}
 </head>
+
 <body class="container py-4 dark-mode"> 
   <!-- 🔹 Navbar -->
   <nav class="navbar navbar-expand-lg px-4 py-2 mb-4"
@@ -366,18 +37,17 @@
           style="filter: drop-shadow(0 0 4px #30cfcf);">
         CodeVerse
       </a>
-  
-      <!-- 🔹 Toggler for mobile -->
+
+      <!-- 🔹 Toggler -->
       <button class="navbar-toggler text-light border-light" type="button" data-bs-toggle="collapse"
         data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false"
         aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-  
+
       <!-- 🔹 Navbar Content -->
       <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
 
-        <!-- 🔹 Center greeting -->
         {% if request.user.is_authenticated %}
         <span class="navbar-text text-light mx-auto d-none d-lg-block fw-semibold">
           👋 Hello, {{ request.user.full_name|default:request.user.username }}
@@ -386,7 +56,7 @@
 
         <ul class="navbar-nav align-items-center gap-2 ms-auto">
 
-          <!-- 📘 Explore Dropdown -->
+          <!-- 📘 Explore -->
           <li class="nav-item position-relative">
             <button class="btn btn-outline-light btn-sm" onclick="toggleDropdown('explore-menu')">
               📘 Explore ⌄
@@ -400,31 +70,25 @@
           </li>
 
           {% if request.user.is_staff or request.user.is_superuser %}
-          <!-- 🛠 Admin Dropdown -->
+          <!-- 🛠 Admin -->
           <li class="nav-item position-relative">
             <button class="btn btn-outline-info btn-sm text-light" onclick="toggleDropdown('admin-menu')">
               🛠 Admin ⌄
             </button>
             <ul id="admin-menu" class="custom-dropdown">
               {% if request.user.is_staff %}
-                <li><a href="{% url 'manage_problems' %}">🧩 Manage Problems</a></li>
+              <li><a href="{% url 'manage_problems' %}">🧩 Manage Problems</a></li>
+              <li><a href="{% url 'add_contest' %}">➕ Make Contest</a></li>
               {% endif %}
-              {% if request.user.is_staff %}
-                <a class="btn btn-outline-light" href="{% url 'add_contest' %}">
-                  ➕ Make Contest
-                </a>
-            {% endif %}
               {% if request.user.is_superuser %}
-                <li><a href="{% url 'promote-users' %}">🎓 Promote Users</a></li>
+              <li><a href="{% url 'promote-users' %}">🎓 Promote Users</a></li>
               {% endif %}
             </ul>
           </li>
           {% endif %}
 
-        <!-- 🔒 Auth Buttons -->
-        <!-- 🔒 Profile Dropdown for Logged-in Users -->
-        {% if request.user.is_authenticated %}
-          <!-- 👤 Profile Dropdown -->
+          <!-- 🔒 User -->
+          {% if request.user.is_authenticated %}
           <li class="nav-item position-relative">
             <button class="btn btn-outline-light btn-sm" onclick="toggleDropdown('user-menu')">
               👤 {{ request.user.username }} ⌄
@@ -439,139 +103,43 @@
               </li>
             </ul>
           </li>
-
-        {% else %}
-        <div class="d-flex gap-2">
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'login' %}">Login</a>
-          <a class="btn btn-outline-success btn-sm" href="{% url 'register' %}">Register</a>
-        </div>
-        {% endif %}
-
-        <!-- 🌗 Dark Mode Toggle Button -->
-        <li class="nav-item">
-          <button id="darkToggle" class="btn btn-outline-light btn-sm">
-            🌗 Theme
-          </button>
-        </li>
-
+          {% else %}
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'login' %}">Login</a>
+            <a class="btn btn-outline-success btn-sm" href="{% url 'register' %}">Register</a>
+          </div>
+          {% endif %}
 
         </ul>
       </div>
-
     </div>
   </nav>
-  
-  <!-- 🔧 Dropdown Toggle Script -->
+
+  <!-- ✅ Content Block -->
+  {% block content %}{% endblock %}
+
+  <!-- ✅ Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <!-- ✅ Dropdown Script -->
   <script>
     function toggleDropdown(id) {
       const menu = document.getElementById(id);
-      menu.classList.toggle('show');
+      const isOpen = menu.style.display === 'block';
+      document.querySelectorAll('.custom-dropdown').forEach(d => d.style.display = 'none');
+      menu.style.display = isOpen ? 'none' : 'block';
     }
-  
-    // Close dropdowns on outside click
-    document.addEventListener('click', function (e) {
-      const dropdowns = document.querySelectorAll('.custom-dropdown');
-      dropdowns.forEach(dropdown => {
-        if (!dropdown.previousElementSibling.contains(e.target)) {
-          dropdown.classList.remove('show');
-        }
-      });
+
+    window.addEventListener('click', function (e) {
+      if (!e.target.closest('.nav-item')) {
+        document.querySelectorAll('.custom-dropdown').forEach(d => d.style.display = 'none');
+      }
     });
   </script>
-  
-  <!-- 🔧 Custom Dropdown Styles -->
-  <style>
-    .custom-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      z-index: 1000;
-      display: none;
-      background-color: #0a192f;
-      border: 1px solid #204a87;
-      border-radius: 0.5rem;
-      padding: 0.5rem 0;
-      min-width: 180px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-    }
-  
-    .custom-dropdown.show {
-      display: block;
-    }
-  
-    .custom-dropdown li {
-      list-style: none;
-    }
-  
-    .custom-dropdown a {
-      display: block;
-      padding: 8px 16px;
-      color: #e2e8f0;
-      text-decoration: none;
-    }
-  
-    .custom-dropdown a:hover {
-      background-color: #1a2b4c;
-    }
-  </style>
-  
 
-  {% block content %}{% endblock %}
-
-
-<!-- Bootstrap JS Bundle (required for dropdowns) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<script>
-  function toggleDropdown(id) {
-    const dropdown = document.getElementById(id);
-    const isOpen = dropdown.style.display === 'block';
-
-    // Close all other dropdowns
-    document.querySelectorAll('.custom-dropdown').forEach(d => d.style.display = 'none');
-
-    // Toggle current
-    dropdown.style.display = isOpen ? 'none' : 'block';
-  }
-
-  // Close dropdown when clicking outside
-  window.addEventListener('click', function (e) {
-    if (!e.target.closest('.nav-item')) {
-      document.querySelectorAll('.custom-dropdown').forEach(d => d.style.display = 'none');
-    }
-  });
-</script>
-
-<script>
-  const toggleBtn = document.getElementById("darkToggle");
-  let currentTheme = localStorage.getItem("theme") || "dark";
-
-  function applyTheme(theme) {
-    document.body.classList.remove("light-mode", "dark-mode");
-    document.body.classList.add(`${theme}-mode`);
-    monaco.editor.setTheme(theme === "light" ? "vs" : "vs-dark");
-    document.getElementById("theme-style").href = 
-      `{% static 'css/theme-' %}` + theme + `.css`;
-    localStorage.setItem("theme", theme);
-  }
-  
-  
-
-  toggleBtn.addEventListener("click", () => {
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-    applyTheme(newTheme);
-  });
-
-  // Apply on first load
-  window.addEventListener("load", () => {
-    applyTheme(currentTheme);
-  });
-</script>
-
-
-{% block monaco_scripts %}{% endblock %}
-
+  {% block monaco_scripts %}{% endblock %}
+  {% block extra_js %}{% endblock %}
 
 </body>
 </html>

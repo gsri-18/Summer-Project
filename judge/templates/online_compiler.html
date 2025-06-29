@@ -41,10 +41,22 @@
 
   #custom-input,
   #custom-output {
-    background: #fff;
-    color: #000;
+    background-color: #0e2239; !important;
+    color: #e2e8f0; !important;
+    border: 1px solid #204a87; !important;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
   }
 
+  #custom-input::placeholder {
+    color: #a0aec0 !important;
+    opacity: 0.8;
+  }
+  
+  #custom-output::placeholder {
+    color: #a0aec0 !important;
+    opacity: 0.8;
+  }
   .btn-run {
     white-space: nowrap;
   }

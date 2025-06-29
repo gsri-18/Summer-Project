@@ -1,0 +1,41 @@
+.verdict-box {
+    padding: 0.45rem 0.9rem;
+    border-radius: 0.45rem;
+    font-weight: 600;
+    display: inline-block;
+    color: #fff;
+}
+
+.verdict-ac {
+    background-color: #27ae60;
+}
+
+.verdict-wa {
+    background-color: #e74c3c;
+}
+
+.verdict-tle {
+    background-color: #d35400;
+}
+
+.verdict-mle {
+    background-color: #c0392b;
+}
+
+.verdict-ce {
+    background-color: #2980b9;
+}
+
+.verdict-re {
+    background-color: #8e44ad;
+}
+
+.verdict-other {
+    background-color: #7f8c8d;
+}
+
+.verdict-emoji {
+    margin-right: 0.4rem;
+    font-size: 1.2em;
+    vertical-align: middle;
+}

@@ -1,0 +1,49 @@
+.problem-card {
+    background: linear-gradient(135deg, #0a1f44, #30cfcf22);
+    border: 1px solid #30cfcf55;
+    border-radius: 1rem;
+    padding: 1.6rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 8px 24px rgba(48, 207, 207, 0.25);
+    transition: transform .2s, box-shadow .2s;
+    backdrop-filter: blur(6px);
+    color: #cbe7ff;
+}
+
+.problem-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(48, 207, 207, 0.4);
+}
+
+.problem-card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #b3e0ff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.problem-card-meta {
+    font-size: .9rem;
+    color: #89b9f0;
+}
+
+.difficulty-badge {
+    font-size: .8rem;
+    padding: .35em .65em;
+    border-radius: .8rem;
+}
+
+.badge-easy {
+    background-color: #4da6ff;
+    color: #fff;
+}
+
+.badge-medium {
+    background-color: #1a75ff;
+    color: #fff;
+}
+
+.badge-hard {
+    background-color: #004ecc;
+    color: #fff;
+}
