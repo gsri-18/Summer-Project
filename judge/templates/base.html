@@ -47,69 +47,69 @@
 
       <!-- 🔹 Navbar Content -->
       <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
-
         {% if request.user.is_authenticated %}
         <span class="navbar-text text-light mx-auto d-none d-lg-block fw-semibold">
           👋 Hello, {{ request.user.full_name|default:request.user.username }}
         </span>
         {% endif %}
-
+        
         <ul class="navbar-nav align-items-center gap-2 ms-auto">
-
+        
           <!-- 📘 Explore -->
           <li class="nav-item position-relative">
-            <button class="btn btn-outline-light btn-sm" onclick="toggleDropdown('explore-menu')">
+            <button class="btn btn-info btn-sm text-white fw-semibold shadow-sm" onclick="toggleDropdown('explore-menu')">
               📘 Explore ⌄
             </button>
-            <ul id="explore-menu" class="custom-dropdown">
-              <li><a href="{% url 'home' %}">🏠 Home</a></li>
-              <li><a href="{% url 'problem_list' %}">📘 Problems</a></li>
-              <li><a href="{% url 'online_compiler' %}">💻 Compiler</a></li>
-              <li><a href="{% url 'ai_suggestions' %}">🤖 AI Assistant</a></li>
+            <ul id="explore-menu" class="custom-dropdown bg-primary text-white rounded-3 shadow">
+              <li><a class="dropdown-item text-white fw-semibold" href="{% url 'home' %}">🏠 Home</a></li>
+              <li><a class="dropdown-item text-white fw-semibold" href="{% url 'problem_list' %}">📘 Problems</a></li>
+              <li><a class="dropdown-item text-white fw-semibold" href="{% url 'online_compiler' %}">💻 Compiler</a></li>
+              <li><a class="dropdown-item text-white fw-semibold" href="{% url 'ai_suggestions' %}">🤖 AI Assistant</a></li>
             </ul>
           </li>
-
+        
           {% if request.user.is_staff or request.user.is_superuser %}
           <!-- 🛠 Admin -->
           <li class="nav-item position-relative">
-            <button class="btn btn-outline-info btn-sm text-light" onclick="toggleDropdown('admin-menu')">
+            <button class="btn btn-warning btn-sm text-dark fw-semibold shadow-sm" onclick="toggleDropdown('admin-menu')">
               🛠 Admin ⌄
             </button>
-            <ul id="admin-menu" class="custom-dropdown">
+            <ul id="admin-menu" class="custom-dropdown bg-warning text-dark rounded-3 shadow">
               {% if request.user.is_staff %}
-              <li><a href="{% url 'manage_problems' %}">🧩 Manage Problems</a></li>
-              <li><a href="{% url 'add_contest' %}">➕ Make Contest</a></li>
+              <li><a class="dropdown-item text-dark fw-semibold" href="{% url 'manage_problems' %}">🧩 Manage Problems</a></li>
+              <li><a class="dropdown-item text-dark fw-semibold" href="{% url 'add_contest' %}">➕ Make Contest</a></li>
               {% endif %}
               {% if request.user.is_superuser %}
-              <li><a href="{% url 'promote-users' %}">🎓 Promote Users</a></li>
+              <li><a class="dropdown-item text-dark fw-semibold" href="{% url 'promote-users' %}">🎓 Promote Users</a></li>
               {% endif %}
             </ul>
           </li>
           {% endif %}
-
+        
           <!-- 🔒 User -->
           {% if request.user.is_authenticated %}
           <li class="nav-item position-relative">
-            <button class="btn btn-outline-light btn-sm" onclick="toggleDropdown('user-menu')">
+            <button class="btn btn-dark btn-sm text-white fw-semibold shadow-sm" onclick="toggleDropdown('user-menu')">
               👤 {{ request.user.username }} ⌄
             </button>
-            <ul id="user-menu" class="custom-dropdown">
-              <li><a href="{% url 'profile' %}">🧑‍💻 My Profile</a></li>
+            <ul id="user-menu" class="custom-dropdown bg-dark text-white rounded-3 shadow">
+              <li><a class="dropdown-item text-white fw-semibold" href="{% url 'profile' %}">🧑‍💻 My Profile</a></li>
               <li>
                 <form method="post" action="{% url 'logout' %}">
                   {% csrf_token %}
-                  <button type="submit" style="background: none; border: none; color: white;">🚪 Logout</button>
+                  <button type="submit" class="dropdown-item text-white fw-semibold">🚪 Logout</button>
                 </form>
               </li>
             </ul>
           </li>
           {% else %}
           <div class="d-flex gap-2">
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'login' %}">Login</a>
-            <a class="btn btn-outline-success btn-sm" href="{% url 'register' %}">Register</a>
+            <a class="btn btn-primary btn-sm fw-semibold" href="{% url 'login' %}">Login</a>
+            <a class="btn btn-success btn-sm fw-semibold" href="{% url 'register' %}">Register</a>
           </div>
           {% endif %}
-
+        </ul>
+        
         </ul>
       </div>
     </div>

@@ -130,7 +130,7 @@ STATIC_URL = '/static/'
 
 from pathlib import Path
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # ✅ This is your static folder: ~/Desktop/CodeVerse/static/
+    BASE_DIR / "static",  # This is your static folder: ~/Desktop/CodeVerse/static/
 ]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
