@@ -161,18 +161,21 @@
     </div>
 
     {% for sub in submissions %}
-      <div class="submission-box">
-        <strong>{{ sub.problem.name }}</strong><br>
-        <small>Language: {{ sub.language }}</small><br>
-        <span style="color: lightgreen;">Verdict: {{ sub.verdict }}</span><br>
-        <small>Submitted: {{ sub.submitted_at|date:"M d, Y – H:i" }}</small>
-        <a href="{% url 'submission_detail' sub.id %}" class="btn" style="background-color: #0ea5e9; margin-top: 8px;">
-          🔍 View Code
-        </a>
-      </div>
+    <div class="submission-box" style="position: relative;">
+      <a href="{% url 'submission_detail' sub.id %}" class="btn"
+         style="position: absolute; top: 12px; right: 12px; background-color: #0ea5e9; padding: 0.4rem 0.8rem;">
+        🔍 View Code
+      </a>
+  
+      <strong>{{ sub.problem.name }}</strong><br>
+      <small>Language: {{ sub.language }}</small><br>
+      <span style="color: lightgreen;">Verdict: {{ sub.verdict }}</span><br>
+      <small>Submitted: {{ sub.submitted_at|date:"M d, Y – H:i" }}</small>
+    </div>
     {% empty %}
       <p>No submissions yet!</p>
     {% endfor %}
+  
   </div>
 
   <!-- 📊 Stats -->
