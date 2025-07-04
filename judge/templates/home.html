@@ -182,7 +182,7 @@
 
 <!-- ⚡ Intro Animation -->
 <div id="intro-animation">
-  <button id="skip-btn">Skip Intro</button>
+  <button id="skip-btn">Teleport to CodeVerse 🚀</button>
   <button id="launch-btn">🚀 Launch CodeVerse</button>
   <div id="terminal-pane">
     <pre class="terminal-text" id="terminal-lines"></pre>
@@ -267,7 +267,7 @@
     if (charIndex < currentLine.length) {
       terminalEl.textContent += currentLine.charAt(charIndex);
       charIndex++;
-      setTimeout(typeChar, 27);
+      setTimeout(typeChar, 18);
     } else {
       terminalEl.textContent += "\n";
       charIndex = 0;
