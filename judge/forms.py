@@ -106,6 +106,14 @@ class ContestForm(forms.ModelForm):
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+from django.forms import BaseInlineFormSet
+from django.forms.models import modelformset_factory
+from django.forms import formset_factory
+
+# Combines ProblemForm + TestCaseFormSet into one logical unit
+ProblemFormSet = formset_factory(ProblemForm, extra=1)
+
+
 
     
 

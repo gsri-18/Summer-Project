@@ -1,0 +1,18 @@
+<tr id="problem-{{ problem.code }}">
+  <td>{{ forloop.counter }}</td>
+  <td><code>{{ problem.code }}</code></td>
+  <td>{{ problem.name }}</td>
+  <td>
+    {% if problem.difficulty == "Easy" %}
+      <span class="badge bg-success">Easy</span>
+    {% elif problem.difficulty == "Medium" %}
+      <span class="badge bg-warning text-dark">Medium</span>
+    {% else %}
+      <span class="badge bg-danger">Hard</span>
+    {% endif %}
+  </td>
+  <td>
+    <button type="button" class="btn btn-sm btn-outline-primary edit-problem-btn" data-code="{{ problem.code }}">✏️ Edit</button>
+    <button type="button" class="btn btn-sm btn-outline-danger delete-problem-btn" data-code="{{ problem.code }}">🗑️ Delete</button>
+  </td>
+</tr>

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Create Contest – CodeVerse{% endblock %}
+
+{% block content %}
+<style>
+  ::placeholder { color: #ccc; }
+  .form-control, .form-select, textarea {
+    background-color: #001d3d; color: white; border: 1px solid #444;
+  }
+  .card { background: #001833; border: 1px solid #0059ff; }
+  .card-header { background: #003366; font-weight: bold; color: white; }
+</style>
+
+<div class="container mt-5 text-light">
+  <h2 class="fw-bold mb-4">🚀 Create Contest</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card mb-4">
+      <div class="card-header">🎯 Contest Info</div>
+      <div class="card-body">{{ contest_form.as_p }}</div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="fw-bold">🧠 Problems</h4>
+      <button type="button" id="toggle-form" class="btn btn-outline-info btn-sm">➕ Add Problem</button>
+    </div>
+
+    <!-- Hidden form section -->
+    <div id="problem-form-container" style="display: none;">
+      <div id="problem-dynamic-form">
+        {% include "problems/partials/problem_with_testcases.html" %}
+      </div>
+    </div>
+
+    <!-- Problem list -->
+    <table class="table text-light">
+      <thead>
+        <tr><th>#</th><th>Code</th><th>Name</th><th>Difficulty</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="problem-list">
+        {% for problem in contest_problems %}
+          {% include "problems/partials/problem_card.html" %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-end mt-4">
+      <button type="submit" name="create_or_update_contest" class="btn btn-success btn-lg">✅ Create Contest</button>
+    </div>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleBtn = document.getElementById("toggle-form");
+  const formContainer = document.getElementById("problem-form-container");
+
+  toggleBtn.addEventListener("click", () => {
+    formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+    toggleBtn.textContent = formContainer.style.display === "none" ? "➕ Add Problem" : "➖ Hide";
+  });
+
+  const contestForm = document.querySelector("form");
+  contestForm.addEventListener("submit", (e) => {
+    if (document.querySelector('[name="save_problem"]')) {
+      e.preventDefault();
+      const formData = new FormData(contestForm);
+      fetch("{% url 'contest_problem_add' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+        body: formData,
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById("problem-list").insertAdjacentHTML("beforeend", data.html);
+          document.getElementById("problem-form-container").style.display = "none";
+          toggleBtn.textContent = "➕ Add Problem";
+        } else {
+          document.getElementById("problem-dynamic-form").innerHTML = data.html;
+        }
+      });
+    }
+  });
+
+  // Delete Problem
+  document.addEventListener("click", e => {
+    if (e.target.classList.contains("delete-problem-btn")) {
+      const code = e.target.dataset.code;
+      fetch(`/contest/problem/delete/${code}/`, {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById(`problem-${code}`).remove();
+        }
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

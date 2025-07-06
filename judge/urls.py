@@ -31,5 +31,8 @@ urlpatterns = [
     path('contests/<slug:code>/', views.contest_detail_view, name='contest_detail'),
     path('contests/<slug:code>/<str:problem_code>/', views.contest_problem_view, name='contest_problem'),
     
+    path('contest/problem/add/', views.contest_problem_add, name='contest_problem_add'),
+    path('contest/problem/edit/<str:code>/', views.contest_problem_edit, name='contest_problem_edit'),
+    path('contest/problem/delete/<str:code>/', views.contest_problem_delete, name='contest_problem_delete'),
 
 ]

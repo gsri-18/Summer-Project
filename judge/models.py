@@ -31,7 +31,7 @@ from django.utils import timezone
 
 class Contest(models.Model):
     title = models.CharField(max_length=100)
-    code = models.SlugField(unique=True)  # e.g., W1, JUNE24, etc.
+    code = models.SlugField(unique=True)  
     description = models.TextField(blank=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
@@ -41,6 +41,7 @@ class Contest(models.Model):
         on_delete=models.CASCADE,
         related_name='created_contests'
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def is_active(self):
         now = timezone.now()

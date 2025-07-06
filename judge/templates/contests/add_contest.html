@@ -1,14 +1,148 @@
 {% extends 'base.html' %}
-{% block title %}Create New Contest – CodeVerse{% endblock %}
+{% load static %}
+
+{% block title %}Create Contest – CodeVerse{% endblock %}
+
+<style>
+  ::placeholder {
+    color: #ccc !important;
+    opacity: 1;
+  }
+  .form-control, .form-select, textarea {
+    background-color: #001d3d !important;
+    color: #ffffff !important;
+    border: 1px solid #444 !important;
+  }
+  .form-control:focus, .form-select:focus, textarea:focus {
+    background-color: #002a52 !important;
+    color: #fff !important;
+    border-color: #4f9df0 !important;
+    box-shadow: 0 0 5px rgba(79, 157, 240, 0.5);
+  }
+
+  .card {
+    background-color: #001833 !important;
+    border: 1px solid #0059ff;
+    color: #fff;
+  }
+  .card-header {
+    background-color: #003366 !important;
+    font-weight: bold;
+  }
+  .btn-outline-info {
+    border-color: #4fd3ff;
+    color: #4fd3ff;
+  }
+  .btn-outline-info:hover {
+    background-color: #4fd3ff;
+    color: #001d3d;
+  }
+</style>
 
 {% block content %}
-<div class="container mt-5">
-  <h2>Create a New Contest</h2>
-  <hr />
-  <form method="post" novalidate>
+<div class="container mt-5 text-light">
+  <h2 class="fw-bold mb-4">🚀 Create Contest</h2>
+
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary">🚀 Create Contest</button>
+
+    <!-- 🎯 Contest Info -->
+    <div class="card mb-4">
+      <div class="card-header">🎯 Contest Info</div>
+      <div class="card-body">
+        {{ contest_form.as_p }}
+      </div>
+    </div>
+
+    <!-- 🧠 Problem Section Header + Add Button -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0 fw-bold">🧠 Problems</h4>
+      <button type="button" id="add-problem-btn" class="btn btn-outline-info btn-sm">
+        ➕ Add Problem
+      </button>
+    </div>
+
+    <!-- 📦 Problem Form Container (Initially Hidden) -->
+    <div id="problem-form-container" style="display: none;">
+      <!-- 📄 Upload Markdown -->
+      <div class="mb-3">
+        <label for="markdown-file" class="form-label fw-bold">📄 Upload Problem (Markdown):</label>
+        <input type="file" class="form-control" id="markdown-file" accept=".md">
+      </div>
+
+      <!-- 🧠 Hidden Markdown Textarea -->
+      <textarea id="markdown-input" class="form-control mb-3" rows="6" style="display:none;"></textarea>
+
+
+      
+      <!-- 💾 Save/Edit/Delete Problem Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="submit" name="save_problem" class="btn btn-success btn-sm">💾 Save Problem</button>
+        <button type="button" class="btn btn-warning btn-sm">✏️ Edit Problem</button>
+        <button type="button" class="btn btn-danger btn-sm remove-problem">🗑️ Delete</button>
+      </div>
+
+      <!-- 🧩 Problem Form & Testcases -->
+      {% include "problems/partials/problem_with_testcases.html" %}
+    </div>
+
+    <!-- ✅ Create Contest Button -->
+    <div class="d-flex justify-content-end mt-4">
+      <button type="submit" name="create_or_update_contest" class="btn btn-success btn-lg">✅ Create Contest</button>
+    </div>
   </form>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleBtn = document.getElementById("add-problem-btn");
+  const formContainer = document.getElementById("problem-form-container");
+
+  toggleBtn.addEventListener("click", () => {
+    const isHidden = formContainer.style.display === "none";
+    formContainer.style.display = isHidden ? "block" : "none";
+    toggleBtn.textContent = isHidden ? "➖ Hide Problem" : "➕ Add Problem";
+  });
+
+  document.getElementById("markdown-file")?.addEventListener("change", function () {
+    const file = this.files[0];
+    if (file && file.name.endsWith(".md")) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("markdown-input").value = e.target.result;
+      };
+      reader.readAsText(file);
+    } else {
+      alert("Please upload a valid .md file.");
+    }
+  });
+
+
+  // Testcase Add/Delete
+  const container = document.getElementById("test-cases-container");
+  const addBtn = document.getElementById("add-test-case");
+  const totalForms = document.querySelector("#id_testcases-TOTAL_FORMS");
+
+  addBtn?.addEventListener("click", () => {
+    const formCount = parseInt(totalForms.value);
+    const firstForm = container.querySelector(".test-case-row");
+    const newForm = firstForm.cloneNode(true);
+
+    newForm.querySelectorAll("textarea").forEach(f => f.value = "");
+    newForm.querySelectorAll("input[type=checkbox]").forEach(cb => cb.checked = false);
+    newForm.innerHTML = newForm.innerHTML.replaceAll(/testcases-(\d+)/g, `testcases-${formCount}`);
+    totalForms.value = formCount + 1;
+    container.appendChild(newForm);
+  });
+
+  document.addEventListener("click", e => {
+    if (e.target.classList.contains("remove-test-case")) {
+      const row = e.target.closest(".test-case-row");
+      const delCb = row.querySelector(".delete-checkbox");
+      if (delCb) { delCb.checked = true; row.style.display = "none"; }
+      else row.remove();
+    }
+  });
+});
+</script>
 {% endblock %}

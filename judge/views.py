@@ -178,7 +178,7 @@ def profile_view(request):
         'profile_form': profile_form,
         'password_form': password_form,
     })
-
+ 
 
 from .models import Contest, Problem, ContestSubmission
 from django.shortcuts import get_object_or_404
@@ -286,25 +286,99 @@ def contest_problem_view(request, code, problem_code):
     })
 
 
-from .forms import ContestForm  
+from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+
+from .forms import ContestForm
+from judge.forms import ProblemForm, TestCaseFormSet
+from .models import Contest
+from problems.models import Problem
 
 @login_required
 @staff_member_required
 def add_contest_view(request):
+    contest_form = ContestForm(request.POST or None)
+    contest_problems = []
+
+    if request.method == 'POST' and 'create_or_update_contest' in request.POST:
+        if contest_form.is_valid():
+            contest = contest_form.save(commit=False)
+            contest.created_by = request.user
+            contest.save()
+            contest_form.save_m2m()
+            messages.success(request, "Contest created.")
+            return redirect('add_contest')
+        else:
+            messages.error(request, "Contest form invalid.")
+
+    latest = Contest.objects.filter(created_by=request.user).order_by('-created_at').first()
+    if latest:
+        contest_problems = latest.problems.all()
+
+    return render(request, 'contests/add_contest.html', {
+        'contest_form': contest_form,
+        'contest_problems': contest_problems
+    })
+
+
+@staff_member_required
+@require_POST
+def contest_problem_add(request):
+    form = ProblemForm(request.POST)
+    formset = TestCaseFormSet(request.POST)
+
+    if form.is_valid() and formset.is_valid():
+        problem = form.save()
+        for tc in formset.save(commit=False):
+            tc.problem = problem
+            tc.save()
+
+        # Add to latest contest
+        latest = Contest.objects.filter(created_by=request.user).order_by('-created_at').first()
+        if latest:
+            latest.problems.add(problem)
+
+        html = render_to_string("problems/partials/problem_card.html", {"problem": problem}, request=request)
+        return JsonResponse({'success': True, 'html': html, 'code': problem.code})
+
+    html = render_to_string("problems/partials/problem_with_testcases.html", {
+        'problem_form': form, 'formset': formset
+    }, request=request)
+    return JsonResponse({'success': False, 'html': html})
+
+
+@staff_member_required
+def contest_problem_edit(request, code):
+    problem = get_object_or_404(Problem, code=code)
+    form = ProblemForm(request.POST or None, instance=problem)
+    formset = TestCaseFormSet(request.POST or None, instance=problem)
     if request.method == 'POST':
-        form = ContestForm(request.POST)
-        if form.is_valid():
-            contest = form.save(commit=False)  # Don't commit yet!
-            contest.created_by = request.user  # Set the missing field
-            contest.save()                     # Now save safely
-            form.save_m2m()                    # For the ManyToManyField: problems
-            return redirect('contest_list')    # Your contest listing page
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            html = render_to_string('problems/partials/problem_card.html', {'problem': problem}, request=request)
+            return JsonResponse({'success': True, 'html': html})
+        html = render_to_string('problems/partials/problem_with_testcases.html', {
+            'problem_form': form, 'formset': formset
+        }, request=request)
+        return JsonResponse({'success': False, 'form_html': html})
+    html = render_to_string('problems/partials/problem_with_testcases.html', {
+        'problem_form': form, 'formset': formset
+    }, request=request)
+    if form.is_valid() and formset.is_valid():
+        ...
+        return JsonResponse({'success': True, 'html': html, 'code': problem.code})
     else:
-        form = ContestForm()
-    return render(request, 'contests/add_contest.html', {'form': form})
+        return JsonResponse({'success': False, 'form_html': html})
 
-
-
-
-
+@staff_member_required
+@require_POST
+def contest_problem_delete(request, code):
+    problem = get_object_or_404(Problem, code=code)
+    problem.delete()
+    return JsonResponse({'success': True})
