@@ -2,34 +2,210 @@
 {% load markdownify %}
 {% load static %}
 
-
 {% block title %}{{ problem.name }} – CodeVerse{% endblock %}
 
 {% block content %}
 <style>
+  /* Remove page-level scrollbar */
+  html, body {
+    overflow: hidden;
+    height: 100vh;
+  }
+  
   .split-container {
     display: flex;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 60px); /* Reduced from 100px to shift content up */
     overflow: hidden;
   }
+  
   .left-pane {
-    width: 40%;
+    width: 42%;
     min-width: 300px;
-    max-width: 70%;
+    max-width: 65%;
     padding: 1rem;
     overflow-y: auto;
-
-    /* 🔹 Add space between left pane and resizer */
     margin-right: 8px;
     box-sizing: border-box;
   }
+  
   .right-pane {
     flex-grow: 1;
     padding: 1rem;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
-  /* 🔹 Sleek blue, dotted vertical splitter */
+  /* Top controls - language selector and buttons on same line */
+  .top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .action-buttons .btn {
+    padding: 4px 10px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .action-buttons .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  /* IDE container with minimized size */
+  .ide-container {
+    flex: 0 0 auto;
+    margin-bottom: 15px;
+  }
+
+  #editor {
+    height: 300px; /* Increased IDE height */
+    min-height: 250px;
+    border: 1px solid #007bff;
+    border-radius: 6px;
+    overflow: hidden;
+
+  }
+
+  /* Custom IO tabs container */
+  .custom-io-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .custom-io-tabs {
+    display: flex;
+    background-color: #1a2b4c;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .custom-io-tab {
+    flex: 1;
+    padding: 6px 10px;
+    background-color: #1a2b4c;
+    color: #94a3b8;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    font-size: 12px;
+  }
+
+  .custom-io-tab:hover {
+    background-color: #263b6e;
+    color: #cbd5e1;
+  }
+
+  .custom-io-tab.active {
+    background-color: #4da6ff;
+    color: white;
+    border-bottom-color: #4da6ff;
+  }
+
+  .custom-io-content {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+  }
+  
+  .custom-io-panel {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+  }
+  
+
+  .custom-io-panel.active {
+    display: flex;
+  }
+
+  .custom-io-single {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .io-section {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+  }
+
+  .io-section label {
+    background-color: #1a2b4c;
+    color: #4da6ff;
+    padding: 8px 12px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px 4px 0 0;
+  }
+
+  #custom-input,
+  #custom-output {
+    background-color: #0e2239 !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #204a87 !important;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    padding: 8px 12px;
+    line-height: 1.5;
+    resize: vertical;
+    height: 6em; 
+    max-height: 6em;
+    overflow-y: auto;
+    border-radius: 0 0 4px 4px !important;
+  }
+
+  
+
+  #custom-input::placeholder,
+  #custom-output::placeholder {
+    color: #a0aec0 !important;
+    opacity: 0.8;
+  }
+
+  /* Language selector styling */
+  .language-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .language-selector select {
+    background-color: #1a2b4c;
+    color: #e2e8f0;
+    border: 1px solid #204a87;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  /* Sleek resizer */
   .resizer {
     width: 4px;
     cursor: ew-resize;
@@ -39,247 +215,290 @@
     background-repeat: repeat-y;
     transition: background-color .2s, transform .2s;
   }
+  
   .resizer:hover {
     background-color: #263b6e;
     transform: scaleX(1.1);
   }
 
-  #editor {
-    height: 300px;
-    border: 1px solid #007bff;
-    border-radius: .5rem;
+  /* Problem description styling - more compact and organized */
+  .problem-card {
+    background: transparent;
   }
 
-  /* scrollbars */
+  .problem-card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4da6ff;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #1a2b4c;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .problem-title-text {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .problem-card-meta {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    min-width: 280px;
+    padding: 0.75rem;
+    background-color: #0e1c2e;
+    border-radius: 6px;
+    border-left: 4px solid #4da6ff;
+    font-size: 0.85rem;
+  }
+  
+  .problem-card-meta-left,
+  .problem-card-meta-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  .problem-card-meta strong {
+    color: #4da6ff;
+    font-size: 0.8rem;
+  }
+  
+  .problem-card-meta code {
+    background: #1a2b4c;
+    padding: 0.2em 0.5em;
+    border-radius: 3px;
+    font-size: 0.75rem;
+  }
+  
+
+  .problem-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .problem-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4da6ff;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #1a2b4c;
+  }
+
+  .markdown-body {
+    background: transparent;
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .markdown-body pre {
+    background: #0e1c2e;
+    padding: 0.75rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0.5rem 0;
+    border-left: 3px solid #4da6ff;
+  }
+
+  .markdown-body code {
+    background: #1a2b4c;
+    padding: 0.15em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* Scrollbar styling */
   .left-pane::-webkit-scrollbar,
-  .right-pane::-webkit-scrollbar {
+  #custom-input::-webkit-scrollbar,
+  #custom-output::-webkit-scrollbar {
     width: 6px;
   }
+
   .left-pane::-webkit-scrollbar-thumb,
-  .right-pane::-webkit-scrollbar-thumb {
+  #custom-input::-webkit-scrollbar-thumb,
+  #custom-output::-webkit-scrollbar-thumb {
     background-color: #4da6ff;
     border-radius: 3px;
   }
 
-  /* custom-input styling */
-  #custom-input,
-  #custom-output {
-    background-color: #0e2239; !important;
-    color: #e2e8f0; !important;
-    border: 1px solid #204a87; !important;
-    font-family: 'Fira Code', monospace;
-    font-size: 0.95rem;
-  }
-
-  #custom-input::placeholder {
-    color: #a0aec0 !important;
-    opacity: 0.8;
-  }
-  
-  #custom-output::placeholder {
-    color: #a0aec0 !important;
-    opacity: 0.8;
-  }
   /* Monaco scrollbar styling */
   .monaco-scrollable-element > .scrollbar > .slider {
     background: #4da6ff !important;
     border-radius: 3px !important;
   }
 
-  /* Monaco draggers (sashes) - usually invisible unless in split editor mode */
   .monaco-sash {
     width: 3px !important;
     height: 3px !important;
     background: transparent !important;
   }
+
   .monaco-sash:hover {
     background: #4da6ff !important;
     opacity: 0.5 !important;
   }
-
-  .markdown-body {
-    background: transparent;
-    color: #cbd5e1;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-  .markdown-body pre {
-    background: #0e1c2e;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-  .markdown-body code {
-    background: #162d4d;
-    padding: 0.15em 0.4em;
-    border-radius: 0.3rem;
-  }
-
-
-  pre {
-    background-color: #0d1117;
-    color: #e2e8f0;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    font-family: 'Fira Code', monospace;
-    font-size: 0.95rem;
-    overflow-x: auto;
-    white-space: pre-wrap; /* ✅ Wrap lines instead of horizontal scroll */
-    word-wrap: break-word;
-    margin: 0;
-  }
-
-  /* Remove vertical scale weirdness */
-  .mb-3 pre {
-    max-height: none;
-    overflow-y: hidden;
-  }
-
-  .preserve-linebreaks {
-    white-space: pre-line; /* 🔥 keeps newlines */
-    font-family: 'Fira Code', monospace;
-    font-size: 0.95rem;
-    background-color: #0d1117;
-    color: #e2e8f0;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    line-height: 1.6;
-    overflow-x: auto;
-  }
-  
-
-  
-
 </style>
-
-<div class="mb-3">
-  <a href="{% url 'problem_list' %}" class="btn btn-outline-secondary">
-    ← Back to Problems
-  </a>
-</div>
 
 <div class="split-container">
   <!-- Problem description -->
   <div class="left-pane">
-    <div class="problem-card markdown-body">
-      <div class="problem-card-title">🧠 {{ problem.name }}</div>
-      <div class="problem-card-meta mb-3 d-flex flex-wrap gap-3 align-items-center">
-        <div>
-          <strong>Code:</strong> <code>{{ problem.code }}</code>
+    <div class="problem-card">
+      <div class="problem-card-title">
+        <div class="problem-title-text">🧠 {{ problem.name }}</div>
+        <div class="problem-card-meta">
+          <div class="problem-card-meta-left">
+            <div><strong>Code:</strong> <code>{{ problem.code }}</code></div>
+            <div>
+              <strong>Difficulty:</strong>
+              <span class="badge 
+                {% if problem.difficulty == 'Easy' %}bg-success text-light
+                {% elif problem.difficulty == 'Medium' %}bg-warning text-dark
+                {% elif problem.difficulty == 'Hard' %}bg-danger text-light
+                {% else %}bg-secondary text-light{% endif %}">
+                {{ problem.get_difficulty_display }}
+              </span>
+            </div>
+          </div>
+          <div class="problem-card-meta-right">
+            <div><strong>Time:</strong> <span class="badge bg-info text-dark">{{ problem.time_limit }}s</span></div>
+            <div><strong>Memory:</strong> <span class="badge bg-info text-dark">{{ problem.memory_limit }}MB</span></div>
+          </div>
         </div>
-      
-        <div>
-          <strong>Difficulty:</strong>
-          <span class="badge 
-            {% if problem.difficulty == 'Easy' %}bg-success text-light
-            {% elif problem.difficulty == 'Medium' %}bg-warning text-dark
-            {% elif problem.difficulty == 'Hard' %}bg-danger text-light
-            {% else %}bg-secondary text-light{% endif %}">
-            {{ problem.get_difficulty_display }}
-          </span>
-        </div>
-      
-        <div>
-          <strong>Time Limit:</strong>
-          <span class="badge bg-info text-dark">
-            {{ problem.time_limit }} seconds
-          </span>
-        </div>
-      
-        <div>
-          <strong>Memory Limit:</strong>
-          <span class="badge bg-info text-dark">
-            {{ problem.memory_limit }} MB
-          </span>
-        </div>
+        
       </div>
       
-  
-      <div class="mb-3">
-        <h5 class="text-info">📝 Description</h5>
+      <div class="problem-section">
+        <h3>📝 Description</h3>
         <div class="markdown-body">{{ problem.description|safe }}</div>
       </div>
       
-      <div class="mb-3">
-        <h5 class="text-info">🔽 Input Format</h5>
+      <div class="problem-section">
+        <h3>🔽 Input Format</h3>
         <div class="markdown-body">{{ problem.input_format|safe }}</div>
       </div>
       
-      <div class="mb-3">
-        <h5 class="text-info">🔼 Output Format</h5>
+      <div class="problem-section">
+        <h3>🔼 Output Format</h3>
         <div class="markdown-body">{{ problem.output_format|safe }}</div>
       </div>
       
-      <div class="mb-3">
-        <h5 class="text-info">📌 Constraints</h5>
+      <div class="problem-section">
+        <h3>📌 Constraints</h3>
         <div class="markdown-body">{{ problem.constraints|safe }}</div>
       </div>
       
-      <div class="mb-3">
-        <h5 class="text-info">🔂 Sample Input</h5>
+      <div class="problem-section">
+        <h3>🔂 Sample Input</h3>
         <div class="markdown-body">{{ problem.sample_input|safe }}</div>
       </div>
       
-      <div class="mb-3">
-        <h5 class="text-info">🔁 Sample Output</h5>
+      <div class="problem-section">
+        <h3>🔁 Sample Output</h3>
         <div class="markdown-body">{{ problem.sample_output|safe }}</div>
       </div>
-      
-      
     </div>
   </div>
-  
 
-  <!-- the one, thin vertical splitter -->
+  <!-- Vertical splitter -->
   <div class="resizer" id="resizer"></div>
 
   <!-- Code workspace -->
   <div class="right-pane">
-    <div class="problem-card">
-      <div class="problem-card-title">🚀 Code Workspace</div>
-      <form id="submission-form" method="post">
-        {% csrf_token %}
-        <div class="mb-2">
-          <label>Language:</label>
-          <select name="language" id="language"
-                  class="form-select w-auto d-inline-block ms-2">
-                  <option value="cpp">C++</option>
-                  <option value="python">Python</option>
-                  <option value="java">Java</option>
-                  <option value="c">C</option>
+    <form id="submission-form" method="post">
+      {% csrf_token %}
+      
+      <!-- Top controls - language selector and action buttons on same line -->
+      <div class="top-controls">
+        <div class="language-selector">
+          <label for="language" style="color: #4da6ff; font-weight: 500;">Language:</label>
+          <select name="language" id="language" class="form-select">
+            <option value="cpp">C++</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+            <option value="c">C</option>
           </select>
         </div>
-        <div class="mb-3">
-          <label>Your Code:</label>
-          <div id="editor"></div>
-          <textarea name="code" id="hidden-code" hidden></textarea>
+        <div class="action-buttons">
+          <button type="button" class="btn btn-outline-primary" id="run-button">
+            ▶️ Run Code
+          </button>
+          <button type="submit" class="btn btn-success">
+            ✅ Submit
+          </button>
         </div>
-        <div class="mb-2">
-          <label>📥 Custom Input:</label>
-          <textarea id="custom-input" class="form-control" rows="3" placeholder="No sample input. Feel free to add your own…">{{ problem.sample_input|striptags|default:"" }}</textarea>
+      </div>
+
+
+      <!-- IDE container -->
+      <div class="ide-container">
+        <div id="editor"></div>
+        <textarea name="code" id="hidden-code" hidden></textarea>
+      </div>
+
+      <!-- Custom IO with tabs -->
+      <div class="custom-io-container">
+        <div class="custom-io-tabs">
+          <button type="button" class="custom-io-tab active" data-tab="input">
+            📥 Custom Input
+          </button>
+          <button type="button" class="custom-io-tab" data-tab="output">
+            📤 Custom Output
+          </button>
         </div>
-        <div class="mb-2">
-          <label>📤 Output:</label>
-          <textarea id="custom-output" class="form-control" rows="4" readonly placeholder="For reference only:&#10;{{ problem.sample_output|striptags|default:'(No sample available)' }}"></textarea>
+        
+        <div class="custom-io-content">
+          <!-- Custom Input Panel -->
+          <div class="custom-io-panel active" id="input-panel">
+            <div class="custom-io-single">
+              <div class="io-section">
+                <label>Enter your custom input:</label>
+                <textarea id="custom-input" class="form-control" placeholder="Enter your custom input here...">{{ problem.sample_input|striptags|default:"" }}</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Output Panel -->
+          <div class="custom-io-panel" id="output-panel">
+            <div class="custom-io-single">
+              <div class="io-section">
+                <label>Output will appear here:</label>
+                <textarea id="custom-output" class="form-control" readonly placeholder="Output will appear here after running your code..."></textarea>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="d-flex gap-3">
-          <button type="button" class="btn btn-outline-primary"
-                  id="run-button">▶️ Run Code</button>
-          <button type="submit" class="btn btn-success">✅ Submit</button>
-        </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
-
-
 </div>
 
-<!-- Monaco AMD Loader (must come before monaco-setup.js) -->
+<!-- Monaco AMD Loader -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
-
-
 <script src="{% static 'js/monaco-setup.js' %}"></script>
+
 <script>
+  // Tab switching functionality
+  document.querySelectorAll('.custom-io-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and panels
+      document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
+      
+      // Add active class to clicked tab and corresponding panel
+      tab.classList.add('active');
+      const tabType = tab.dataset.tab;
+      document.getElementById(tabType + '-panel').classList.add('active');
+    });
+  });
+
+  // Monaco Editor setup
   setupMonacoEditor({
     selector: "editor",
     language: "cpp",
@@ -300,7 +519,14 @@
       });
       langSel.dispatchEvent(new Event("change"));
 
+      // Run button functionality
       document.getElementById("run-button").addEventListener("click", () => {
+        // Switch to custom output tab when run is clicked
+        document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
+        document.querySelector('[data-tab="output"]').classList.add('active');
+        document.getElementById('output-panel').classList.add('active');
+
         const data = new FormData();
         data.append("code", editor.getValue());
         data.append("language", langSel.value);
@@ -318,17 +544,30 @@
         });
       });
 
+      // Add default input on page load
+      setTimeout(() => {
+        const customInputField = document.getElementById("custom-input");
+        if (customInputField && !customInputField.value) {
+          customInputField.value = "{{ problem.sample_input|striptags|default:""|escapejs }}";
+        }
+      }, 100);
+
       document.getElementById("submission-form").addEventListener("submit", () => {
         document.getElementById("hidden-code").value = editor.getValue();
       });
     }
   });
 
-  // vertical splitter
+  // Vertical splitter functionality
   const rz = document.getElementById("resizer"),
         lp = rz.previousElementSibling;
   let dragging = false;
-  rz.onmousedown = () => { dragging = true; document.body.style.cursor = "ew-resize"; };
+  
+  rz.onmousedown = () => { 
+    dragging = true; 
+    document.body.style.cursor = "ew-resize"; 
+  };
+  
   document.onmousemove = e => {
     if (!dragging) return;
     let newW = e.clientX - lp.parentNode.offsetLeft;
@@ -336,7 +575,11 @@
       lp.style.width = newW + "px";
     }
   };
-  document.onmouseup = () => { dragging = false; document.body.style.cursor = ""; };
+  
+  document.onmouseup = () => { 
+    dragging = false; 
+    document.body.style.cursor = ""; 
+  };
 </script>
 
 {% endblock %}
