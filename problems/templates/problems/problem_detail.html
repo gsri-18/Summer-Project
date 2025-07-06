@@ -5,353 +5,13 @@
 {% block title %}{{ problem.name }} – CodeVerse{% endblock %}
 
 {% block content %}
-<style>
-  /* Remove page-level scrollbar */
-  html, body {
-    overflow: hidden;
-    height: 100vh;
-  }
-  
-  .split-container {
-    display: flex;
-    height: calc(100vh - 60px); /* Reduced from 100px to shift content up */
-    overflow: hidden;
-  }
-  
-  .left-pane {
-    width: 42%;
-    min-width: 300px;
-    max-width: 65%;
-    padding: 1rem;
-    overflow-y: auto;
-    margin-right: 8px;
-    box-sizing: border-box;
-  }
-  
-  .right-pane {
-    flex-grow: 1;
-    padding: 1rem;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Top controls - language selector and buttons on same line */
-  .top-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    flex-wrap: wrap;
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 10px;
-  }
-
-  .action-buttons .btn {
-    padding: 4px 10px;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 6px;
-    transition: all 0.2s;
-  }
-
-  .action-buttons .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-
-  /* IDE container with minimized size */
-  .ide-container {
-    flex: 0 0 auto;
-    margin-bottom: 15px;
-  }
-
-  #editor {
-    height: 300px; /* Increased IDE height */
-    min-height: 250px;
-    border: 1px solid #007bff;
-    border-radius: 6px;
-    overflow: hidden;
-
-  }
-
-  /* Custom IO tabs container */
-  .custom-io-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
-
-  .custom-io-tabs {
-    display: flex;
-    background-color: #1a2b4c;
-    border-radius: 6px 6px 0 0;
-    overflow: hidden;
-    margin-bottom: 0;
-    flex-shrink: 0;
-  }
-
-  .custom-io-tab {
-    flex: 1;
-    padding: 6px 10px;
-    background-color: #1a2b4c;
-    color: #94a3b8;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-    border-bottom: 2px solid transparent;
-    font-size: 12px;
-  }
-
-  .custom-io-tab:hover {
-    background-color: #263b6e;
-    color: #cbd5e1;
-  }
-
-  .custom-io-tab.active {
-    background-color: #4da6ff;
-    color: white;
-    border-bottom-color: #4da6ff;
-  }
-
-  .custom-io-content {
-    display: flex;
-    flex: 1;
-    min-height: 0;
-    height: 100%;
-  }
-  
-  .custom-io-panel {
-    flex: 1;
-    display: none;
-    flex-direction: column;
-    min-height: 0;
-    height: 100%;
-  }
-  
-
-  .custom-io-panel.active {
-    display: flex;
-  }
-
-  .custom-io-single {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-  }
-
-  .io-section {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    flex: 1;
-  }
-
-  .io-section label {
-    background-color: #1a2b4c;
-    color: #4da6ff;
-    padding: 8px 12px;
-    margin: 0;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 4px 4px 0 0;
-  }
-
-  #custom-input,
-  #custom-output {
-    background-color: #0e2239 !important;
-    color: #e2e8f0 !important;
-    border: 1px solid #204a87 !important;
-    font-family: 'Fira Code', monospace;
-    font-size: 14px;
-    padding: 8px 12px;
-    line-height: 1.5;
-    resize: vertical;
-    height: 6em; 
-    max-height: 6em;
-    overflow-y: auto;
-    border-radius: 0 0 4px 4px !important;
-  }
-
-  
-
-  #custom-input::placeholder,
-  #custom-output::placeholder {
-    color: #a0aec0 !important;
-    opacity: 0.8;
-  }
-
-  /* Language selector styling */
-  .language-selector {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-
-  .language-selector select {
-    background-color: #1a2b4c;
-    color: #e2e8f0;
-    border: 1px solid #204a87;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-
-  /* Sleek resizer */
-  .resizer {
-    width: 4px;
-    cursor: ew-resize;
-    background-color: #1a2b4c;
-    background-image: radial-gradient(circle, #4da6ff 1px, transparent 1px);
-    background-size: 2px 6px;
-    background-repeat: repeat-y;
-    transition: background-color .2s, transform .2s;
-  }
-  
-  .resizer:hover {
-    background-color: #263b6e;
-    transform: scaleX(1.1);
-  }
-
-  /* Problem description styling - more compact and organized */
-  .problem-card {
-    background: transparent;
-  }
-
-  .problem-card-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #4da6ff;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #1a2b4c;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .problem-title-text {
-    flex: 1;
-    min-width: 200px;
-  }
-
-  .problem-card-meta {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    min-width: 280px;
-    padding: 0.75rem;
-    background-color: #0e1c2e;
-    border-radius: 6px;
-    border-left: 4px solid #4da6ff;
-    font-size: 0.85rem;
-  }
-  
-  .problem-card-meta-left,
-  .problem-card-meta-right {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-  
-  .problem-card-meta strong {
-    color: #4da6ff;
-    font-size: 0.8rem;
-  }
-  
-  .problem-card-meta code {
-    background: #1a2b4c;
-    padding: 0.2em 0.5em;
-    border-radius: 3px;
-    font-size: 0.75rem;
-  }
-  
-
-  .problem-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .problem-section h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #4da6ff;
-    margin-bottom: 0.75rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #1a2b4c;
-  }
-
-  .markdown-body {
-    background: transparent;
-    color: #cbd5e1;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  .markdown-body pre {
-    background: #0e1c2e;
-    padding: 0.75rem;
-    border-radius: 4px;
-    overflow-x: auto;
-    margin: 0.5rem 0;
-    border-left: 3px solid #4da6ff;
-  }
-
-  .markdown-body code {
-    background: #1a2b4c;
-    padding: 0.15em 0.4em;
-    border-radius: 3px;
-    font-size: 0.9em;
-  }
-
-  /* Scrollbar styling */
-  .left-pane::-webkit-scrollbar,
-  #custom-input::-webkit-scrollbar,
-  #custom-output::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .left-pane::-webkit-scrollbar-thumb,
-  #custom-input::-webkit-scrollbar-thumb,
-  #custom-output::-webkit-scrollbar-thumb {
-    background-color: #4da6ff;
-    border-radius: 3px;
-  }
-
-  /* Monaco scrollbar styling */
-  .monaco-scrollable-element > .scrollbar > .slider {
-    background: #4da6ff !important;
-    border-radius: 3px !important;
-  }
-
-  .monaco-sash {
-    width: 3px !important;
-    height: 3px !important;
-    background: transparent !important;
-  }
-
-  .monaco-sash:hover {
-    background: #4da6ff !important;
-    opacity: 0.5 !important;
-  }
-</style>
 
 <div class="split-container">
   <!-- Problem description -->
   <div class="left-pane">
     <div class="problem-card">
       <div class="problem-card-title">
-        <div class="problem-title-text">🧠 {{ problem.name }}</div>
+        <div class="problem-title-text">{{ problem.name }}</div>
         <div class="problem-card-meta">
           <div class="problem-card-meta-left">
             <div><strong>Code:</strong> <code>{{ problem.code }}</code></div>
@@ -371,7 +31,6 @@
             <div><strong>Memory:</strong> <span class="badge bg-info text-dark">{{ problem.memory_limit }}MB</span></div>
           </div>
         </div>
-        
       </div>
       
       <div class="problem-section">
@@ -425,7 +84,22 @@
             <option value="c">C</option>
           </select>
         </div>
+
+        <!-- Action buttons -->
         <div class="action-buttons">
+          <!-- AI Assist Button with Manual Dropdown -->
+          <div class="dropdown ai-assist-dropdown">
+            <button class="btn btn-outline-info" type="button" id="aiAssistBtn">
+              🤖 AI Assist <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" id="aiAssistMenu">
+              <a class="dropdown-item ai-option" href="#" data-action="debugger">🛠️ AI Debugger</a>
+              <a class="dropdown-item ai-option" href="#" data-action="hints">💡 AI Hints</a>
+              <a class="dropdown-item ai-option" href="#" data-action="explain">❓ Explain Question</a>
+              <a class="dropdown-item ai-option" href="#" data-action="suggestions">✨ Suggestions</a>
+            </div>
+          </div>
+          
           <button type="button" class="btn btn-outline-primary" id="run-button">
             ▶️ Run Code
           </button>
@@ -434,7 +108,6 @@
           </button>
         </div>
       </div>
-
 
       <!-- IDE container -->
       <div class="ide-container">
@@ -483,27 +156,163 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
 <script src="{% static 'js/monaco-setup.js' %}"></script>
 
+<style>
+/* Custom dropdown styles to make it work properly */
+.ai-assist-dropdown {
+  position: relative;
+}
+
+.ai-assist-dropdown .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 200px;
+  background-color: #0e1c2e;
+  border: 1px solid #4da6ff;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-top: 2px;
+}
+
+.ai-assist-dropdown .dropdown-menu.show {
+  display: block;
+}
+
+.ai-assist-dropdown .dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  color: #e2e8f0;
+  text-decoration: none;
+  background-color: transparent;
+  border: 0;
+  font-size: 14px;
+  transition: all 0.15s ease-in-out;
+}
+
+.ai-assist-dropdown .dropdown-item:hover,
+.ai-assist-dropdown .dropdown-item:focus {
+  background-color: #1a2b4c;
+  color: #ffffff;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  margin-left: 5px;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+#aiAssistBtn {
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+</style>
+
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Manual dropdown implementation
+  const aiAssistBtn = document.getElementById('aiAssistBtn');
+  const aiAssistMenu = document.getElementById('aiAssistMenu');
+  const dropdownArrow = aiAssistBtn.querySelector('.dropdown-arrow');
+  
+  // Toggle dropdown
+  aiAssistBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const isOpen = aiAssistMenu.classList.contains('show');
+    
+    // Close all other dropdowns (if any)
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+      menu.classList.remove('show');
+    });
+    
+    // Toggle current dropdown
+    if (isOpen) {
+      aiAssistMenu.classList.remove('show');
+      dropdownArrow.classList.remove('open');
+    } else {
+      aiAssistMenu.classList.add('show');
+      dropdownArrow.classList.add('open');
+    }
+  });
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.ai-assist-dropdown')) {
+      aiAssistMenu.classList.remove('show');
+      dropdownArrow.classList.remove('open');
+    }
+  });
+  
+  // Handle dropdown item clicks
+  document.querySelectorAll('.ai-option').forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Close dropdown
+      aiAssistMenu.classList.remove('show');
+      dropdownArrow.classList.remove('open');
+      
+      // Get action
+      const action = this.getAttribute('data-action');
+      
+      // Handle action
+      handleAIAction(action);
+    });
+  });
+  
+  function handleAIAction(action) {
+    const editor = window.monacoEditor; // We'll set this when Monaco loads
+    const code = editor ? editor.getValue() : '';
+    
+    switch (action) {
+      case 'debugger':
+        console.log('🛠️ AI Debugger clicked');
+        alert('🛠️ AI Debugger\nAnalyzing your code...\nCode length: ' + code.length);
+        break;
+      case 'hints':
+        console.log('💡 AI Hints clicked');
+        alert('💡 AI Hints\nHere are some hints based on your current code!');
+        break;
+      case 'explain':
+        console.log('❓ Explain Question clicked');
+        alert('❓ Explain Question\nProblem: {{ problem.name }}\nLet me explain this problem step by step...');
+        break;
+      case 'suggestions':
+        console.log('✨ AI Suggestions clicked');
+        alert('✨ AI Suggestions\nHere are some suggestions to improve your code!');
+        break;
+    }
+  }
+
   // Tab switching functionality
   document.querySelectorAll('.custom-io-tab').forEach(tab => {
     tab.addEventListener('click', () => {
-      // Remove active class from all tabs and panels
       document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
-      
-      // Add active class to clicked tab and corresponding panel
       tab.classList.add('active');
       const tabType = tab.dataset.tab;
       document.getElementById(tabType + '-panel').classList.add('active');
     });
   });
 
-  // Monaco Editor setup
+  // Monaco setup
   setupMonacoEditor({
     selector: "editor",
     language: "cpp",
     theme: "one-dark-pro",
     onReady: (editor, monaco) => {
+      // Store editor reference globally for AI functions
+      window.monacoEditor = editor;
+      
       const boilerplate = {
         java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Your code here\n\n\n    }\n}`,
         python: `def main():\n    # Your code here\n\n\n    pass\n\nif __name__ == "__main__":\n    main()`,
@@ -519,9 +328,8 @@
       });
       langSel.dispatchEvent(new Event("change"));
 
-      // Run button functionality
+      // Run button
       document.getElementById("run-button").addEventListener("click", () => {
-        // Switch to custom output tab when run is clicked
         document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
         document.querySelector('[data-tab="output"]').classList.add('active');
@@ -544,7 +352,7 @@
         });
       });
 
-      // Add default input on page load
+      // Set default input
       setTimeout(() => {
         const customInputField = document.getElementById("custom-input");
         if (customInputField && !customInputField.value) {
@@ -552,22 +360,23 @@
         }
       }, 100);
 
+      // Submission - sync hidden textarea
       document.getElementById("submission-form").addEventListener("submit", () => {
         document.getElementById("hidden-code").value = editor.getValue();
       });
     }
   });
 
-  // Vertical splitter functionality
+  // Resizer logic
   const rz = document.getElementById("resizer"),
         lp = rz.previousElementSibling;
   let dragging = false;
-  
-  rz.onmousedown = () => { 
-    dragging = true; 
-    document.body.style.cursor = "ew-resize"; 
+
+  rz.onmousedown = () => {
+    dragging = true;
+    document.body.style.cursor = "ew-resize";
   };
-  
+
   document.onmousemove = e => {
     if (!dragging) return;
     let newW = e.clientX - lp.parentNode.offsetLeft;
@@ -575,11 +384,12 @@
       lp.style.width = newW + "px";
     }
   };
-  
-  document.onmouseup = () => { 
-    dragging = false; 
-    document.body.style.cursor = ""; 
+
+  document.onmouseup = () => {
+    dragging = false;
+    document.body.style.cursor = "";
   };
+});
 </script>
 
 {% endblock %}
