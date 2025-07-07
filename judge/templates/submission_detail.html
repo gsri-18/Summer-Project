@@ -3,6 +3,14 @@
 
 {% block content %}
 <div class="mt-4">
+
+  <!-- Top-right buttons -->
+  <div class="d-flex justify-content-end gap-2 mb-3 flex-wrap">
+    <a href="{% url 'problem_list' %}" class="btn btn-outline-primary">Back to Problems</a>
+    <a href="{% url 'problem_detail' submission.problem.code %}" class="btn btn-outline-success">Back to {{ submission.problem.name }}</a>
+  </div>
+
+
   <h2>📝 Submission #{{ submission.id }}</h2>
   <p><strong>Problem:</strong> {{ submission.problem.name }}</p>
   <p><strong>Language:</strong> {{ submission.language }}</p>
@@ -48,6 +56,5 @@
   </pre>
   
 
-  <a href="{% url 'problem_list' %}" class="btn btn-outline-primary mt-3">🔙 Back to Problems</a>
 </div>
 {% endblock %}
