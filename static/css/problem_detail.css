@@ -364,3 +364,155 @@ body {
     background: #4da6ff !important;
     opacity: 0.5 !important;
 }
+
+/* Custom dropdown styles to make it work properly */
+.ai-assist-dropdown {
+    position: relative;
+}
+
+.ai-assist-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    min-width: 200px;
+    background-color: #0e1c2e;
+    border: 1px solid #4da6ff;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin-top: 2px;
+}
+
+.ai-assist-dropdown .dropdown-menu.show {
+    display: block;
+}
+
+.ai-assist-dropdown .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    color: #e2e8f0;
+    text-decoration: none;
+    background-color: transparent;
+    border: 0;
+    font-size: 14px;
+    transition: all 0.15s ease-in-out;
+}
+
+.ai-assist-dropdown .dropdown-item:hover,
+.ai-assist-dropdown .dropdown-item:focus {
+    background-color: #1a2b4c;
+    color: #ffffff;
+}
+
+.dropdown-arrow {
+    font-size: 10px;
+    margin-left: 5px;
+    transition: transform 0.2s ease;
+}
+
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+#aiAssistBtn {
+    font-size: 14px;
+    padding: 4px 10px;
+    border-radius: 6px; 
+}
+
+.ai-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.7);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-modal.hidden {
+    display: none;
+}
+
+.ai-modal-content {
+    background-color: #0e1c2e;
+    border: 1px solid #4da6ff;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 700px;
+    max-height: 70vh;
+    overflow-y: auto;
+    color: #e2e8f0;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    font-family: 'Courier New', monospace;
+}
+
+.ai-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ai-close-btn {
+    cursor: pointer;
+    font-size: 24px;
+    color: #aaa;
+}
+
+.ai-modal-body p {
+    margin: 0;
+    font-size: 15px;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+}
+
+.ai-modal-body pre {
+    white-space: pre-wrap;
+    background: #1e293b;
+    padding: 0.75rem;
+    border-radius: 6px;
+    color: #f8fafc;
+    overflow-x: auto;
+}
+
+/* Scrollbar inside AI modal */
+.ai-modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ai-modal-content::-webkit-scrollbar-thumb {
+    background-color: #4da6ff;
+    border-radius: 3px;
+}
+
+/* Markdown inside AI modal */
+.ai-modal-body .markdown-body {
+    background: transparent;
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.ai-modal-body .markdown-body pre {
+    background: #0e1c2e;
+    padding: 0.75rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0.5rem 0;
+    border-left: 3px solid #4da6ff;
+}
+
+.ai-modal-body .markdown-body code {
+    background: #1a2b4c;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+

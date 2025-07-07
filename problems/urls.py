@@ -10,4 +10,5 @@ urlpatterns = [
     path('<str:code>/', views.problem_detail, name='problem_detail'),  # /problems/PB001/
     path('<str:code>/update/', views.update_problem_view, name='update_problem'),  # /problems/PB001/update/
     path('<str:code>/delete/', views.delete_problem_view, name='delete_problem'),  # /problems/PB001/delete/
+    path('ai-assist', views.ai_assist_view, name='ai_assist'),
 ]

@@ -260,3 +260,33 @@ def delete_problem_view(request, code):
     else:
         messages.error(request, "❌ Invalid delete request.")
         return redirect('manage_problems')
+    
+import os
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import google.generativeai as genai
+
+@csrf_exempt
+def ai_assist_view(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST allowed'}, status=405)
+
+    data = json.loads(request.body)
+    action = data.get('action')
+    prompt = data.get('prompt')
+    code = data.get('code', '')
+
+    if not prompt:
+        return JsonResponse({'error': 'Prompt missing'}, status=400)
+
+    try:
+        genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        response = model.generate_content(prompt)
+        return JsonResponse({'result': response.text})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+

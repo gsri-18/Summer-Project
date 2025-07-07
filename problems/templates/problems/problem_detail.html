@@ -5,6 +5,8 @@
 {% block title %}{{ problem.name }} – CodeVerse{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/problem_detail.css' %}">
+
 
 <div class="split-container">
   <!-- Problem description -->
@@ -34,32 +36,32 @@
       </div>
       
       <div class="problem-section">
-        <h3>📝 Description</h3>
+        <h3>Description</h3>
         <div class="markdown-body">{{ problem.description|safe }}</div>
       </div>
       
       <div class="problem-section">
-        <h3>🔽 Input Format</h3>
+        <h3>Input Format</h3>
         <div class="markdown-body">{{ problem.input_format|safe }}</div>
       </div>
       
       <div class="problem-section">
-        <h3>🔼 Output Format</h3>
+        <h3>Output Format</h3>
         <div class="markdown-body">{{ problem.output_format|safe }}</div>
       </div>
       
       <div class="problem-section">
-        <h3>📌 Constraints</h3>
+        <h3>Constraints</h3>
         <div class="markdown-body">{{ problem.constraints|safe }}</div>
       </div>
       
       <div class="problem-section">
-        <h3>🔂 Sample Input</h3>
+        <h3>Sample Input</h3>
         <div class="markdown-body">{{ problem.sample_input|safe }}</div>
       </div>
       
       <div class="problem-section">
-        <h3>🔁 Sample Output</h3>
+        <h3>Sample Output</h3>
         <div class="markdown-body">{{ problem.sample_output|safe }}</div>
       </div>
     </div>
@@ -152,244 +154,294 @@
   </div>
 </div>
 
+<!-- Load marked.js and DOMPurify -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.2/dist/purify.min.js"></script>
+
 <!-- Monaco AMD Loader -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
 <script src="{% static 'js/monaco-setup.js' %}"></script>
 
-<style>
-/* Custom dropdown styles to make it work properly */
-.ai-assist-dropdown {
-  position: relative;
-}
-
-.ai-assist-dropdown .dropdown-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  z-index: 1000;
-  min-width: 200px;
-  background-color: #0e1c2e;
-  border: 1px solid #4da6ff;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  margin-top: 2px;
-}
-
-.ai-assist-dropdown .dropdown-menu.show {
-  display: block;
-}
-
-.ai-assist-dropdown .dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 8px 16px;
-  color: #e2e8f0;
-  text-decoration: none;
-  background-color: transparent;
-  border: 0;
-  font-size: 14px;
-  transition: all 0.15s ease-in-out;
-}
-
-.ai-assist-dropdown .dropdown-item:hover,
-.ai-assist-dropdown .dropdown-item:focus {
-  background-color: #1a2b4c;
-  color: #ffffff;
-}
-
-.dropdown-arrow {
-  font-size: 10px;
-  margin-left: 5px;
-  transition: transform 0.2s ease;
-}
-
-.dropdown-arrow.open {
-  transform: rotate(180deg);
-}
-
-#aiAssistBtn {
-  font-size: 14px;
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-</style>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  // Manual dropdown implementation
-  const aiAssistBtn = document.getElementById('aiAssistBtn');
-  const aiAssistMenu = document.getElementById('aiAssistMenu');
-  const dropdownArrow = aiAssistBtn.querySelector('.dropdown-arrow');
+  document.addEventListener("DOMContentLoaded", function () {
+    // Dropdown
+    const aiAssistBtn = document.getElementById('aiAssistBtn');
+    const aiAssistMenu = document.getElementById('aiAssistMenu');
+    const dropdownArrow = aiAssistBtn.querySelector('.dropdown-arrow');
   
-  // Toggle dropdown
-  aiAssistBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const isOpen = aiAssistMenu.classList.contains('show');
-    
-    // Close all other dropdowns (if any)
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-      menu.classList.remove('show');
-    });
-    
-    // Toggle current dropdown
-    if (isOpen) {
-      aiAssistMenu.classList.remove('show');
-      dropdownArrow.classList.remove('open');
-    } else {
-      aiAssistMenu.classList.add('show');
-      dropdownArrow.classList.add('open');
-    }
-  });
-  
-  // Close dropdown when clicking outside
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.ai-assist-dropdown')) {
-      aiAssistMenu.classList.remove('show');
-      dropdownArrow.classList.remove('open');
-    }
-  });
-  
-  // Handle dropdown item clicks
-  document.querySelectorAll('.ai-option').forEach(item => {
-    item.addEventListener('click', function(e) {
+    aiAssistBtn.addEventListener('click', function (e) {
       e.preventDefault();
-      
-      // Close dropdown
-      aiAssistMenu.classList.remove('show');
-      dropdownArrow.classList.remove('open');
-      
-      // Get action
-      const action = this.getAttribute('data-action');
-      
-      // Handle action
-      handleAIAction(action);
+      e.stopPropagation();
+      const isOpen = aiAssistMenu.classList.contains('show');
+      document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
+      if (isOpen) {
+        aiAssistMenu.classList.remove('show');
+        dropdownArrow.classList.remove('open');
+      } else {
+        aiAssistMenu.classList.add('show');
+        dropdownArrow.classList.add('open');
+      }
     });
-  });
   
-  function handleAIAction(action) {
-    const editor = window.monacoEditor; // We'll set this when Monaco loads
-    const code = editor ? editor.getValue() : '';
-    
-    switch (action) {
-      case 'debugger':
-        console.log('🛠️ AI Debugger clicked');
-        alert('🛠️ AI Debugger\nAnalyzing your code...\nCode length: ' + code.length);
-        break;
-      case 'hints':
-        console.log('💡 AI Hints clicked');
-        alert('💡 AI Hints\nHere are some hints based on your current code!');
-        break;
-      case 'explain':
-        console.log('❓ Explain Question clicked');
-        alert('❓ Explain Question\nProblem: {{ problem.name }}\nLet me explain this problem step by step...');
-        break;
-      case 'suggestions':
-        console.log('✨ AI Suggestions clicked');
-        alert('✨ AI Suggestions\nHere are some suggestions to improve your code!');
-        break;
-    }
-  }
-
-  // Tab switching functionality
-  document.querySelectorAll('.custom-io-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      const tabType = tab.dataset.tab;
-      document.getElementById(tabType + '-panel').classList.add('active');
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.ai-assist-dropdown')) {
+        aiAssistMenu.classList.remove('show');
+        dropdownArrow.classList.remove('open');
+      }
     });
-  });
-
-  // Monaco setup
-  setupMonacoEditor({
-    selector: "editor",
-    language: "cpp",
-    theme: "one-dark-pro",
-    onReady: (editor, monaco) => {
-      // Store editor reference globally for AI functions
-      window.monacoEditor = editor;
-      
-      const boilerplate = {
-        java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Your code here\n\n\n    }\n}`,
-        python: `def main():\n    # Your code here\n\n\n    pass\n\nif __name__ == "__main__":\n    main()`,
-        cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    // Your code here\n\n\n    return 0;\n}`,
-        c: `#include <stdio.h>\n\nint main() {\n    // Your code here\n\n\n    return 0;\n}`
-      };
-
-      const langSel = document.getElementById("language");
-      langSel.addEventListener("change", () => {
-        const lang = langSel.value;
-        editor.setValue(boilerplate[lang] || "");
-        monaco.editor.setModelLanguage(editor.getModel(), lang === "cpp" ? "cpp" : lang);
+  
+    document.querySelectorAll('.ai-option').forEach(item => {
+      item.addEventListener('click', function (e) {
+        e.preventDefault();
+        aiAssistMenu.classList.remove('show');
+        dropdownArrow.classList.remove('open');
+        const action = this.getAttribute('data-action');
+        handleAIAction(action);
       });
-      langSel.dispatchEvent(new Event("change"));
-
-      // Run button
-      document.getElementById("run-button").addEventListener("click", () => {
-        document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
-        document.querySelector('[data-tab="output"]').classList.add('active');
-        document.getElementById('output-panel').classList.add('active');
-
-        const data = new FormData();
-        data.append("code", editor.getValue());
-        data.append("language", langSel.value);
-        data.append("custom_input", document.getElementById("custom-input").value);
-
-        fetch("{% url 'run_code' %}", {
-          method: "POST",
-          headers: { "X-CSRFToken": "{{ csrf_token }}" },
-          body: data
-        })
+    });
+  
+    function handleAIAction(action) {
+      const editor = window.monacoEditor;
+      const code = editor ? editor.getValue() : '';
+  
+      const problem = {
+        title: `{{ problem.name|escapejs }}`,
+        description: `{{ problem.description|striptags|escapejs }}`,
+        input: `{{ problem.input_format|striptags|escapejs }}`,
+        output: `{{ problem.output_format|striptags|escapejs }}`,
+        constraints: `{{ problem.constraints|striptags|escapejs }}`,
+        sample_input: `{{ problem.sample_input|striptags|escapejs }}`,
+        sample_output: `{{ problem.sample_output|striptags|escapejs }}`
+      };
+  
+      let prompt = "";
+  
+      if (action === "debugger") {
+        prompt = `
+  You are a code debugger. The user is solving this problem:
+  
+  Title: ${problem.title}
+  Description: ${problem.description}
+  Input Format: ${problem.input}
+  Output Format: ${problem.output}
+  Constraints: ${problem.constraints}
+  Sample Input: ${problem.sample_input}
+  Sample Output: ${problem.sample_output}
+  
+  Below is their code:
+  
+  ${code}
+  
+  Your task:
+  1. Identify logic, syntax, or runtime issues.
+  2. Suggest corrections, but do not rewrite the full code.
+  3. Limit to 300 words.
+        `.trim();
+      } else if (action === "hints") {
+        prompt = `
+  You are a programming tutor. Provide 2–3 beginner-friendly hints.
+  
+  Problem:
+  Title: ${problem.title}
+  Description: ${problem.description}
+  Input Format: ${problem.input}
+  Output Format: ${problem.output}
+  Constraints: ${problem.constraints}
+  
+  Each hint must be under 30 words. Do not include the solution.
+        `.trim();
+      } else if (action === "explain") {
+        prompt = `
+  You are a coding mentor. Explain this problem to a beginner.
+  
+  Problem:
+  Title: ${problem.title}
+  Description: ${problem.description}
+  Input Format: ${problem.input}
+  Output Format: ${problem.output}
+  Constraints: ${problem.constraints}
+  Sample Input: ${problem.sample_input}
+  Sample Output: ${problem.sample_output}
+  
+  Use clear language. Explain step-by-step. Keep it under 300 words.
+        `.trim();
+      } else if (action === "suggestions") {
+        prompt = `
+  You are a code reviewer. Analyze this solution.
+  
+  Problem:
+  Title: ${problem.title}
+  Description: ${problem.description}
+  Input Format: ${problem.input}
+  Output Format: ${problem.output}
+  
+  User's code:
+  ${code}
+  
+  List a maximum of 6 suggestions. Focus on logic, style, or edge cases. Keep it under 300 words.
+        `.trim();
+      }
+  
+      const loadingMessages = {
+        debugger: "🛠️ Analyzing your code for bugs...",
+        hints: "💡 Thinking of beginner-friendly hints...",
+        explain: "📖 Breaking it down step-by-step...",
+        suggestions: "✨ Reviewing your code for improvements..."
+      };
+  
+      // Show AI modal with dynamic loading text
+      document.getElementById("ai-modal-body").innerHTML = `<p>${loadingMessages[action] || "🤖 Working on it..."}</p>`;
+      document.getElementById("ai-response-modal").classList.remove("hidden");
+  
+      // Send prompt to backend
+      fetch("{% url 'ai_assist' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ action, prompt, code })
+      })
         .then(res => res.json())
         .then(json => {
-          document.getElementById("custom-output").value =
-            json.output || json.details || json.error || "";
+          if (json.result) {
+            try {
+              const rendered = marked.parse(json.result);
+              document.getElementById("ai-modal-body").innerHTML = `
+                <div class="markdown-body">
+                  ${rendered}
+                </div>`;
+            } catch (e) {
+              document.getElementById("ai-modal-body").innerHTML = `
+                <div class="markdown-body">
+                  <p>⚠️ Markdown rendering failed. Showing plain text instead.</p>
+                  <pre>${json.result}</pre>
+                </div>`;
+            }
+          } else {
+            document.getElementById("ai-modal-body").innerHTML = `<p>⚠️ AI Error: ${json.error || "Unknown error."}</p>`;
+          }
+        })
+        
+        .catch(err => {
+          document.getElementById("ai-modal-body").innerHTML = `<p>❌ Request failed: ${err.message}</p>`;
         });
-      });
-
-      // Set default input
-      setTimeout(() => {
-        const customInputField = document.getElementById("custom-input");
-        if (customInputField && !customInputField.value) {
-          customInputField.value = "{{ problem.sample_input|striptags|default:""|escapejs }}";
-        }
-      }, 100);
-
-      // Submission - sync hidden textarea
-      document.getElementById("submission-form").addEventListener("submit", () => {
-        document.getElementById("hidden-code").value = editor.getValue();
-      });
     }
+  
+    // Tab switching
+    document.querySelectorAll('.custom-io-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        const tabType = tab.dataset.tab;
+        document.getElementById(tabType + '-panel').classList.add('active');
+      });
+    });
+  
+    // Monaco setup
+    setupMonacoEditor({
+      selector: "editor",
+      language: "cpp",
+      theme: "one-dark-pro",
+      onReady: (editor, monaco) => {
+        window.monacoEditor = editor;
+        const boilerplate = {
+          java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Your code here\n\n\n    }\n}`,
+          python: `def main():\n    # Your code here\n\n\n    pass\n\nif __name__ == "__main__":\n    main()`,
+          cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    // Your code here\n\n\n    return 0;\n}`,
+          c: `#include <stdio.h>\n\nint main() {\n    // Your code here\n\n\n    return 0;\n}`
+        };
+  
+        const langSel = document.getElementById("language");
+        langSel.addEventListener("change", () => {
+          const lang = langSel.value;
+          editor.setValue(boilerplate[lang] || "");
+          monaco.editor.setModelLanguage(editor.getModel(), lang === "cpp" ? "cpp" : lang);
+        });
+        langSel.dispatchEvent(new Event("change"));
+  
+        // Run button
+        document.getElementById("run-button").addEventListener("click", () => {
+          document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
+          document.querySelector('[data-tab="output"]').classList.add('active');
+          document.getElementById('output-panel').classList.add('active');
+  
+          const data = new FormData();
+          data.append("code", editor.getValue());
+          data.append("language", langSel.value);
+          data.append("custom_input", document.getElementById("custom-input").value);
+  
+          fetch("{% url 'run_code' %}", {
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            body: data
+          })
+            .then(res => res.json())
+            .then(json => {
+              document.getElementById("custom-output").value =
+                json.output || json.details || json.error || "";
+            });
+        });
+  
+        // Default input
+        setTimeout(() => {
+          const customInputField = document.getElementById("custom-input");
+          if (customInputField && !customInputField.value) {
+            customInputField.value = "{{ problem.sample_input|striptags|default:""|escapejs }}";
+          }
+        }, 100);
+  
+        document.getElementById("submission-form").addEventListener("submit", () => {
+          document.getElementById("hidden-code").value = editor.getValue();
+        });
+      }
+    });
+  
+    // Resizer logic
+    const rz = document.getElementById("resizer"),
+          lp = rz.previousElementSibling;
+    let dragging = false;
+  
+    rz.onmousedown = () => {
+      dragging = true;
+      document.body.style.cursor = "ew-resize";
+    };
+  
+    document.onmousemove = e => {
+      if (!dragging) return;
+      let newW = e.clientX - lp.parentNode.offsetLeft;
+      if (newW > 250 && newW < window.innerWidth * 0.7) {
+        lp.style.width = newW + "px";
+      }
+    };
+  
+    document.onmouseup = () => {
+      dragging = false;
+      document.body.style.cursor = "";
+    };
   });
+  
+  // Expose close modal
+  function closeAIModal() {
+    document.getElementById("ai-response-modal").classList.add("hidden");
+  }
+  </script>
+  
+<!-- AI Response Modal -->
+<div id="ai-response-modal" class="ai-modal hidden">
+  <div class="ai-modal-content">
+    <div class="ai-modal-header">
+      <h5>🤖 AI Assistant</h5>
+      <span class="ai-close-btn" onclick="closeAIModal()">×</span>
+    </div>
+    <div class="ai-modal-body" id="ai-modal-body">
+      <p>🛰️ Request sent... Help incoming!</p>
+    </div>
+  </div>
+</div>
 
-  // Resizer logic
-  const rz = document.getElementById("resizer"),
-        lp = rz.previousElementSibling;
-  let dragging = false;
-
-  rz.onmousedown = () => {
-    dragging = true;
-    document.body.style.cursor = "ew-resize";
-  };
-
-  document.onmousemove = e => {
-    if (!dragging) return;
-    let newW = e.clientX - lp.parentNode.offsetLeft;
-    if (newW > 250 && newW < window.innerWidth * 0.7) {
-      lp.style.width = newW + "px";
-    }
-  };
-
-  document.onmouseup = () => {
-    dragging = false;
-    document.body.style.cursor = "";
-  };
-});
-</script>
 
 {% endblock %}
