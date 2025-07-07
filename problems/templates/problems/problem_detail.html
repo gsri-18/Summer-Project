@@ -1,15 +1,23 @@
 {% extends 'base.html' %}
-{% load markdownify %}
-{% load static %}
+{% load markdownify static %}
 
 {% block title %}{{ problem.name }} – CodeVerse{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/problem_detail.css' %}">
 
+<!-- Pass problem data to JS -->
+<div id="problem-data"
+     data-title="{{ problem.name|escapejs }}"
+     data-description="{{ problem.description|striptags|escapejs }}"
+     data-input="{{ problem.input_format|striptags|escapejs }}"
+     data-output="{{ problem.output_format|striptags|escapejs }}"
+     data-constraints="{{ problem.constraints|striptags|escapejs }}"
+     data-sample-input="{{ problem.sample_input|striptags|escapejs }}"
+     data-sample-output="{{ problem.sample_output|striptags|escapejs }}">
+</div>
 
 <div class="split-container">
-  <!-- Problem description -->
   <div class="left-pane">
     <div class="problem-card">
       <div class="problem-card-title">
@@ -20,10 +28,10 @@
             <div>
               <strong>Difficulty:</strong>
               <span class="badge 
-                {% if problem.difficulty == 'Easy' %}bg-success text-light
-                {% elif problem.difficulty == 'Medium' %}bg-warning text-dark
-                {% elif problem.difficulty == 'Hard' %}bg-danger text-light
-                {% else %}bg-secondary text-light{% endif %}">
+                {% if problem.difficulty == 'Easy' %}bg-success
+                {% elif problem.difficulty == 'Medium' %}bg-warning
+                {% elif problem.difficulty == 'Hard' %}bg-danger
+                {% endif %} text-light">
                 {{ problem.get_difficulty_display }}
               </span>
             </div>
@@ -34,32 +42,32 @@
           </div>
         </div>
       </div>
-      
+
       <div class="problem-section">
         <h3>Description</h3>
         <div class="markdown-body">{{ problem.description|safe }}</div>
       </div>
-      
+
       <div class="problem-section">
         <h3>Input Format</h3>
         <div class="markdown-body">{{ problem.input_format|safe }}</div>
       </div>
-      
+
       <div class="problem-section">
         <h3>Output Format</h3>
         <div class="markdown-body">{{ problem.output_format|safe }}</div>
       </div>
-      
+
       <div class="problem-section">
         <h3>Constraints</h3>
         <div class="markdown-body">{{ problem.constraints|safe }}</div>
       </div>
-      
+
       <div class="problem-section">
         <h3>Sample Input</h3>
         <div class="markdown-body">{{ problem.sample_input|safe }}</div>
       </div>
-      
+
       <div class="problem-section">
         <h3>Sample Output</h3>
         <div class="markdown-body">{{ problem.sample_output|safe }}</div>
@@ -67,67 +75,58 @@
     </div>
   </div>
 
-  <!-- Vertical splitter -->
   <div class="resizer" id="resizer"></div>
 
-  <!-- Code workspace -->
   <div class="right-pane">
     <form id="submission-form" method="post">
       {% csrf_token %}
-      
-      <!-- Top controls - language selector and action buttons on same line -->
-      <div class="top-controls">
-        <div class="language-selector">
-          <label for="language" style="color: #4da6ff; font-weight: 500;">Language:</label>
-          <select name="language" id="language" class="form-select">
+      <div class="top-controls d-flex justify-content-between align-items-center mb-3 flex-wrap">
+  
+        <!-- LEFT GROUP: Language -->
+        <div class="left-controls d-flex align-items-center gap-2">
+          <label for="language" class="mb-0 language-label">Language:</label>
+          <select name="language" id="language" class="form-select form-select-sm language-dropdown">
             <option value="cpp">C++</option>
             <option value="python">Python</option>
             <option value="java">Java</option>
             <option value="c">C</option>
           </select>
         </div>
-
-        <!-- Action buttons -->
-        <div class="action-buttons">
-          <!-- AI Assist Button with Manual Dropdown -->
+      
+        <!-- RIGHT GROUP: Buttons -->
+        <div class="right-controls d-flex align-items-center gap-2 flex-wrap">
           <div class="dropdown ai-assist-dropdown">
-            <button class="btn btn-outline-info" type="button" id="aiAssistBtn">
+            <button class="btn btn-outline-info btn-sm" id="aiAssistBtn">
               🤖 AI Assist <span class="dropdown-arrow">▼</span>
             </button>
-            <div class="dropdown-menu dropdown-menu-end" id="aiAssistMenu">
-              <a class="dropdown-item ai-option" href="#" data-action="debugger">🛠️ AI Debugger</a>
-              <a class="dropdown-item ai-option" href="#" data-action="hints">💡 AI Hints</a>
-              <a class="dropdown-item ai-option" href="#" data-action="explain">❓ Explain Question</a>
-              <a class="dropdown-item ai-option" href="#" data-action="suggestions">✨ Suggestions</a>
+            <div class="dropdown-menu" id="aiAssistMenu">
+              <a class="dropdown-item ai-option" data-action="debugger">🛠️ AI Debugger</a>
+              <a class="dropdown-item ai-option" data-action="hints">💡 AI Hints</a>
+              <a class="dropdown-item ai-option" data-action="explain">❓ Explain</a>
+              <a class="dropdown-item ai-option" data-action="suggestions">✨ Suggestions</a>
             </div>
           </div>
-          
-          <button type="button" class="btn btn-outline-primary" id="run-button">
-            ▶️ Run Code
-          </button>
-          <button type="submit" class="btn btn-success">
-            ✅ Submit
-          </button>
+      
+          <button type="button" class="btn btn-outline-primary btn-sm" id="run-button">▶️ Run Code</button>
+          <button type="submit" class="btn btn-success btn-sm">✅ Submit</button>
         </div>
+      
       </div>
+      
+      
 
-      <!-- IDE container -->
       <div class="ide-container">
         <div id="editor"></div>
-        <textarea name="code" id="hidden-code" hidden></textarea>
+        <textarea id="hidden-code" name="code" hidden></textarea>
       </div>
 
-      <!-- Custom IO with tabs -->
       <div class="custom-io-container">
+
         <div class="custom-io-tabs">
-          <button type="button" class="custom-io-tab active" data-tab="input">
-            📥 Custom Input
-          </button>
-          <button type="button" class="custom-io-tab" data-tab="output">
-            📤 Custom Output
-          </button>
+          <button type="button" class="custom-io-tab active" data-tab="input">📥 Custom Input</button>
+          <button type="button" class="custom-io-tab" data-tab="output">📤 Custom Output</button>
         </div>
-        
+
         <div class="custom-io-content">
           <!-- Custom Input Panel -->
           <div class="custom-io-panel active" id="input-panel">
@@ -149,299 +148,35 @@
             </div>
           </div>
         </div>
+
       </div>
     </form>
   </div>
 </div>
 
-<!-- Load marked.js and DOMPurify -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.2/dist/purify.min.js"></script>
-
-<!-- Monaco AMD Loader -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
-<script src="{% static 'js/monaco-setup.js' %}"></script>
-
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Dropdown
-    const aiAssistBtn = document.getElementById('aiAssistBtn');
-    const aiAssistMenu = document.getElementById('aiAssistMenu');
-    const dropdownArrow = aiAssistBtn.querySelector('.dropdown-arrow');
-  
-    aiAssistBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const isOpen = aiAssistMenu.classList.contains('show');
-      document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('show'));
-      if (isOpen) {
-        aiAssistMenu.classList.remove('show');
-        dropdownArrow.classList.remove('open');
-      } else {
-        aiAssistMenu.classList.add('show');
-        dropdownArrow.classList.add('open');
-      }
-    });
-  
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest('.ai-assist-dropdown')) {
-        aiAssistMenu.classList.remove('show');
-        dropdownArrow.classList.remove('open');
-      }
-    });
-  
-    document.querySelectorAll('.ai-option').forEach(item => {
-      item.addEventListener('click', function (e) {
-        e.preventDefault();
-        aiAssistMenu.classList.remove('show');
-        dropdownArrow.classList.remove('open');
-        const action = this.getAttribute('data-action');
-        handleAIAction(action);
-      });
-    });
-  
-    function handleAIAction(action) {
-      const editor = window.monacoEditor;
-      const code = editor ? editor.getValue() : '';
-  
-      const problem = {
-        title: `{{ problem.name|escapejs }}`,
-        description: `{{ problem.description|striptags|escapejs }}`,
-        input: `{{ problem.input_format|striptags|escapejs }}`,
-        output: `{{ problem.output_format|striptags|escapejs }}`,
-        constraints: `{{ problem.constraints|striptags|escapejs }}`,
-        sample_input: `{{ problem.sample_input|striptags|escapejs }}`,
-        sample_output: `{{ problem.sample_output|striptags|escapejs }}`
-      };
-  
-      let prompt = "";
-  
-      if (action === "debugger") {
-        prompt = `
-  You are a code debugger. The user is solving this problem:
-  
-  Title: ${problem.title}
-  Description: ${problem.description}
-  Input Format: ${problem.input}
-  Output Format: ${problem.output}
-  Constraints: ${problem.constraints}
-  Sample Input: ${problem.sample_input}
-  Sample Output: ${problem.sample_output}
-  
-  Below is their code:
-  
-  ${code}
-  
-  Your task:
-  1. Identify logic, syntax, or runtime issues.
-  2. Suggest corrections, but do not rewrite the full code.
-  3. Limit to 300 words.
-        `.trim();
-      } else if (action === "hints") {
-        prompt = `
-  You are a programming tutor. Provide 2–3 beginner-friendly hints.
-  
-  Problem:
-  Title: ${problem.title}
-  Description: ${problem.description}
-  Input Format: ${problem.input}
-  Output Format: ${problem.output}
-  Constraints: ${problem.constraints}
-  
-  Each hint must be under 30 words. Do not include the solution.
-        `.trim();
-      } else if (action === "explain") {
-        prompt = `
-  You are a coding mentor. Explain this problem to a beginner.
-  
-  Problem:
-  Title: ${problem.title}
-  Description: ${problem.description}
-  Input Format: ${problem.input}
-  Output Format: ${problem.output}
-  Constraints: ${problem.constraints}
-  Sample Input: ${problem.sample_input}
-  Sample Output: ${problem.sample_output}
-  
-  Use clear language. Explain step-by-step. Keep it under 300 words.
-        `.trim();
-      } else if (action === "suggestions") {
-        prompt = `
-  You are a code reviewer. Analyze this solution.
-  
-  Problem:
-  Title: ${problem.title}
-  Description: ${problem.description}
-  Input Format: ${problem.input}
-  Output Format: ${problem.output}
-  
-  User's code:
-  ${code}
-  
-  List a maximum of 6 suggestions. Focus on logic, style, or edge cases. Keep it under 300 words.
-        `.trim();
-      }
-  
-      const loadingMessages = {
-        debugger: "🛠️ Analyzing your code for bugs...",
-        hints: "💡 Thinking of beginner-friendly hints...",
-        explain: "📖 Breaking it down step-by-step...",
-        suggestions: "✨ Reviewing your code for improvements..."
-      };
-  
-      // Show AI modal with dynamic loading text
-      document.getElementById("ai-modal-body").innerHTML = `<p>${loadingMessages[action] || "🤖 Working on it..."}</p>`;
-      document.getElementById("ai-response-modal").classList.remove("hidden");
-  
-      // Send prompt to backend
-      fetch("{% url 'ai_assist' %}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify({ action, prompt, code })
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.result) {
-            try {
-              const rendered = marked.parse(json.result);
-              document.getElementById("ai-modal-body").innerHTML = `
-                <div class="markdown-body">
-                  ${rendered}
-                </div>`;
-            } catch (e) {
-              document.getElementById("ai-modal-body").innerHTML = `
-                <div class="markdown-body">
-                  <p>⚠️ Markdown rendering failed. Showing plain text instead.</p>
-                  <pre>${json.result}</pre>
-                </div>`;
-            }
-          } else {
-            document.getElementById("ai-modal-body").innerHTML = `<p>⚠️ AI Error: ${json.error || "Unknown error."}</p>`;
-          }
-        })
-        
-        .catch(err => {
-          document.getElementById("ai-modal-body").innerHTML = `<p>❌ Request failed: ${err.message}</p>`;
-        });
-    }
-  
-    // Tab switching
-    document.querySelectorAll('.custom-io-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        const tabType = tab.dataset.tab;
-        document.getElementById(tabType + '-panel').classList.add('active');
-      });
-    });
-  
-    // Monaco setup
-    setupMonacoEditor({
-      selector: "editor",
-      language: "cpp",
-      theme: "one-dark-pro",
-      onReady: (editor, monaco) => {
-        window.monacoEditor = editor;
-        const boilerplate = {
-          java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Your code here\n\n\n    }\n}`,
-          python: `def main():\n    # Your code here\n\n\n    pass\n\nif __name__ == "__main__":\n    main()`,
-          cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    // Your code here\n\n\n    return 0;\n}`,
-          c: `#include <stdio.h>\n\nint main() {\n    // Your code here\n\n\n    return 0;\n}`
-        };
-  
-        const langSel = document.getElementById("language");
-        langSel.addEventListener("change", () => {
-          const lang = langSel.value;
-          editor.setValue(boilerplate[lang] || "");
-          monaco.editor.setModelLanguage(editor.getModel(), lang === "cpp" ? "cpp" : lang);
-        });
-        langSel.dispatchEvent(new Event("change"));
-  
-        // Run button
-        document.getElementById("run-button").addEventListener("click", () => {
-          document.querySelectorAll('.custom-io-tab').forEach(t => t.classList.remove('active'));
-          document.querySelectorAll('.custom-io-panel').forEach(p => p.classList.remove('active'));
-          document.querySelector('[data-tab="output"]').classList.add('active');
-          document.getElementById('output-panel').classList.add('active');
-  
-          const data = new FormData();
-          data.append("code", editor.getValue());
-          data.append("language", langSel.value);
-          data.append("custom_input", document.getElementById("custom-input").value);
-  
-          fetch("{% url 'run_code' %}", {
-            method: "POST",
-            headers: { "X-CSRFToken": "{{ csrf_token }}" },
-            body: data
-          })
-            .then(res => res.json())
-            .then(json => {
-              document.getElementById("custom-output").value =
-                json.output || json.details || json.error || "";
-            });
-        });
-  
-        // Default input
-        setTimeout(() => {
-          const customInputField = document.getElementById("custom-input");
-          if (customInputField && !customInputField.value) {
-            customInputField.value = "{{ problem.sample_input|striptags|default:""|escapejs }}";
-          }
-        }, 100);
-  
-        document.getElementById("submission-form").addEventListener("submit", () => {
-          document.getElementById("hidden-code").value = editor.getValue();
-        });
-      }
-    });
-  
-    // Resizer logic
-    const rz = document.getElementById("resizer"),
-          lp = rz.previousElementSibling;
-    let dragging = false;
-  
-    rz.onmousedown = () => {
-      dragging = true;
-      document.body.style.cursor = "ew-resize";
-    };
-  
-    document.onmousemove = e => {
-      if (!dragging) return;
-      let newW = e.clientX - lp.parentNode.offsetLeft;
-      if (newW > 250 && newW < window.innerWidth * 0.7) {
-        lp.style.width = newW + "px";
-      }
-    };
-  
-    document.onmouseup = () => {
-      dragging = false;
-      document.body.style.cursor = "";
-    };
-  });
-  
-  // Expose close modal
-  function closeAIModal() {
-    document.getElementById("ai-response-modal").classList.add("hidden");
-  }
-  </script>
-  
-<!-- AI Response Modal -->
+  window.ai_assist_url = "{% url 'ai_assist' %}";
+  window.run_code_url = "{% url 'run_code' %}";
+</script>
+
+
+<script src="{% static 'js/problem_detail.js' %}"></script>
+<script src="{% static 'js/monaco-setup.js' %}"></script>
+
+<!-- AI Modal -->
 <div id="ai-response-modal" class="ai-modal hidden">
   <div class="ai-modal-content">
     <div class="ai-modal-header">
       <h5>🤖 AI Assistant</h5>
-      <span class="ai-close-btn" onclick="closeAIModal()">×</span>
+      <button class="ai-close-btn" onclick="document.getElementById('ai-response-modal').classList.add('hidden')">×</button>
     </div>
-    <div class="ai-modal-body" id="ai-modal-body">
-      <p>🛰️ Request sent... Help incoming!</p>
+    <div id="ai-modal-body" class="ai-modal-body">
+      🛰️ Preparing response...
     </div>
   </div>
 </div>
-
-
 {% endblock %}

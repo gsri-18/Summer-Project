@@ -31,13 +31,13 @@ body {
 }
 
 /* Top controls - language selector and buttons on same line */
-.top-controls {
+.top-controls .btn {
+    height: 32px;
+    padding: 4px 12px;
+    font-size: 14px;
+    line-height: 1;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    flex-wrap: wrap;
 }
 
 .action-buttons {
@@ -212,8 +212,9 @@ body {
 .language-selector {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 8px;
+    margin-bottom: 0;
+    height: 32px;
 }
 
 .language-selector select {
@@ -462,8 +463,24 @@ body {
 
 .ai-close-btn {
     cursor: pointer;
-    font-size: 24px;
-    color: #aaa;
+    font-size: 18px;
+    color: #cbd5e1;
+    background-color: #1e3a5f;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.ai-close-btn:hover {
+    background-color: #2563eb;
+    /* deep blue hover */
+    color: white;
+    transform: scale(1.1);
 }
 
 .ai-modal-body p {
@@ -514,5 +531,19 @@ body {
     padding: 0.2em 0.4em;
     border-radius: 3px;
     font-size: 0.9em;
+}
+
+.language-label {
+    font-size: 14px;
+    margin-bottom: 0;
+    padding-top: 0;
+    line-height: 1;
+}
+
+.language-dropdown {
+    height: 32px;
+    padding: 4px 10px;
+    font-size: 14px;
+    line-height: 1;
 }
 
