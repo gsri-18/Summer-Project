@@ -183,28 +183,47 @@ List a maximum of 6 suggestions. Focus on logic, style, or edge cases. Keep it u
 
 // ---------- Run Button Logic ----------
 function setupRunButton() {
-    $("#run-button").addEventListener("click", async () => {
+    const runBtn = $("#run-button");
+    const outputBox = $("#custom-output");
+
+    runBtn.addEventListener("click", async () => {
         const editor = window.monacoEditor;
         const lang = $("#language").value;
         const code = editor.getValue();
         const input = $("#custom-input").value;
+
+        // Disable button and show loading
+        runBtn.disabled = true;
+        runBtn.innerHTML = "⏳ Running...";
+
+        // Show output tab and loading message
+        activateTab("output");
+        outputBox.value = "🔄 Please wait... Your code is running.";
 
         const data = new FormData();
         data.append("code", code);
         data.append("language", lang);
         data.append("custom_input", input);
 
-        const response = await fetch(window.run_code_url || "/run-code/", {
-            method: "POST",
-            headers: { "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value },
-            body: data
-        });
+        try {
+            const response = await fetch(window.run_code_url || "/run-code/", {
+                method: "POST",
+                headers: { "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value },
+                body: data
+            });
 
-        const json = await response.json();
-        $("#custom-output").value = json.output || json.error || json.details || "No response.";
-        activateTab("output");
+            const json = await response.json();
+            outputBox.value = json.output || json.error || json.details || "No response from server.";
+        } catch (err) {
+            outputBox.value = `❌ Error: ${err.message}`;
+        } finally {
+            // Restore button
+            runBtn.disabled = false;
+            runBtn.innerHTML = "▶️ Run Code";
+        }
     });
 }
+
 
 // ---------- Tabs (Custom I/O) ----------
 function setupTabs() {
@@ -254,10 +273,45 @@ function setupResizer() {
 
 // ---------- Form Submission ----------
 function setupFormSubmit() {
-    $("#submission-form").addEventListener("submit", () => {
+    const form = $("#submission-form");
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Get the code from Monaco
         $("#hidden-code").value = window.monacoEditor.getValue();
+
+        // Disable submit button and show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = "⏳ Submitting...";
+
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action || window.location.href, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                },
+                body: formData
+            });
+
+            const html = await response.text();
+
+            // Replace the whole document with the response (full page reload)
+            document.open();
+            document.write(html);
+            document.close();
+        } catch (err) {
+            alert("❌ Submission failed: " + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = "✅ Submit";
+        }
     });
 }
+
 
 // ---------- Main ----------
 document.addEventListener("DOMContentLoaded", () => {
