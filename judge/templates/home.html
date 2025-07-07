@@ -64,18 +64,28 @@
 
   #logo-container {
     width: 220px;
-    height: 220px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     position: relative;
   }
-
-  #logo-container img {
+  
+  .logo-wrapper {
+    position: relative;
+    width: 100%;
+    height: 220px;
+  }
+  
+  .logo-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     position: relative;
     z-index: 2;
   }
-
+  
   #logo-fill {
     position: absolute;
     bottom: 0;
@@ -88,6 +98,20 @@
     transition: height 0.5s ease-out;
     border-radius: 20%;
   }
+  
+  #logo-progress {
+    margin-top: 12px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #00ffe7;
+    text-shadow: 0 0 5px #00ffe7, 0 0 10px #00ffe7;
+    animation: fadeIn 1s ease forwards;
+    font-family: 'Fira Code', monospace;
+    z-index: 3;
+  }
+  
+  
+  
 
   #skip-btn, #launch-btn {
     position: absolute;
@@ -188,12 +212,18 @@
     <pre class="terminal-text" id="terminal-lines"></pre>
     <span class="blink">█</span>
   </div>
+
   <div id="logo-pane">
     <div id="logo-container">
-      <img src="{% static 'images/codeverse-logo.png' %}" alt="CodeVerse Logo">
-      <div id="logo-fill"></div>
+      <div class="logo-wrapper">
+        <img src="{% static 'images/codeverse-logo.png' %}" alt="CodeVerse Logo">
+        <div id="logo-fill"></div>
+      </div>
+      <div id="logo-progress">%<span id="percent-value">0</span></div>
     </div>
   </div>
+
+  
 </div>
 
 <!-- 🌍 Actual Home Page Content -->
@@ -216,8 +246,14 @@
   <div class="row g-4">
     <div class="col-md-4"><a href="{% url 'problem_list' %}" class="feature-card"><div class="feature-icon">📚</div><h5>Problem Solving</h5><p class="small">Practice coding with instant verdicts and custom test cases.</p></a></div>
     <div class="col-md-4"><a href="{% url 'online_compiler' %}" class="feature-card"><div class="feature-icon">💻</div><h5>Online Compiler</h5><p class="small">Run Python, C, C++, Java in-browser with custom limits and inputs.</p></a></div>
-    <div class="col-md-4"><a href="{% url 'ai_suggestions' %}" class="feature-card"><div class="feature-icon">🧠</div><h5>AI Assistant <span class="coming-soon">(beta)</span></h5><p class="small">Get hints, debug help, and analysis powered by AI.</p></a></div>
-    <div class="col-md-4"><a href="#" class="feature-card disabled"><div class="feature-icon">📈</div><h5>Leaderboard <span class="coming-soon">(coming soon)</span></h5><p class="small">Track your growth and flex your rank to the world.</p></a></div>
+    <div class="col-md-4"><a href="{% url 'ai_suggestions' %}" class="feature-card"><div class="feature-icon">🧠</div><h5>AI Assistant</h5><p class="small">Get hints, debug help, and analysis powered by AI.</p></a></div>
+    <div class="col-md-4">
+      <a href="{% url 'leaderboard' %}" class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h5>Leaderboard</h5>
+        <p class="small">Track your growth and flex your rank to the world.</p>
+      </a>
+    </div>
     <div class="col-md-4"><a href="{% url 'add_problem' %}" class="feature-card"><div class="feature-icon">🛠️</div><h5>Admin Tools</h5><p class="small">Create, edit, and manage problems with ease.</p></a></div>
     <div class="col-md-4"><a href="#" class="feature-card disabled"><div class="feature-icon">🔒</div><h5>Docker Sandbox</h5><p class="small">Run code securely inside isolated containers.</p></a></div>
   </div>
@@ -274,6 +310,7 @@
       lineIndex++;
       const fillHeight = Math.floor((lineIndex / bootLines.length) * 100);
       logoFill.style.height = `${fillHeight}%`;
+      document.getElementById("percent-value").textContent = fillHeight;
       setTimeout(typeChar, 400);
     }
   }

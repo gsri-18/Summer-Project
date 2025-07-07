@@ -3,6 +3,52 @@
 
 {% block title %}Register - CodeVerse{% endblock %}
 
+{% block extra_css %}
+<style>
+  .auth-card {
+    background-color: #1e293b; /* slate-800 */
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    color: #e2e8f0; /* slate-200 */
+    font-family: 'Fira Code', monospace;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .auth-heading {
+    color: #facc15; /* yellow-400 */
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .register-btn {
+    background-color: #22c55e; /* green-500 */
+    color: white;
+    font-weight: 600;
+    border: none;
+    transition: 0.2s ease-in-out;
+  }
+
+  .register-btn:hover {
+    background-color: #16a34a; /* green-600 */
+  }
+
+  .auth-card a {
+    color: #60a5fa; /* blue-400 */
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .auth-card a:hover {
+    color: #93c5fd; /* blue-300 */
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-center align-items-center" style="min-height: 85vh;">
   <div class="auth-card">
@@ -12,13 +58,14 @@
       {% csrf_token %}
       {{ form|crispy }}
       <div class="d-grid mt-3">
-        <button type="submit" class="btn">Create Account</button>
+        <button type="submit" class="btn register-btn">Create Account</button>
       </div>
     </form>
 
-    <hr class="my-4" style="border-color: rgba(255,255,255,0.15);">
-    <p class="text-center mb-0">Already have an account?
-      <a href="{% url 'login' %}" style="color:#4da6ff;">Login</a>
+    <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+    <p class="text-center mb-0">
+      Already have an account?
+      <a href="{% url 'login' %}">Login</a>
     </p>
   </div>
 </div>

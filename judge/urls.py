@@ -25,11 +25,13 @@ urlpatterns = [
 
     path('compiler/', views.online_compiler, name='online_compiler'),
     path('ai/', views.ai_suggestions, name='ai_suggestions'),
+    path('leaderboard/', views.leaderboard_view, name='leaderboard'),
 
     path('contests/', views.contest_list_view, name='contest_list'),
     path('contests/add/', views.add_contest_view, name='add_contest'),
     path('contests/<slug:code>/', views.contest_detail_view, name='contest_detail'),
     path('contests/<slug:code>/<str:problem_code>/', views.contest_problem_view, name='contest_problem'),
+
     
 
 ]

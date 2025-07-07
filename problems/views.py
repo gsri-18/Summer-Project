@@ -118,27 +118,28 @@ def problem_detail(request, code):
         )
 
         return redirect('submission_detail', id=submission.id)
+    
+    submissions = Submission.objects.filter(problem=problem).order_by('-submitted_at')
 
     return render(request, 'problems/problem_detail.html', {
         'problem': problem,
-        'verdict': verdict
+        'verdict': verdict,
+        'submissions': submissions,
     })
 
-# compiler/views.py or problems/views.py or wherever
 from core.utils.code_runner import handle_run_code_view_logic
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
 @csrf_exempt
-@login_required
 def run_code_view(request):
     result, status = handle_run_code_view_logic(request)
     return JsonResponse(result, status=status)
 
 
 
-from judge.forms import ProblemForm, TestCaseFormSet  # make sure these are imported
+from judge.forms import ProblemForm, TestCaseFormSet  
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages

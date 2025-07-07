@@ -116,6 +116,7 @@ body {
     background-color: #0f172a;
     border-radius: 6px;
     overflow: hidden;
+    margin-bottom: 0.5rem;
 }
 
 .custom-io-tabs {
@@ -387,6 +388,32 @@ body {
 #custom-input::-webkit-scrollbar-track,
 #custom-output::-webkit-scrollbar-track {
     background: #1e293b;
+}
+
+/* Cosmic Tabs */
+.cosmic-tabs .nav-link {
+    background-color: transparent;
+    color: #94a3b8;
+    font-size: 13px;
+    padding: 6px 12px;
+    margin-right: 4px;
+    border-radius: 6px 6px 0 0;
+    border: 1px solid transparent;
+}
+
+.cosmic-tabs .nav-link.active {
+    background-color: #1e293b;
+    border: 1px solid #4da6ff;
+    border-bottom: none;
+    color: #e2e8f0;
+}
+
+.cosmic-tab-content {
+    border: 1px solid #4da6ff;
+    border-top: none;
+    padding: 12px;
+    border-radius: 0 0 6px 6px;
+    background-color: #0f172a;
 }
 
 /* Monaco scrollbar styling */

@@ -94,14 +94,10 @@ def promote_users_view(request):
 
 
 
-@login_required
 def online_compiler(request):
     return render(request, 'online_compiler.html')
 
-@login_required
 def ai_suggestions(request):
-    # Placeholder for AI suggestions logic
-    # This could be integrated with an AI model or API to provide code suggestions
     return render(request, 'ai_suggestions.html')
 
 from django.contrib.auth.decorators import login_required
@@ -305,6 +301,41 @@ def add_contest_view(request):
     return render(request, 'contests/add_contest.html', {'form': form})
 
 
+from django.shortcuts import render
+from .models import Submission, Problem, User
+from django.db.models import Count, Sum, Case, When, IntegerField
+
+def leaderboard_view(request):
+    # Map difficulty to points
+    difficulty_points = {
+        'Easy': 10,
+        'Medium': 30,
+        'Hard': 50
+    }
+
+    # Only consider first AC per problem per user
+    unique_ac_subs = Submission.objects.filter(verdict='Accepted').values('user', 'problem').distinct()
+
+    user_scores = {}
+    for entry in unique_ac_subs:
+        user_id = entry['user']
+        prob = Problem.objects.get(id=entry['problem'])
+        points = difficulty_points.get(prob.difficulty, 0)
+        user_scores[user_id] = user_scores.get(user_id, 0) + points
+
+    # Get user objects and prepare leaderboard
+    leaderboard = []
+    for user_id, score in user_scores.items():
+        user = User.objects.get(id=user_id)
+        leaderboard.append({
+            'user': user,
+            'score': score
+        })
+
+    # Sort descending by score
+    leaderboard.sort(key=lambda x: x['score'], reverse=True)
+
+    return render(request, 'leaderboard.html', {'leaderboard': leaderboard})
 
 
 

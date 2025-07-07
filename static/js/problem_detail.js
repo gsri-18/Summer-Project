@@ -237,6 +237,19 @@ function setupTabs() {
     });
 }
 
+// ---------- Problem Tabs (Description / Submissions / Notes) ----------
+function setupProblemTabs() {
+    const tabTriggers = $$("#problemTab button[data-bs-toggle='tab']");
+    tabTriggers.forEach(triggerEl => {
+        triggerEl.addEventListener("click", (e) => {
+            e.preventDefault();
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+        });
+    });
+}
+
+
 function activateTab(tabName) {
     $$(".custom-io-tab").forEach(t => t.classList.remove("active"));
     $$(".custom-io-panel").forEach(p => p.classList.remove("active"));
@@ -319,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupAIAssist();
     setupRunButton();
     setupTabs();
+    setupProblemTabs();
     setupResizer();
     setupFormSubmit();
 });

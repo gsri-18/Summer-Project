@@ -1,8 +1,31 @@
-asgiref==3.8.1
+# === CORE DEPENDENCIES ===
 Django==5.2.3
 psycopg2-binary==2.9.10
 sqlparse==0.5.3
-crispy-bootstrap5==2025.6
-django-crispy-forms==2.4
+asgiref==3.8.1
+
+# === TEMPLATING & FORMS ===
 Jinja2==3.1.6
 MarkupSafe==3.0.2
+django-crispy-forms==2.4
+crispy-bootstrap5==2025.6
+
+# === MARKDOWN SUPPORT ===
+django-markdownify==0.9.5
+Markdown==3.8.2
+bleach==6.2.0
+
+# === AI INTEGRATION (Gemini) ===
+google-generativeai==0.8.5
+google-api-core==2.25.1
+google-auth==2.40.3
+google-ai-generativelanguage==0.6.15
+google-auth-httplib2==0.2.0
+httplib2==0.22.0
+protobuf==5.29.5
+grpcio==1.73.1
+grpcio-status==1.71.2
+requests==2.32.4
+
+# === ENVIRONMENT VARIABLES ===
+python-dotenv==1.1.1

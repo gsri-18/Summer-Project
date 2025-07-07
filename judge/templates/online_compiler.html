@@ -41,85 +41,85 @@
 
   #custom-input,
   #custom-output {
-    background-color: #0e2239; !important;
-    color: #e2e8f0; !important;
-    border: 1px solid #204a87; !important;
-    font-family: 'Fira Code', monospace;
-    font-size: 0.95rem;
+    background: #fff;
+    color: #000;
   }
 
-  #custom-input::placeholder {
-    color: #a0aec0 !important;
-    opacity: 0.8;
+  /* Fix invisible placeholder text in dark mode */
+  #custom-input::placeholder,
+  #custom-output::placeholder {
+    color: #9ca3af; /* light gray like Tailwind's text-gray-400 */
+    opacity: 1;     /* ensure it's fully visible */
   }
   
-  #custom-output::placeholder {
-    color: #a0aec0 !important;
-    opacity: 0.8;
-  }
+
   .btn-run {
     white-space: nowrap;
   }
 
-  .compiler-container::-webkit-scrollbar,
-  #editor::-webkit-scrollbar,
-  textarea::-webkit-scrollbar {
-    width: 6px;
-  }
+  /* Add this to your existing <style> in online_compiler.html */
+    .compiler-container::-webkit-scrollbar,
+    #editor::-webkit-scrollbar,
+    textarea::-webkit-scrollbar {
+      width: 6px;
+    }
+    .compiler-container::-webkit-scrollbar-thumb,
+    #editor::-webkit-scrollbar-thumb,
+    textarea::-webkit-scrollbar-thumb {
+      background-color: #4da6ff;
+      border-radius: 3px;
+    }
 
-  .compiler-container::-webkit-scrollbar-thumb,
-  #editor::-webkit-scrollbar-thumb,
-  textarea::-webkit-scrollbar-thumb {
-    background-color: #4da6ff;
-    border-radius: 3px;
-  }
+    .monaco-scrollable-element > .scrollbar > .slider {
+        background: #4da6ff !important;
+        border-radius: 3px !important;
+      }
 
-  .monaco-scrollable-element > .scrollbar > .slider {
-    background: #4da6ff !important;
-    border-radius: 3px !important;
-  }
-
-  body::-webkit-scrollbar,
-  .compiler-container::-webkit-scrollbar,
-  #editor::-webkit-scrollbar,
-  textarea::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  body::-webkit-scrollbar-thumb,
-  .compiler-container::-webkit-scrollbar-thumb,
-  #editor::-webkit-scrollbar-thumb,
-  textarea::-webkit-scrollbar-thumb {
-    background-color: #4da6ff;
-    border-radius: 3px;
-  }
-
-  .text-primary {
-    color: #4da6ff !important;
-  }
-
-  .fw-bold {
-    font-weight: 600;
-  }
+      /* Scrollbar for entire page */
+      body::-webkit-scrollbar,
+      .compiler-container::-webkit-scrollbar,
+      #editor::-webkit-scrollbar,
+      textarea::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      /* Stylish blue thumb */
+      body::-webkit-scrollbar-thumb,
+      .compiler-container::-webkit-scrollbar-thumb,
+      #editor::-webkit-scrollbar-thumb,
+      textarea::-webkit-scrollbar-thumb {
+        background-color: #4da6ff;
+        border-radius: 3px;
+      }
+      .text-primary {
+        color: #4da6ff !important;
+      }
+      
+      .fw-bold {
+        font-weight: 600;
+      }
+      
+          
 </style>
 
 <div class="text-center mb-4">
-  <h2 class="fw-bold text-primary">
-    <img src="{% static 'images/codeverse-logo.png' %}" height="40" class="me-2" style="vertical-align: middle;" />
-    CodeVerse Online Compiler
-  </h2>
-  <p class="text-muted mt-2 mb-0">
-    Code in <strong>Python</strong>, <strong>C</strong>, <strong>C++</strong>, or <strong>Java</strong>.<br>
-    Set limits. Add input. Get verdicts. All in one elegant workspace.
-  </p>
-</div>
+    <h2 class="fw-bold text-primary">
+      <img src="{% static 'images/codeverse-logo.png' %}" height="40" class="me-2" style="vertical-align: middle;" />
+      CodeVerse Online Compiler
+    </h2>
+    <p class="text-muted mt-2 mb-0">
+      Code in <strong>Python</strong>, <strong>C</strong>, <strong>C++</strong>, or <strong>Java</strong>.  
+      Set limits. Add input. Get verdicts. All in one elegant workspace.
+    </p>
+  </div>
+  
 
 <div class="compiler-container">
   <div>
     <select id="language" class="form-select w-auto mb-2">
-      <option value="cpp">C++</option>
-      <option value="python">Python</option>
-      <option value="java">Java</option>
+        <option value="cpp">C++</option>
+        <option value="python">Python</option>
+        <option value="java">Java</option>
       <option value="c">C</option>
     </select>
     <div id="editor"></div>
@@ -157,61 +157,159 @@
   </div>
 </div>
 
-<!-- Monaco AMD Loader (must come before monaco-setup.js) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
 
-
-<!-- Monaco loader -->
-<script src="{% static 'js/monaco-setup.js' %}"></script>
 <script>
-  setupMonacoEditor({
-    selector: "editor",
-    language: "cpp",
-    theme: "one-dark-pro",
-    onReady: (editor, monaco) => {
-      const boilerplate = {
-        java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        // Your code here\n\n\n    }\n}`,
-        python: `def main():\n    # Your code here\n\n\n    pass\n\nif __name__ == "__main__":\n    main()`,
-        cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n    // Your code here\n\n\n    return 0;\n}`,
-        c: `#include <stdio.h>\n\nint main() {\n    // Your code here\n\n\n    return 0;\n}`
-      };
-
-      const langSelect = document.getElementById("language");
-      langSelect.addEventListener("change", () => {
-        const lang = langSelect.value;
-        editor.setValue(boilerplate[lang] || "");
-        monaco.editor.setModelLanguage(editor.getModel(), lang === "cpp" ? "cpp" : lang);
-      });
-      langSelect.dispatchEvent(new Event("change"));
-
-      document.getElementById("run-button").addEventListener("click", () => {
-        const code = editor.getValue();
-        const language = langSelect.value;
-        const custom_input = document.getElementById("custom-input").value;
-        const time_limit = document.getElementById("time-limit").value;
-        const memory_limit = document.getElementById("memory-limit").value;
-
-        const data = new FormData();
-        data.append("code", code);
-        data.append("language", language);
-        data.append("custom_input", custom_input);
-        data.append("time_limit", time_limit);
-        data.append("memory_limit", memory_limit);
-
-        fetch("{% url 'run_code' %}", {
-          method: "POST",
-          headers: { "X-CSRFToken": "{{ csrf_token }}" },
-          body: data
-        })
-        .then(res => res.json())
-        .then(json => {
-          document.getElementById("custom-output").value =
-            json.output || json.details || json.error || "";
-        });
-      });
-    }
-  });
+  window.run_code_url = "{% url 'run_code' %}";
 </script>
 
 
+<script>
+  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' }});
+  require(['vs/editor/editor.main'], function () {
+    window.editor = monaco.editor.create(document.getElementById('editor'), {
+      value: '',
+      language: 'java',
+      theme: 'vs-dark',
+      automaticLayout: true,
+      minimap: { enabled: false },
+      scrollbar: {
+        verticalScrollbarSize: 4,
+        horizontalScrollbarSize: 4,
+        useShadows: false,
+      }
+    });
+
+
+    // boilerplate snippets
+    const boilerplate = {
+        java: `import java.util.*;
+  
+public class Main {
+    public static void main(String[] args) {
+        // Your code here
+
+    }
+}
+  `,
+        python: `# Python3 code
+
+def main():
+    # Your code here
+    
+
+    pass
+
+if __name__ == "__main__":
+    main()
+  `,
+        cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    // Your code here
+
+
+    return 0;
+}
+  `,
+        c: `#include <stdio.h>
+  
+int main() {
+
+    // Your code here
+
+
+    return 0;
+}
+  `
+    };
+
+    const langSelect = document.getElementById('language');
+    langSelect.addEventListener('change', () => {
+      const lang = langSelect.value;
+      editor.setValue(boilerplate[lang] || '');
+      monaco.editor.setModelLanguage(editor.getModel(), lang === 'cpp' ? 'cpp' : lang);
+    });
+
+    langSelect.dispatchEvent(new Event('change'));
+
+    document.getElementById('run-button').addEventListener('click', () => {
+      const code = editor.getValue();
+      const language = langSelect.value;
+      const custom_input = document.getElementById('custom-input').value;
+      const time_limit = document.getElementById('time-limit').value;
+      const memory_limit = document.getElementById('memory-limit').value;
+
+      const data = new FormData();
+      data.append('code', code);
+      data.append('language', language);
+      data.append('custom_input', custom_input);
+      data.append('time_limit', time_limit);
+      data.append('memory_limit', memory_limit);
+
+      fetch(window.run_code_url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: data
+      })
+      .then(res => res.json())
+      .then(json => {
+        document.getElementById('custom-output').value =
+          json.output || json.details || json.error || '';
+      });
+    });
+
+    document.getElementById('run-button').addEventListener('click', () => {
+      const runBtn = document.getElementById('run-button');
+      const outputBox = document.getElementById('custom-output');
+    
+      const code = editor.getValue();
+      const language = langSelect.value;
+      const custom_input = document.getElementById('custom-input').value;
+      const time_limit = document.getElementById('time-limit').value;
+      const memory_limit = document.getElementById('memory-limit').value;
+    
+      const data = new FormData();
+      data.append('code', code);
+      data.append('language', language);
+      data.append('custom_input', custom_input);
+      data.append('time_limit', time_limit);
+      data.append('memory_limit', memory_limit);
+    
+      // ✅ Visual Feedback
+      runBtn.disabled = true;
+      runBtn.innerHTML = "⏳ Running...";
+      outputBox.value = "💡 Running code... Please wait.";
+    
+      fetch(window.run_code_url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: data
+      })
+      .then(res => res.json())
+      .then(json => {
+        outputBox.value = json.output || json.details || json.error || '';
+      })
+      .catch(err => {
+        outputBox.value = "❌ An error occurred while running your code.";
+        console.error(err);
+      })
+      .finally(() => {
+        // ✅ Restore UI
+        runBtn.disabled = false;
+        runBtn.innerHTML = "▶️ Run Code";
+      });
+    });
+    
+  });
+</script>
 {% endblock %}
