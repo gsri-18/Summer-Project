@@ -359,6 +359,7 @@ textarea:focus {
 
 .nav-btn {
     position: relative;
+    padding: 0.6rem 1.2rem;
     border: none;
     font-family: 'Fira Code', monospace;
     font-weight: 500;
