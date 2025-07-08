@@ -293,11 +293,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from judge.models import DailyAICall
 import google.generativeai as genai
-
-DAILY_LIMIT = 27
 
 @csrf_exempt
 @login_required
@@ -316,10 +313,19 @@ def ai_assist_view(request):
     user = request.user
     today = timezone.now().date()
 
-    # Get or create today's AI usage record for user
+    # Dynamic limit based on role
+    if user.is_superuser:
+        daily_limit = 108  # Or set to float('inf') if truly unlimited
+    elif user.is_staff:
+        daily_limit = 54
+    else:
+        daily_limit = 27
+
+    # Get or create today's AI usage record
     record, _ = DailyAICall.objects.get_or_create(user=user, date=today)
 
-    if record.count >= DAILY_LIMIT:
+    # Check limit
+    if record.count >= daily_limit:
         return JsonResponse({
             'error': 'Daily AI limit reached. Try again tomorrow.',
             'calls_left': 0
@@ -331,13 +337,13 @@ def ai_assist_view(request):
         model = genai.GenerativeModel("gemini-2.0-flash")
         response = model.generate_content(prompt)
 
-        # Increment count
+        # Track usage
         record.count += 1
         record.save()
 
         return JsonResponse({
             'result': response.text,
-            'calls_left': DAILY_LIMIT - record.count
+            'calls_left': daily_limit - record.count
         })
 
     except Exception as e:
