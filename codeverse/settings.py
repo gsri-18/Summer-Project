@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os 
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-sr2m(=#zzrq6-=&v9$9%7-(s5w=ql!7b(xzw$4z-mt2e(%!0*o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = True  # Set to False in production
 ALLOWED_HOSTS = []
+
+# DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Use environment variable for debug mode
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 
 # Application definition
@@ -154,7 +159,7 @@ LOGIN_URL = '/login/'
 
 # settings.py
 DELETE_SUBMISSION_FILES_AFTER_EVALUATION = False
-DELETE_RUN_FILES_AFTER_EXECUTION = False
+DELETE_RUN_FILES_AFTER_EXECUTION = True
 
 
 INSTALLED_APPS += ["markdownify"]
@@ -172,8 +177,6 @@ MARKDOWNIFY = {
     }
 }
 
-import os 
-from dotenv import load_dotenv
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')

@@ -12,7 +12,7 @@ def run_code_util(code, language, input_data, base_path,
                   time_limit=1, memory_limit=128, use_docker=False):
     
     if use_docker:
-        return run_in_docker(code, language, input_data, time_limit, memory_limit)
+        return run_in_docker(code, language, input_data, time_limit, memory_limit, base_path)
 
 
     uid = str(uuid.uuid4())
@@ -109,7 +109,7 @@ def run_code_util(code, language, input_data, base_path,
         return {'error': 'Unexpected Error', 'details': str(e)}
     finally:
         delete_toggle = (
-            settings.DELETE_RUN_FILES_AFTER_EXECUTION if 'runs' in str(base_path) else
+            settings.DELETE_RUN_FILES_AFTER_EXECUTION if 'runs' in base_path.parts else
             settings.DELETE_SUBMISSION_FILES_AFTER_EVALUATION
         )
         if delete_toggle:
@@ -117,10 +117,10 @@ def run_code_util(code, language, input_data, base_path,
 
 
 
-def run_in_docker(code, language, input_data, time_limit, memory_limit):
+def run_in_docker(code, language, input_data, time_limit, memory_limit, base_dir):
 
     uid = str(uuid.uuid4())
-    base_dir = Path(settings.BASE_DIR) / "submission_files" / "docker_temp" / uid
+    # base_dir = Path(settings.BASE_DIR) / "submission_files" / "docker_temp" / uid
     base_dir.mkdir(parents=True, exist_ok=True)
 
     ext_map = {'python': '.py', 'cpp': '.cpp', 'c': '.c', 'java': '.java'}
@@ -184,12 +184,12 @@ def run_in_docker(code, language, input_data, time_limit, memory_limit):
     except Exception as e:
         return {'error': 'Unexpected Error', 'details': str(e)}
     finally:
-        # delete_toggle = (
-        #     settings.DELETE_RUN_FILES_AFTER_EXECUTION if 'runs' in str(base_dir) else
-        #     settings.DELETE_SUBMISSION_FILES_AFTER_EVALUATION
-        # )
-        # if delete_toggle:
-        #     shutil.rmtree(base_dir, ignore_errors=True)
-        #     print("🗑️ Docker temp files deleted:", base_dir)
+        delete_toggle = (
+            settings.DELETE_RUN_FILES_AFTER_EXECUTION if 'runs' in base_dir.parts else
+            settings.DELETE_SUBMISSION_FILES_AFTER_EVALUATION
+        )
+        if delete_toggle:
+            shutil.rmtree(base_dir, ignore_errors=True)
+            print("🗑️ Docker temp files deleted:", base_dir)
         pass
 
