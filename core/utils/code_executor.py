@@ -133,6 +133,8 @@ def run_in_docker(code, language, input_data, time_limit, memory_limit, base_dir
     input_file = base_dir / "input.txt"
     output_file = base_dir / "output.txt"
 
+    time_limit = time_limit + 1  # Add a buffer to the time limit for Docker execution
+
     code_file.write_text(code)
     input_file.write_text(input_data)
     print("🐳 [Docker] Mount base_dir:", base_dir)

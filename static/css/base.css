@@ -49,3 +49,342 @@ textarea:focus {
 .custom-dropdown li {
     padding-left: 0;
 }
+
+.navbar-modern {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(77, 166, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand-modern {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff !important;
+    text-shadow: 0 0 20px rgba(48, 207, 207, 0.5);
+    transition: all 0.3s ease;
+}
+
+.navbar-brand-modern:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 30px rgba(48, 207, 207, 0.8);
+}
+
+.navbar-brand-modern img {
+    filter: drop-shadow(0 0 10px #30cfcf);
+    transition: filter 0.3s ease;
+}
+
+.navbar-brand-modern:hover img {
+    filter: drop-shadow(0 0 20px #30cfcf);
+}
+
+.nav-buttons-container {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex: 1;
+    margin: 0 2rem;
+}
+
+.nav-btn {
+    position: relative;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.nav-btn:hover::before {
+    left: 100%;
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.nav-btn-home {
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    color: white;
+}
+
+.nav-btn-home:hover {
+    background: linear-gradient(45deg, #ff5252, #ff7979);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.nav-btn-problems {
+    background: linear-gradient(45deg, #4ecdc4, #44a08d);
+    color: white;
+}
+
+.nav-btn-problems:hover {
+    background: linear-gradient(45deg, #26de81, #20bf6b);
+    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+}
+
+.nav-btn-compiler {
+    background: linear-gradient(45deg, #a55eea, #8b46ff);
+    color: white;
+}
+
+.nav-btn-compiler:hover {
+    background: linear-gradient(45deg, #9c4dff, #7b2cbf);
+    box-shadow: 0 8px 25px rgba(165, 94, 234, 0.4);
+}
+
+.nav-btn-ai {
+    background: linear-gradient(45deg, #ffa726, #ff7043);
+    color: white;
+}
+
+.nav-btn-ai:hover {
+    background: linear-gradient(45deg, #ff9800, #ff5722);
+    box-shadow: 0 8px 25px rgba(255, 167, 38, 0.4);
+}
+
+.nav-btn-leaderboard {
+    background: linear-gradient(45deg, #ffd700, #ffb300);
+    color: #333;
+}
+
+.nav-btn-leaderboard:hover {
+    background: linear-gradient(45deg, #ffc107, #ff9800);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.nav-btn-admin {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+.nav-btn-admin:hover {
+    background: linear-gradient(45deg, #d63031, #a4161a);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+.nav-btn-manage {
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+    color: white;
+}
+
+.nav-btn-manage:hover {
+    background: linear-gradient(45deg, #e67e22, #d35400);
+    box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
+}
+
+.nav-btn-contest {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+}
+
+.nav-btn-contest:hover {
+    background: linear-gradient(45deg, #2980b9, #1abc9c);
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+}
+
+.nav-btn-promote {
+    background: linear-gradient(45deg, #9b59b6, #8e44ad);
+    color: white;
+}
+
+.nav-btn-promote:hover {
+    background: linear-gradient(45deg, #8e44ad, #663399);
+    box-shadow: 0 8px 25px rgba(155, 89, 182, 0.4);
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-greeting {
+    color: #4da6ff;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(77, 166, 255, 0.3);
+}
+
+.nav-btn-profile {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.nav-btn-profile:hover {
+    background: linear-gradient(45deg, #5a67d8, #553c9a);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.nav-btn-logout {
+    background: linear-gradient(45deg, #34495e, #2c3e50);
+    color: white;
+    border: none;
+}
+
+.nav-btn-logout:hover {
+    background: linear-gradient(45deg, #2c3e50, #1a252f);
+    box-shadow: 0 8px 25px rgba(52, 73, 94, 0.4);
+}
+
+.nav-btn-login {
+    background: linear-gradient(45deg, #00b894, #00a085);
+    color: white;
+}
+
+.nav-btn-login:hover {
+    background: linear-gradient(45deg, #00a085, #008f7a);
+    box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
+}
+
+.nav-btn-register {
+    background: linear-gradient(45deg, #6c5ce7, #5f3dc4);
+    color: white;
+}
+
+.nav-btn-register:hover {
+    background: linear-gradient(45deg, #5f3dc4, #4c63d2);
+    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+}
+
+.nav-btn i {
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 992px) {
+    .nav-buttons-container {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .nav-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-modern {
+        padding: 1rem 0.5rem;
+    }
+
+    .nav-buttons-container {
+        margin: 0.5rem 0;
+    }
+
+    .user-section {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* Pulse animation for AI button */
+.nav-btn-ai {
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 4px 25px rgba(255, 167, 38, 0.6);
+    }
+}
+
+/* Sparkle effect for leaderboard */
+.nav-btn-leaderboard {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-btn-leaderboard::after {
+    content: '✨';
+    position: absolute;
+    top: 0.2rem;
+    right: 0.5rem;
+    animation: sparkle 1.5s infinite;
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+.dropdown-menu-dark {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+}
+
+.dropdown-item:hover {
+    background-color: #334155;
+}
+
+.nav-btn {
+    position: relative;
+    border: none;
+    font-family: 'Fira Code', monospace;
+    font-weight: 500;
+    font-size: 0.81rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.nav-buttons-container {
+    display: flex;
+    gap: 0.5rem;
+    /* 🔹 reduced spacing */
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex: 1;
+    margin: 0 1rem;
+}
+
+.navbar-modern {
+    padding: 0.4rem 0.8rem;
+    /* 🔹 less navbar height */
+}

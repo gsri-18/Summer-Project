@@ -1,85 +1,781 @@
 {% extends 'base.html' %}
-
 {% block title %}Problems – CodeVerse{% endblock %}
 
 {% block content %}
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: #e2e8f0;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .cosmic-container {
+    position: relative;
+    min-height: 100vh;
+    padding: 2rem 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+  }
+
+  .cosmic-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.05) 50%, transparent 70%),
+      linear-gradient(-45deg, transparent 30%, rgba(139, 92, 246, 0.05) 50%, transparent 70%);
+    pointer-events: none;
+    animation: cosmicShift 20s ease-in-out infinite;
+  }
+
+  @keyframes cosmicShift {
+    0%, 100% { 
+      opacity: 0.3;
+      transform: rotate(0deg) scale(1);
+    }
+    50% { 
+      opacity: 0.6;
+      transform: rotate(1deg) scale(1.02);
+    }
+  }
+
+  .problems-wrapper {
+    max-width: min(1400px, 95vw);
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2rem);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-section {
+    text-align: center;
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+    position: relative;
+    padding: clamp(2rem, 5vw, 4rem) 0;
+  }
+
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { 
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.5;
+    }
+    50% { 
+      transform: translate(-50%, -50%) scale(1.2);
+      opacity: 0.8;
+    }
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(
+      135deg,
+      #60a5fa 0%,
+      #3b82f6 25%,
+      #2563eb 50%,
+      #1d4ed8 75%,
+      #1e40af 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    animation: titleGlow 4s ease-in-out infinite;
+  }
+
+  @keyframes titleGlow {
+    0%, 100% { 
+      filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.4));
+    }
+    50% { 
+      filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.8));
+    }
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: #94a3b8;
+    margin-top: 1rem;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-icon {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-right: 1rem;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iconSpin 8s linear infinite;
+  }
+
+  @keyframes iconSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .filters-section {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+    position: relative;
+  }
+
+  .filters-container {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .filters-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      transparent,
+      rgba(59, 130, 246, 0.05),
+      transparent
+    );
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .filters-wrapper {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    .filters-wrapper {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+  .search-container {
+    position: relative;
+  }
+
+  .search-bar {
+    position: relative;
+    width: 100%;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: clamp(0.75rem, 2vw, 1rem) clamp(3rem, 5vw, 4rem) clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    font-weight: 500;
+    border-radius: 16px;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    color: #e2e8f0;
+    outline: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .search-bar input:focus {
+    border-color: #3b82f6;
+    box-shadow: 
+      0 0 0 4px rgba(59, 130, 246, 0.15),
+      0 8px 32px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .search-bar input::placeholder {
+    color: #64748b;
+    font-weight: 400;
+  }
+
+  .search-icon {
+    position: absolute;
+    right: clamp(1rem, 2vw, 1.5rem);
+    top: 50%;
+    transform: translateY(-50%);
+    color: #3b82f6;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    transition: all 0.3s ease;
+  }
+
+  .search-bar input:focus + .search-icon {
+    color: #60a5fa;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .difficulty-select {
+    position: relative;
+  }
+
+  .difficulty-select select {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    color: #e2e8f0;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+    border-radius: 16px;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    font-weight: 500;
+    min-width: clamp(140px, 20vw, 180px);
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+  }
+
+  .difficulty-select select:focus {
+    border-color: #3b82f6;
+    box-shadow: 
+      0 0 0 4px rgba(59, 130, 246, 0.15),
+      0 8px 32px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .btn {
+    padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+    border-radius: 16px;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s;
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+  }
+
+  .btn-secondary {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+  }
+
+  #applyFilters {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #applyFilters.show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+  .problems-grid {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
   .problem-card {
-    background: #0d2147;
-    border-radius: 12px;
-    padding: 12px 18px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease-in-out;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.1),
+      rgba(139, 92, 246, 0.1),
+      rgba(16, 185, 129, 0.1)
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .problem-card:hover::before {
+    opacity: 1;
   }
 
   .problem-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px);
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(59, 130, 246, 0.1);
   }
 
-  .problem-card-title {
-    font-size: 1.1rem;
+  .problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .problem-info {
+    flex: 1;
+  }
+
+  .problem-title {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+    transition: color 0.3s ease;
+  }
+
+  .problem-card:hover .problem-title {
+    color: #60a5fa;
+  }
+
+  .problem-meta {
+    font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+    color: #94a3b8;
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .difficulty-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+  }
+
+  .difficulty-badge.easy {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  .difficulty-badge.medium {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2));
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+
+  .difficulty-badge.hard {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  .problem-card:hover .difficulty-badge {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .no-results {
+    text-align: center;
+    padding: clamp(3rem, 6vw, 5rem) 2rem;
+    color: #64748b;
+  }
+
+  .no-results-icon {
+    font-size: clamp(3rem, 6vw, 4rem);
+    margin-bottom: 1.5rem;
+    color: #3b82f6;
+    opacity: 0.6;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .no-results-text {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
     font-weight: 600;
-    margin-bottom: 4px;
-    color: #ffffff;
+    margin-bottom: 0.5rem;
   }
 
-  .problem-card-meta {
-    font-size: 0.85rem;
-    color: #cccccc;
-    margin-bottom: 8px;
+  .no-results-subtitle {
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    opacity: 0.8;
   }
 
-  .btn-solve {
-    background: #2c89ff;
-    color: white;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    text-decoration: none;
-    transition: background 0.2s ease;
+  /* Responsive Enhancements */
+  @media (max-width: 768px) {
+    .action-buttons {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .problem-header {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .difficulty-badge {
+      align-self: flex-start;
+    }
   }
 
-  .btn-solve:hover {
-    background: #1a6de2;
-    color: white;
+  /* Scroll Enhancements */
+  html {
+    scroll-behavior: smooth;
   }
 
-  .badge {
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    border-radius: 6px;
+  body::-webkit-scrollbar {
+    width: 8px;
   }
 
-  h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 24px;
+  body::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.3);
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-radius: 4px;
+  }
+
+  body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  }
+
+  /* Animation Delays for Staggered Effects */
+  .problem-card {
+    animation: slideInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  @keyframes slideInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .problem-card:nth-child(1) { animation-delay: 0.1s; }
+  .problem-card:nth-child(2) { animation-delay: 0.2s; }
+  .problem-card:nth-child(3) { animation-delay: 0.3s; }
+  .problem-card:nth-child(4) { animation-delay: 0.4s; }
+  .problem-card:nth-child(5) { animation-delay: 0.5s; }
+  .problem-card:nth-child(6) { animation-delay: 0.6s; }
+  .problem-card:nth-child(7) { animation-delay: 0.7s; }
+  .problem-card:nth-child(8) { animation-delay: 0.8s; }
+  .problem-card:nth-child(9) { animation-delay: 0.9s; }
+  .problem-card:nth-child(10) { animation-delay: 1s; }
+
+  /* Zoom adaptability */
+  @media (min-resolution: 2dppx) {
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+    }
   }
 </style>
 
-<h2>All Problems</h2>
-
-{% for p in problems %}
-  <div class="problem-card">
-    <div class="problem-card-title">{{ p.name }}</div>
-    <div class="problem-card-meta">
-      Code: <code style="background:#0c295a;padding:2px 6px;border-radius:4px;">{{ p.code }}</code>
+<div class="cosmic-container">
+  <div class="problems-wrapper">
+    <div class="hero-section">
+      <h1 class="hero-title">
+        <i class="fas fa-code hero-icon"></i>CodeVerse Problem List
+      </h1>
+      <p class="hero-subtitle">Master coding challenges and elevate your skills</p>
     </div>
-    <div class="d-flex justify-content-between align-items-center">
-      <span class="badge
-        {% if p.difficulty == 'Easy' %}bg-success text-light
-        {% elif p.difficulty == 'Medium' %}bg-warning text-dark
-        {% elif p.difficulty == 'Hard' %}bg-danger text-light
-        {% else %}bg-secondary text-light{% endif %}">
-        {{ p.get_difficulty_display }}
-      </span>
-      <a href="{% url 'problem_detail' code=p.code %}" class="btn-solve">Solve →</a>
+
+    <div class="filters-section">
+      <div class="filters-container">
+        <form method="get" class="filters-wrapper" id="filterForm">
+          <div class="search-container">
+            <div class="search-bar">
+              <input type="text" name="q" id="searchInput" placeholder="Search problems..." value="{{ request.GET.q }}">
+              <i class="fas fa-search search-icon"></i>
+            </div>
+          </div>
+          
+          <div class="difficulty-select">
+            <select name="difficulty" id="difficultySelect">
+              <option value="">All Difficulties</option>
+              <option value="Easy" {% if request.GET.difficulty == "Easy" %}selected{% endif %}>Easy</option>
+              <option value="Medium" {% if request.GET.difficulty == "Medium" %}selected{% endif %}>Medium</option>
+              <option value="Hard" {% if request.GET.difficulty == "Hard" %}selected{% endif %}>Hard</option>
+            </select>
+          </div>
+
+          <div class="action-buttons">
+            <button type="submit" id="applyFilters" class="btn btn-primary">
+              <i class="fas fa-filter"></i> Apply
+            </button>
+          
+            {% if request.GET.q or request.GET.difficulty %}
+              <button type="submit" class="btn btn-secondary" name="clear" value="1">
+                <i class="fas fa-times"></i> Clear
+              </button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="problems-grid">
+      {% for p in problems %}
+        <a href="{% url 'problem_detail' code=p.code %}" class="problem-card">
+          <div class="problem-header">
+            <div class="problem-info">
+              <div class="problem-title">{{ p.name }}</div>
+              <div class="problem-meta">{{ p.code }}</div>
+            </div>
+            <div class="difficulty-badge 
+              {% if p.difficulty == 'Easy' %}easy
+              {% elif p.difficulty == 'Medium' %}medium
+              {% elif p.difficulty == 'Hard' %}hard{% endif %}">
+              {{ p.get_difficulty_display }}
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="no-results">
+          <div class="no-results-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <div class="no-results-text">No problems found</div>
+          <div class="no-results-subtitle">Try adjusting your search criteria</div>
+        </div>
+      {% endfor %}
     </div>
   </div>
-{% empty %}
-  <p>No problems yet—start coding! 💻</p>
-{% endfor %}
+</div>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced search functionality
+    document.addEventListener('keydown', function(e) {
+      if (e.key === '/' && !e.target.matches('input, textarea, select')) {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }
+      
+      if (e.key === 'Escape' && e.target.matches('input')) {
+        e.target.blur();
+      }
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    const difficultySelect = document.getElementById('difficultySelect');
+    const applyButton = document.getElementById('applyFilters');
+    const form = document.getElementById('filterForm');
+
+    function updateApplyButton() {
+      const hasSearch = searchInput.value.trim() !== "";
+      const hasDifficulty = difficultySelect.value !== "";
+      
+      if (hasSearch || hasDifficulty) {
+        applyButton.classList.add('show');
+      } else {
+        applyButton.classList.remove('show');
+      }
+    }
+
+    // Enhanced debouncing for better performance
+    let debounceTimer;
+    const debounceDelay = 200;
+
+    function debounce(func, delay) {
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(debounceTimer);
+          func(...args);
+        };
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(later, delay);
+      };
+    }
+
+    const debouncedUpdate = debounce(updateApplyButton, debounceDelay);
+
+    searchInput.addEventListener('input', debouncedUpdate);
+    difficultySelect.addEventListener('change', updateApplyButton);
+
+    // Auto-submit functionality
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        form.submit();
+      }
+    });
+
+    // Initialize
+    updateApplyButton();
+
+    // Add smooth reveal animation for problem cards
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.problem-card').forEach(card => {
+      observer.observe(card);
+    });
+
+    // Enhanced zoom detection and adjustment
+    function handleZoom() {
+      const zoom = window.devicePixelRatio;
+      const root = document.documentElement;
+      
+      if (zoom > 1.5) {
+        root.style.setProperty('--zoom-factor', '0.85');
+      } else if (zoom < 0.8) {
+        root.style.setProperty('--zoom-factor', '1.15');
+      } else {
+        root.style.setProperty('--zoom-factor', '1');
+      }
+    }
+
+    // Listen for zoom changes
+    window.addEventListener('resize', debounce(handleZoom, 100));
+    handleZoom(); // Initial check
+
+    // Add cosmic particles effect
+    function createCosmicParticles() {
+      const container = document.querySelector('.cosmic-container');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+          position: absolute;
+          width: 2px;
+          height: 2px;
+          background: rgba(59, 130, 246, 0.6);
+          border-radius: 50%;
+          pointer-events: none;
+          animation: float ${3 + Math.random() * 4}s ease-in-out infinite;
+          top: ${Math.random() * 100}vh;
+          left: ${Math.random() * 100}vw;
+          animation-delay: ${Math.random() * 2}s;
+          z-index: 0;
+        `;
+        container.appendChild(particle);
+      }
+    }
+
+    createCosmicParticles();
+  });
+</script>
 {% endblock %}

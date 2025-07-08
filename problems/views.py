@@ -19,9 +19,34 @@ from core.utils.code_executor import run_code_util
 
 # Create your views here.
 
+from django.db.models import Q
+
+@login_required
 def problem_list(request):
+    # Clear filters if the user explicitly clicked the clear button
+    if request.GET.get('clear'):
+        return redirect('problem_list')
+
+    # Get query params safely
+    q = request.GET.get('q', '').strip()
+    difficulty = request.GET.get('difficulty', '').strip()
+
+    # Start with all problems
     problems = Problem.objects.all()
-    return render(request, 'problems/problems.html', {'problems': problems})
+
+    # Apply search filter
+    if q:
+        problems = problems.filter(Q(name__icontains=q) | Q(code__icontains=q))
+
+    # Apply difficulty filter only if it's a valid option
+    if difficulty in ['Easy', 'Medium', 'Hard']:
+        problems = problems.filter(difficulty=difficulty)
+
+    # Render the list
+    return render(request, 'problems/problems.html', {
+        'problems': problems,
+    })
+
 
 import markdown
 import bleach
