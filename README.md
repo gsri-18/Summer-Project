@@ -194,16 +194,6 @@ Problems can be added via:
 
 ---
 
-## 🏁 Contest System
-
-Contests are fully supported:
-
-* ⏰ Time-Bound Contests with multiple problems
-* 🧑‍💻 Live Submissions with verdicts
-* 🪄 Add Problems to contests via modal UI
-* 📊 ContestLeaderboard (Coming soon)
-
----
 
 ## 🧠 AI Assistant
 
