@@ -291,9 +291,16 @@ import os
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from judge.models import DailyAICall
 import google.generativeai as genai
 
+DAILY_LIMIT = 27
+
 @csrf_exempt
+@login_required
 def ai_assist_view(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Only POST allowed'}, status=405)
@@ -306,13 +313,32 @@ def ai_assist_view(request):
     if not prompt:
         return JsonResponse({'error': 'Prompt missing'}, status=400)
 
+    user = request.user
+    today = timezone.now().date()
+
+    # Get or create today's AI usage record for user
+    record, _ = DailyAICall.objects.get_or_create(user=user, date=today)
+
+    if record.count >= DAILY_LIMIT:
+        return JsonResponse({
+            'error': 'Daily AI limit reached. Try again tomorrow.',
+            'calls_left': 0
+        }, status=429)
+
     try:
+        # Call Gemini
         genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
         model = genai.GenerativeModel("gemini-2.0-flash")
         response = model.generate_content(prompt)
-        return JsonResponse({'result': response.text})
+
+        # Increment count
+        record.count += 1
+        record.save()
+
+        return JsonResponse({
+            'result': response.text,
+            'calls_left': DAILY_LIMIT - record.count
+        })
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
-

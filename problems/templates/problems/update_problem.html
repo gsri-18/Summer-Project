@@ -4,8 +4,8 @@
 {% block content %}
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold">✏️ Update Problem – {{ problem.name }}</h4>
-    <a href="{% url 'manage_problems' %}" class="btn btn-outline-secondary btn-sm">← Back to Manage</a>
+    <h2 class="fw-bold">✏️ Update Problem – {{ problem.name }}</h2>
+    <a href="{% url 'manage_problems' %}" class="btn btn-secondary">← Back to Manage</a>
   </div>
 
   {% if messages %}
@@ -32,59 +32,95 @@
     </div>
   {% endif %}
 
+  <!-- 📝 Problem Form -->
   <form method="post" novalidate>
     {% csrf_token %}
     {{ formset.management_form }}
 
     <!-- Problem Fields -->
     <div class="row mb-3">
-      <div class="col-md-6"><label>Name:</label> {{ form.name }}</div>
-      <div class="col-md-6"><label>Code:</label> {{ form.code }}</div>
+      <div class="col-md-6">
+        <label class="form-label">Name:</label>
+        {{ form.name|add_class:"form-control" }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Code:</label>
+        {{ form.code|add_class:"form-control" }}
+      </div>
     </div>
-    <div class="row mb-3">
-      <div class="col-md-6"><label>Difficulty:</label> {{ form.difficulty }}</div>
-      <div class="col-md-3"><label>Time Limit (sec):</label> {{ form.time_limit }}</div>
-      <div class="col-md-3"><label>Memory Limit (MB):</label> {{ form.memory_limit }}</div>
-    </div>
-    <div class="mb-3"><label>Description:</label> {{ form.description }}</div>
-    <div class="mb-3"><label>Input Format:</label> {{ form.input_format }}</div>
-    <div class="mb-3"><label>Output Format:</label> {{ form.output_format }}</div>
-    <div class="mb-3"><label>Constraints:</label> {{ form.constraints }}</div>
-    <div class="mb-3"><label>Sample Input:</label> {{ form.sample_input }}</div>
-    <div class="mb-3"><label>Sample Output:</label> {{ form.sample_output }}</div>
 
-    <hr class="my-4" />
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Difficulty:</label>
+        {{ form.difficulty|add_class:"form-select" }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Time Limit (sec):</label>
+        {{ form.time_limit|add_class:"form-control" }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Memory Limit (MB):</label>
+        {{ form.memory_limit|add_class:"form-control" }}
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description:</label>
+      {{ form.description|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Input Format:</label>
+      {{ form.input_format|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Output Format:</label>
+      {{ form.output_format|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Constraints:</label>
+      {{ form.constraints|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Sample Input:</label>
+      {{ form.sample_input|add_class:"form-control" }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Sample Output:</label>
+      {{ form.sample_output|add_class:"form-control" }}
+    </div>
+
+    <hr class="my-4">
 
     <!-- Test Cases -->
     <h4 class="mb-3">🧪 Test Cases</h4>
     <div id="test-cases-container">
       {% for tc_form in formset.forms %}
-        <div class="row test-case-row mb-3">
+        <div class="row mb-2 test-case-row">
           {% for hidden in tc_form.hidden_fields %}
             {{ hidden }}
           {% endfor %}
 
-          <div class="col-md-6">
+          <div class="col-md-5">
             <label class="form-label">Input:</label>
-            {{ tc_form.input|add_class:"form-control form-control-sm" }}
+            {{ tc_form.input|add_class:"form-control" }}
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-5">
             <label class="form-label">Expected Output:</label>
-            {{ tc_form.output|add_class:"form-control form-control-sm" }}
+            {{ tc_form.output|add_class:"form-control" }}
           </div>
 
-          <div class="d-flex align-items-start justify-content-end mt-4">
+          <div class="col-md-2 d-flex align-items-start">
             {% if tc_form.instance.pk %}
               <input type="hidden" name="{{ tc_form.DELETE.name }}" id="{{ tc_form.DELETE.id_for_label }}" value="" class="delete-marker">
-              <button type="button" class="btn btn-outline-danger btn-sm remove-test-case">🗑️ Delete</button>
             {% endif %}
+            <button type="button" class="btn btn-danger btn-sm remove-test-case ms-2">🗑️ Delete</button>
           </div>
         </div>
       {% endfor %}
     </div>
 
-    <div class="d-flex justify-content-between my-4">
+    <div class="d-flex justify-content-between mb-4">
       <button type="submit" class="btn btn-success">✅ Save Changes</button>
       <button type="button" class="btn btn-outline-primary btn-sm" id="add-test-case">➕ Add Test Case</button>
     </div>

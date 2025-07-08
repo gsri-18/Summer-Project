@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from problems.models import Problem, TestCase
+from django.conf import settings
 
 
 # Create your models here.
@@ -84,4 +85,16 @@ class ContestSubmission(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.problem.code} - {self.verdict}"
+    
+
+class DailyAICall(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    count = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('user', 'date')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.date} -> {self.count}"
 
