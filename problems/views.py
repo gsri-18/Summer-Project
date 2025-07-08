@@ -119,7 +119,7 @@ def problem_detail(request, code):
 
         return redirect('submission_detail', id=submission.id)
     
-    submissions = Submission.objects.filter(problem=problem).order_by('-submitted_at')
+    submissions = Submission.objects.filter(problem=problem, user = request.user).order_by('-submitted_at')
 
     return render(request, 'problems/problem_detail.html', {
         'problem': problem,
