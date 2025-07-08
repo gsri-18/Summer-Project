@@ -48,9 +48,8 @@
 | 7     | Docker Isolation for Code Execution             | ✅ Complete   |
 | 8     | Leaderboard System                              | ✅ Complete   |
 | 9     | Contest Support (Modal UI, Submission Tracking) | ✅ Complete   |
-| 10    | Tab Focus Detection (Anti-Cheat)                | 🔜 Planned    |
-| 11    | AI Debug Assistant                              | ✅ Integrated |
-| 12    | EC2 Deployment                                  | 🔜 Planned    |
+| 10    | AI Debug Assistant                              | ✅ Integrated |
+| 11    | EC2 Deployment                                  | 🔜 Planned    |
 
 ---
 
