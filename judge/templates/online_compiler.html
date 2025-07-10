@@ -156,15 +156,51 @@
     <textarea id="custom-output" class="form-control" rows="4" readonly></textarea>
   </div>
 </div>
+{% endblock %}
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
-
+{% block extra_js %}
 <script>
   window.run_code_url = "{% url 'run_code' %}";
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
 
 <script>
+  // Force re-initialization of Bootstrap dropdowns
+  function forceInitDropdowns() {
+    // Wait for Bootstrap to be fully loaded
+    if (typeof bootstrap === 'undefined') {
+      console.log('Bootstrap not loaded yet, retrying...');
+      setTimeout(forceInitDropdowns, 100);
+      return;
+    }
+
+    try {
+      // Destroy existing dropdowns first
+      document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
+        const existingDropdown = bootstrap.Dropdown.getInstance(element);
+        if (existingDropdown) {
+          existingDropdown.dispose();
+        }
+      });
+
+      // Re-initialize all dropdowns
+      document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
+        new bootstrap.Dropdown(element);
+        console.log('Initialized dropdown for:', element.id);
+      });
+
+      console.log('All dropdowns re-initialized successfully');
+    } catch (error) {
+      console.error('Error initializing dropdowns:', error);
+    }
+  }
+
+  // Initialize dropdowns when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    forceInitDropdowns();
+  });
+
   require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs' }});
   require(['vs/editor/editor.main'], function () {
     window.editor = monaco.editor.create(document.getElementById('editor'), {
@@ -180,7 +216,6 @@
       }
     });
 
-
     // boilerplate snippets
     const boilerplate = {
         java: `import java.util.*;
@@ -190,8 +225,7 @@ public class Main {
         // Your code here
 
     }
-}
-  `,
+}`,
         python: `# Python3 code
 
 def main():
@@ -201,8 +235,7 @@ def main():
     pass
 
 if __name__ == "__main__":
-    main()
-  `,
+    main()`,
         cpp: `#include <bits/stdc++.h>
 using namespace std;
 
@@ -215,8 +248,7 @@ int main() {
 
 
     return 0;
-}
-  `,
+}`,
         c: `#include <stdio.h>
   
 int main() {
@@ -225,8 +257,7 @@ int main() {
 
 
     return 0;
-}
-  `
+}`
     };
 
     const langSelect = document.getElementById('language');
@@ -236,36 +267,10 @@ int main() {
       monaco.editor.setModelLanguage(editor.getModel(), lang === 'cpp' ? 'cpp' : lang);
     });
 
+    // Initialize with default language
     langSelect.dispatchEvent(new Event('change'));
 
-    document.getElementById('run-button').addEventListener('click', () => {
-      const code = editor.getValue();
-      const language = langSelect.value;
-      const custom_input = document.getElementById('custom-input').value;
-      const time_limit = document.getElementById('time-limit').value;
-      const memory_limit = document.getElementById('memory-limit').value;
-
-      const data = new FormData();
-      data.append('code', code);
-      data.append('language', language);
-      data.append('custom_input', custom_input);
-      data.append('time_limit', time_limit);
-      data.append('memory_limit', memory_limit);
-
-      fetch(window.run_code_url, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: data
-      })
-      .then(res => res.json())
-      .then(json => {
-        document.getElementById('custom-output').value =
-          json.output || json.details || json.error || '';
-      });
-    });
-
+    // SINGLE event listener for run button with proper error handling
     document.getElementById('run-button').addEventListener('click', () => {
       const runBtn = document.getElementById('run-button');
       const outputBox = document.getElementById('custom-output');
@@ -309,6 +314,12 @@ int main() {
         runBtn.innerHTML = "▶️ Run Code";
       });
     });
+    
+    // Re-initialize dropdowns after Monaco loads (Monaco might interfere)
+    setTimeout(function() {
+      console.log('Re-initializing dropdowns after Monaco Editor load...');
+      forceInitDropdowns();
+    }, 1000);
     
   });
 </script>
