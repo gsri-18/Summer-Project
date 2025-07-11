@@ -5,6 +5,8 @@
 - DO NOT remove section headers (##), metadata labels (**Code:** etc.), or formatting
 - Do not use LaTeX ($...$), HTML tags, or extra markdown features
 - Wrap the sample input/output in ```, for better rendering, at the start and end.
+- If using bullet points, ensure each point has atleast 2 bullets, for better rendering
+- In other sections too, please ensure to have atleast 2 sentences on a new line for better display
 - Do not wrap any test case inputs/outputs in ```, they should be plain text
 - Ensure the problem is self-contained and clear
 -->

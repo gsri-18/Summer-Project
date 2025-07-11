@@ -295,6 +295,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from judge.models import DailyAICall
 import google.generativeai as genai
+from django.conf import settings
 
 @csrf_exempt
 @login_required
@@ -333,7 +334,7 @@ def ai_assist_view(request):
 
     try:
         # Call Gemini
-        genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+        genai.configure(api_key=settings.GEMINI_API_KEY)
         model = genai.GenerativeModel("gemini-2.0-flash")
         response = model.generate_content(prompt)
 
