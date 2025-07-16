@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="static/images/codeverse-logo.png" alt="CodeVerse Logo" width="180"/>
+  <a href="http://56.228.80.60/" target="_blank">
+    <img src="static/images/codeverse-logo.png" alt="CodeVerse Logo" width="180"/>
+  </a>
 </p>
 
 <h1 align="center"> CodeVerse – Online Judge Platform</h1>
@@ -9,29 +11,33 @@
   <img src="https://img.shields.io/badge/Django-5.2-green.svg"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-blue.svg"/>
   <img src="https://img.shields.io/badge/Docker-Isolated-brightgreen.svg"/>
-  <img src="https://img.shields.io/badge/Status-Active🔥-orange.svg"/>
+  <img src="https://img.shields.io/badge/Status-Active-orange.svg"/>
+</p>
+
+<p align="center">
+  🌐 <strong>Live Demo:</strong> <a href="http://56.228.80.60/" target="_blank">http://56.228.80.60/</a>
 </p>
 
 > **CodeVerse** is a full-stack, secure **Online Judge Platform** powered by Django, PostgreSQL, and Docker-based isolation.  
-> Now with a sleek Monaco editor, **contest support**, **live verdicts**, **AI debug help**, and a growing developer-friendly ecosystem.
+> Now with a sleek Monaco editor, **live verdicts**, **AI debug help**, and a growing developer-friendly ecosystem.
+
 
 ---
 
 ## ✨ Features
 
-- 🚀 **Live Verdict System** (`AC`, `WA`, `TLE`, `MLE`, `RTE`, `CE`)
-- 🔒 **Docker-based Isolation** for safe code execution
-- ✍️ **Problem Creation via Markdown Templates**
-- 👩‍💻 **Monaco Editor** with syntax highlighting, theming & vertical split
-- 📈 **Leaderboard** with difficulty-wise performance stats
-- 🧠 **AI Debug Assistant** (integrated with OpenAI/Gemini)
-- 🧪 **Custom Test Runs** (Compiler-only mode)
-- 🧰 **Frontend Admin Tools** (modal-based, JS-enhanced creation)
-- 📦 **TestCase Management** per problem
-- 👤 **Custom User Model** with profile & full name
-- 🧼 **File Cleanup Toggles** (`runs/`, `submissions/`)
-- 🌌 **Cosmic UI** – animated intro, mobile responsive, terminal-like I/O
-- 🗂️ **Contest System** – create, view, manage contests + live submissions
+- **Live Verdict System** (`AC`, `WA`, `TLE`, `MLE`, `RTE`, `CE`)
+- **Docker-based Isolation** for safe code execution
+- **Problem Creation via Markdown Templates**
+- **Monaco Editor** with syntax highlighting, theming & vertical split
+- **Leaderboard** with difficulty-wise performance stats
+- **AI Debug Assistant** (integrated with Gemini)
+- **Custom Test Runs** (Compiler-only mode)
+- **Frontend Admin Tools** (modal-based, JS-enhanced creation)
+- **TestCase Management** per problem
+- **Custom User Model** with profile & full name
+- **File Cleanup Toggles** (`runs/`, `submissions/`)
+- **Cosmic UI** – animated intro, mobile responsive, terminal-like I/O
 
 ---
 
