@@ -55,7 +55,7 @@
 | 8     | Leaderboard System                              | ✅ Complete   |
 | 9     | Contest Support (Modal UI, Submission Tracking) | ✅ Complete   |
 | 10    | AI Debug Assistant                              | ✅ Integrated |
-| 11    | EC2 Deployment                                  | 🔜 Planned    |
+| 11    | EC2 Deployment                                  | ✅ Complete   |
 
 ---
 
