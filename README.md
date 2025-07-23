@@ -247,7 +247,7 @@ Ranks update live based on accepted submissions.
 
 ---
 
-## 📄 License
+## License
 
 This project is for academic and learning purposes only.
 Full Docker sandboxing is integrated for production-grade security.
@@ -257,7 +257,7 @@ Full Docker sandboxing is integrated for production-grade security.
 ## Maintainer
 
 Built with passion by [@gsri-18](https://github.com/gsri-18)
-Drop a ⭐ if you love CodeVerse!
+Drop a ⭐ if you like CodeVerse!
 
 ---
 
