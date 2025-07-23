@@ -24,7 +24,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
 - **Live Verdict System** (`AC`, `WA`, `TLE`, `MLE`, `RTE`, `CE`)
 - **Docker-based Isolation** for safe code execution
@@ -41,7 +41,7 @@
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 | Phase | Feature                                         | Status       |
 | ----- | ----------------------------------------------- | ------------ |
@@ -59,7 +59,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer           | Technology                             |
 | --------------- | -------------------------------------- |
@@ -74,7 +74,7 @@
 
 ---
 
-## 🔍 System Requirements
+## System Requirements
 
 Ensure the following **tools are globally installed**:
 
@@ -87,7 +87,7 @@ Ensure the following **tools are globally installed**:
 | PostgreSQL | `psql`          | [postgresql.org](https://www.postgresql.org/download/)                                                |
 | Docker     | `docker`        | [Docker Installation Guide](https://docs.docker.com/get-docker/)                                      |
 
-### ✅ Check Installed Versions (Linux/macOS)
+### Check Installed Versions (Linux/macOS)
 
 ```bash
 gcc --version
@@ -99,7 +99,7 @@ python3 --version
 docker --version
 ````
 
-### ✅ Check Installed Versions (Windows CMD)
+### Check Installed Versions (Windows CMD)
 
 ```cmd
 gcc --version
@@ -113,11 +113,11 @@ docker --version
 
 ---
 
-## ⚙️ Local Development Setup
+## Local Development Setup
 
-> 💡 Recommended: Use virtual environment
+> Recommended: Use virtual environment
 
-### 🐧 Linux/macOS
+### Linux/macOS
 
 ```bash
 git clone https://github.com/gsri-18/Summer-Project.git
@@ -132,7 +132,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### 🪟 Windows (CMD)
+### Windows (CMD)
 
 ```cmd
 git clone https://github.com/gsri-18/Summer-Project.git
@@ -147,7 +147,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### 🪟 Windows (PowerShell)
+### Windows (PowerShell)
 
 ```powershell
 git clone https://github.com/gsri-18/Summer-Project.git
@@ -164,7 +164,7 @@ python manage.py runserver
 
 ---
 
-## 🔐 Superuser Access
+## Superuser Access
 
 To manage users, problems, testcases, or contest verdicts:
 
@@ -173,13 +173,13 @@ python manage.py createsuperuser
 ```
 
 Then visit:
-👉 [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
+ [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
 > Plus, in-app admin menus let staff users create/update problems or contests without needing the admin panel.
 
 ---
 
-## 🧩 Problem Structure
+## Problem Structure
 
 Each problem contains:
 
@@ -193,14 +193,14 @@ Each problem contains:
 
 Problems can be added via:
 
-* 🧠 AI Markdown Parsing
-* ⚙️ Admin Panel
-* ⚡ Modal-based Quick Create (for contests)
+*  AI Markdown Parsing
+*  Admin Panel
+*  Modal-based Quick Create (for contests)
 
 ---
 
 
-## 🧠 AI Assistant
+##  AI Assistant
 
 Integrated into the problem detail page, this tool:
 
@@ -211,19 +211,19 @@ Integrated into the problem detail page, this tool:
 
 ---
 
-## 📊 Leaderboard
+## Leaderboard
 
 Track users based on difficulty-wise problems solved:
 
-* Easy ✅
-* Medium 🔶
-* Hard 🔺
+* Easy 
+* Medium 
+* Hard 
 
 Ranks update live based on accepted submissions.
 
 ---
 
-## 📁 Project Structure (Preview)
+## Project Structure (Preview)
 
 <details>
 <summary>Click to expand</summary>
@@ -254,9 +254,9 @@ Full Docker sandboxing is integrated for production-grade security.
 
 ---
 
-## 👨‍🚀 Maintainer
+## Maintainer
 
-Built with ❤️ by [@gsri-18](https://github.com/gsri-18)
+Built with passion by [@gsri-18](https://github.com/gsri-18)
 Drop a ⭐ if you love CodeVerse!
 
 ---
