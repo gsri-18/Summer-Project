@@ -4,6 +4,7 @@ import platform
 import uuid
 import subprocess
 import shutil
+import os
 
 
 ext_map = {'python': '.py', 'c': '.c', 'cpp': '.cpp', 'java': '.java'}
@@ -132,6 +133,11 @@ def run_in_docker(code, language, input_data, time_limit, memory_limit, base_dir
     code_file = base_dir / filename
     input_file = base_dir / "input.txt"
     output_file = base_dir / "output.txt"
+    output_name = "output.txt"
+    output_dir = base_dir / 'output'
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+
 
     time_limit = time_limit + 1  # Add a buffer to the time limit for Docker execution
 
@@ -143,20 +149,33 @@ def run_in_docker(code, language, input_data, time_limit, memory_limit, base_dir
     print("✅ Code file exists?", code_file.exists())
     print("✅ Input file exists?", input_file.exists())
 
+    uid = str(os.getuid())
+    gid = str(os.getgid())
+
+    output_file_in_runner = f"/runner/{code_file.name}"
+    input_file_in_runner = f"/runner/{input_file.name}"
+    output_file_in_output = output_name
 
     docker_cmd = [
         "docker", "run", "--rm",
-        "-v", f"{base_dir}:/runner",
+        "-u", f"{uid}:{gid}",
+        "-v", f"{base_dir}:/runner:ro",  # safer: read-only
+        "-v", f"{base_dir}/output:/output:rw",  # writable output
+        "--tmpfs", "/tmp",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt", "no-new-privileges",
+        "--pids-limit=64",
         "--cpus", "1.0",
         "--network", "none",
         "codeverse-runner",
         "/scripts/run_code.sh",
         language,                      # $1 -> LANG
-        f"/runner/{code_file.name}",   # $2 -> CODE_FILE
-        f"/runner/{input_file.name}",  # $3 -> INPUT_FILE
-        f"/runner/{output_file.name}", # $4 -> OUTPUT_FILE
+        output_file_in_runner,      # $2 -> CODE_FILE
+        input_file_in_runner,         # $3 -> INPUT_FILE
+        output_file_in_output,        # $4 -> OUTPUT_FILE
         str(time_limit),               # $5 -> TIME_LIMIT
-        str(memory_limit)              # $6 -> MEMORY_LIMIT ✅ (was missing!)
+        str(memory_limit)              # $6 -> MEMORY_LIMIT 
     ]
 
 

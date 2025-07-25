@@ -3,19 +3,45 @@
 LANG=$1
 CODE_FILE=$2
 INPUT_FILE=$3
-OUTPUT_FILE=$4
-TIME_LIMIT=$5    # in seconds
-MEMORY_LIMIT=$6  # in MB
+OUTPUT_NAME=$4
+TIME_LIMIT=$5    # seconds
+MEMORY_LIMIT=$6  # MB
+
+OUTPUT_FILE="/output/$OUTPUT_NAME"
+echo "Writing to: $OUTPUT_FILE"
+echo "Some output" > "$OUTPUT_FILE"
+
 
 cd /runner || exit 1
 
-# 🛠 1. Compile without memory/time limits
+# Reject unexpected file paths
+[[ "$CODE_FILE" != /runner/* ]] && echo "Invalid code path" && exit 1
+[[ "$INPUT_FILE" != /runner/* ]] && echo "Invalid input path" && exit 1
+[[ "$OUTPUT_FILE" != /output/* ]] && echo "Invalid output path" && exit 1
+
+
+# Don't run as root
+if [ "$(id -u)" -eq 0 ]; then
+  echo "Unsafe: Running as root. Aborting." > "$OUTPUT_FILE"
+  exit 1
+fi
+
+# Validate code path
+if [[ "$CODE_FILE" != /runner/* ]]; then
+  echo "Invalid code path" > "$OUTPUT_FILE"
+  exit 1
+fi
+
+# Set up executable output file path
+EXEC_FILE="/runner/code_exec"
+
+# Compile if needed
 if [ "$LANG" == "c" ]; then
-    gcc "$CODE_FILE" -o code_exec
+    gcc "$CODE_FILE" -o "$EXEC_FILE"
     [[ $? -ne 0 ]] && echo "Compilation Error" > "$OUTPUT_FILE" && exit 1
 
 elif [ "$LANG" == "cpp" ]; then
-    g++ "$CODE_FILE" -o code_exec
+    g++ "$CODE_FILE" -o "$EXEC_FILE"
     [[ $? -ne 0 ]] && echo "Compilation Error" > "$OUTPUT_FILE" && exit 1
 
 elif [ "$LANG" == "java" ]; then
@@ -23,12 +49,11 @@ elif [ "$LANG" == "java" ]; then
     [[ $? -ne 0 ]] && echo "Compilation Error" > "$OUTPUT_FILE" && exit 1
 fi
 
-# 🧠 2. Setup memory and time limits
-ulimit -v $((MEMORY_LIMIT * 1024))  # Set max virtual memory
+# Apply memory limit
+ulimit -v $((MEMORY_LIMIT * 1024))
 
-# 🏃 3. Run the code with timeout and memory restrictions
+# Safe execution wrapper
 run_command() {
-    # Wrapper to handle timeout exit codes (124 = timeout, 137 = SIGKILL)
     if ! timeout --preserve-status "$TIME_LIMIT" bash -c "$1" < "$INPUT_FILE" > "$OUTPUT_FILE" 2>/runner/stderr.log; then
         status=$?
         if [ "$status" -eq 124 ] || [ "$status" -eq 137 ]; then
@@ -39,16 +64,19 @@ run_command() {
     fi
 }
 
-if [ "$LANG" == "python" ]; then
+# Run based on language
+case "$LANG" in
+  python)
     run_command "python3 $CODE_FILE"
-
-elif [ "$LANG" == "c" ] || [ "$LANG" == "cpp" ]; then
-    run_command "./code_exec"
-
-elif [ "$LANG" == "java" ]; then
+    ;;
+  c|cpp)
+    run_command "$EXEC_FILE"
+    ;;
+  java)
     run_command "java -Xmx${MEMORY_LIMIT}m Main"
-
-else
+    ;;
+  *)
     echo "Unsupported language" > "$OUTPUT_FILE"
     exit 1
-fi
+    ;;
+esac
