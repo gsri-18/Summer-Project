@@ -1,7 +1,5 @@
 <p align="center">
-  <a href="http://56.228.80.60/" target="_blank">
-    <img src="static/images/codeverse-logo.png" alt="CodeVerse Logo" width="180"/>
-  </a>
+  <img src="static/images/codeverse-logo.png" alt="CodeVerse Logo" width="180"/>
 </p>
 
 <h1 align="center"> CodeVerse – Online Judge Platform</h1>
@@ -11,11 +9,15 @@
   <img src="https://img.shields.io/badge/Django-5.2-green.svg"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-blue.svg"/>
   <img src="https://img.shields.io/badge/Docker-Isolated-brightgreen.svg"/>
-  <img src="https://img.shields.io/badge/Status-Active-orange.svg"/>
+  <img src="https://img.shields.io/badge/Status-Actively%20Developed-orange.svg"/>
 </p>
 
 <p align="center">
-  🌐 <strong>Live Demo:</strong> <a href="http://56.228.80.60/" target="_blank">http://56.228.80.60/</a>
+  <strong>Live Demo:</strong> <em>Temporarily offline</em> 
+</p>
+
+<p align="center">
+  You can run CodeVerse locally by following the setup instructions below.
 </p>
 
 > **CodeVerse** is a full-stack, secure **Online Judge Platform** powered by Django, PostgreSQL, and Docker-based isolation.  
@@ -41,6 +43,16 @@
 
 ---
 
+## Deployment Note
+
+CodeVerse was successfully deployed and tested on AWS EC2 (Free Tier).
+The public demo has been taken offline to avoid persistent cloud costs.
+
+The platform is fully reproducible locally and can be redeployed on any
+cloud provider using the documented setup steps.
+
+---
+
 ## Roadmap
 
 | Phase | Feature                                         | Status       |
@@ -55,7 +67,7 @@
 | 8     | Leaderboard System                              | ✅ Complete   |
 | 9     | Contest Support (Modal UI, Submission Tracking) | ✅ Complete   |
 | 10    | AI Debug Assistant                              | ✅ Integrated |
-| 11    | EC2 Deployment                                  | ✅ Complete   |
+| 11    | EC2 Deployment (Proof of Concept)               | ✅ Complete   |
 
 ---
 
